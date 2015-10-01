@@ -15,7 +15,7 @@ public class ParserTest {
     private Filter<Lesson> oddParity = new Filter<Lesson>() {
         @Override
         public boolean accept(Lesson obj) {
-            return obj.getParity().equals(Lesson.Parity.ODD) || obj.getParity().equals(Lesson.Parity.BOTH);
+            return obj.getParity().equals(Parity.ODD) || obj.getParity().equals(Parity.BOTH);
         }
     };
     private Filter<Lesson> firstSubgroup = new Filter<Lesson>() {
