@@ -9,7 +9,7 @@ public class TeacherFactory {
 
     private static final Pattern pattern = Pattern.compile("^(.*), (.*) , (.*)$");
 
-    public static Set<Teacher> teacherPool = new HashSet<>();
+    public static Set<Teacher> teacherPool = new HashSet<Teacher>();
 
     public static Teacher get(String teacher) {
         String name = "", education = "", department = "";

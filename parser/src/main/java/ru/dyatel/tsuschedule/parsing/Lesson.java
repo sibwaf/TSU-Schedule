@@ -2,6 +2,10 @@ package ru.dyatel.tsuschedule.parsing;
 
 public class Lesson {
 
+    public enum Type {
+        PRACTICE, LECTURE, LABORATORY, UNKNOWN
+    }
+
     private Parity parity;
     private String weekday;
     private String time;
@@ -10,9 +14,10 @@ public class Lesson {
     private String auditory;
     private Teacher teacher;
 
+    private Type type;
     private int subgroup;
 
-    public Lesson(Parity parity, String weekday, String time, String discipline, String auditory, Teacher teacher, int subgroup) {
+    public Lesson(Parity parity, String weekday, String time, String discipline, String auditory, Teacher teacher, Type type, int subgroup) {
         this.parity = parity;
         this.weekday = weekday;
         this.time = time;
@@ -21,6 +26,7 @@ public class Lesson {
         this.auditory = auditory;
         this.teacher = teacher;
 
+        this.type = type;
         this.subgroup = subgroup;
     }
 
@@ -46,6 +52,10 @@ public class Lesson {
 
     public Teacher getTeacher() {
         return teacher;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public int getSubgroup() {
