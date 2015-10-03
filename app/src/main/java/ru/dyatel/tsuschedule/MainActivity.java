@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -71,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(DRAWER_LEARNED_KEY, true)
                     .apply();
         }
+
+        // TODO: remove this as soon as I can!
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
     }
 
 
