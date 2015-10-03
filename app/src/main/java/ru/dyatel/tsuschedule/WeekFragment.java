@@ -4,17 +4,14 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
-import ru.dyatel.tsuschedule.parsing.Parser;
 import ru.dyatel.tsuschedule.parsing.util.Filter;
 import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
 
-import java.io.IOException;
 import java.util.Set;
 
 public class WeekFragment extends Fragment {
@@ -23,7 +20,7 @@ public class WeekFragment extends Fragment {
 
     private IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
 
-    private Set<Lesson> lessonList;
+    private WeekAdapter weekdays;
 
     public static WeekFragment newInstance(Parity parity) {
         WeekFragment fragment = new WeekFragment();
@@ -39,13 +36,6 @@ public class WeekFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: replace with normal data retrieving
-        try {
-            lessonList = Parser.getLessons("221251");
-        } catch (IOException e) {
-            Log.e("WeekFragment", "Failed to get lesson list", e);
-        }
 
         // Create required week filter
         final Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
@@ -64,12 +54,14 @@ public class WeekFragment extends Fragment {
 
         RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
         weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        weekdayList.setAdapter(new WeekAdapter());
-
-        // TODO: replace with sending data after retrieving it
-        ((WeekAdapter) weekdayList.getAdapter()).updateData(filter.filter(lessonList));
+        weekdays = new WeekAdapter();
+        weekdayList.setAdapter(weekdays);
 
         return root;
+    }
+
+    public void updateData(Set<Lesson> lessons) {
+        weekdays.updateData(filter.filter(lessons));
     }
 
 }
