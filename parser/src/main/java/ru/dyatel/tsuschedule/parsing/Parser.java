@@ -13,7 +13,9 @@ import java.util.regex.Pattern;
 public class Parser {
 
     private static final String subgroupString = "\u043f/\u0433";
+
     private static final String evenParityString = "\u0447/\u043d";
+    private static final String oddParityString = "\u043d/\u0079";
 
     private static final String practiceString = "\u041f\u0440";
     private static final String lectureString = "\u041b";
@@ -48,8 +50,10 @@ public class Parser {
                         if (e.classNames().contains("teac"))
                             throw new IllegalStateException("Can't parse: got \"teac\" div!");
 
-                        Parity parity = e.getElementsByClass("parity").get(0).text().trim()
-                                .equals(evenParityString) ? Parity.EVEN : Parity.ODD;
+                        String parityString = e.getElementsByClass("parity").get(0).text().trim();
+                        Parity parity = Parity.BOTH;
+                        if (parityString.equals(evenParityString)) parity = Parity.EVEN;
+                        else if (parityString.equals(oddParityString)) parity = Parity.ODD;
 
                         // find teacher
                         String teacher = "";
