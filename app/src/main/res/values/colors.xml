@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="practice_color">#66EE66</color>
+    <color name="lecture_color">#8899FF</color>
+    <color name="laboratory_color">#FF4D4D</color>
+    <color name="unknown_color">#444444</color>
+</resources>
