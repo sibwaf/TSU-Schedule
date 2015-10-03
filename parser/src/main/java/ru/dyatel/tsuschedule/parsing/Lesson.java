@@ -12,12 +12,12 @@ public class Lesson {
 
     private String discipline;
     private String auditory;
-    private Teacher teacher;
+    private String teacher;
 
     private Type type;
     private int subgroup;
 
-    public Lesson(Parity parity, String weekday, String time, String discipline, String auditory, Teacher teacher, Type type, int subgroup) {
+    public Lesson(Parity parity, String weekday, String time, String discipline, String auditory, String teacher, Type type, int subgroup) {
         this.parity = parity;
         this.weekday = weekday;
         this.time = time;
@@ -50,7 +50,7 @@ public class Lesson {
         return auditory;
     }
 
-    public Teacher getTeacher() {
+    public String getTeacher() {
         return teacher;
     }
 
