@@ -9,6 +9,8 @@
 
     <string name="hint_group_index">Номер группы</string>
 
+    <string name="load_failure">Ошибка при загрузке данных, попробуйте ещё раз</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

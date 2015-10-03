@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -13,28 +12,26 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 
 import java.util.Locale;
+import java.util.Set;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DataFragment.Listener {
+
+    private static final String FRAGMENT_DATA = "data";
 
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager viewPager;
-
-    /**
-     * The navigation drawer
-     */
-    private DrawerLayout drawerLayout;
-    private View drawerContent;
     private ActionBarDrawerToggle drawerToggle;
+
+    private SparseArray<WeekFragment> weekFragments = new SparseArray<WeekFragment>();
+    private DataFragment dataFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Set up the navigation drawer
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerContent = findViewById(R.id.drawer_content);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        View drawerContent = findViewById(R.id.drawer_content);
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -59,9 +56,18 @@ public class MainActivity extends AppCompatActivity {
         );
         drawerLayout.setDrawerListener(drawerToggle);
 
+        FragmentManager fragmentManager = getFragmentManager();
+
         // Set up the ViewPager with the sections adapter.
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(new SectionsPagerAdapter(getFragmentManager()));
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setAdapter(new SectionsPagerAdapter(fragmentManager));
+
+        // Get the data fragment
+        if (fragmentManager.findFragmentByTag(FRAGMENT_DATA) == null) {
+            dataFragment = new DataFragment();
+            fragmentManager.beginTransaction().add(dataFragment, FRAGMENT_DATA).commit();
+            dataFragment.setListener(this);
+        }
 
         // Open drawer if user had never seen it
         SharedPreferences preferences = getSharedPreferences("prefs", MODE_PRIVATE);
@@ -72,11 +78,14 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean(DRAWER_LEARNED_KEY, true)
                     .apply();
         }
-
-        // TODO: remove this as soon as I can!
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
     }
 
+    @Override
+    public void onDataUpdate(Set<Lesson> lessons) {
+        for (int i = 0; i < weekFragments.size(); i++) {
+            weekFragments.get(weekFragments.keyAt(i)).updateData(lessons);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            dataFragment.loadLessons("221251"); // TODO: replace with normal data refreshing
             return true;
         }
 
@@ -132,7 +142,11 @@ public class MainActivity extends AppCompatActivity {
                     p = Parity.EVEN;
                     break;
             }
-            return WeekFragment.newInstance(p);
+
+            // Create fragment and remember it for future data updating
+            WeekFragment fragment = WeekFragment.newInstance(p);
+            weekFragments.put(position, fragment);
+            return fragment;
         }
 
         @Override
