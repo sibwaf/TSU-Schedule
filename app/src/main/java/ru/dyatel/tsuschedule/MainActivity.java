@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
-                R.string.nav_drawer_open,
-                R.string.nav_drawer_close
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
         );
         drawerLayout.setDrawerListener(drawerToggle);
 
