@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements DataFragment.List
     @Override
     public void onDataUpdate(Set<Lesson> lessons) {
         for (int i = 0; i < weekFragments.size(); i++) {
-            weekFragments.get(weekFragments.keyAt(i)).updateData(lessons);
+            weekFragments.valueAt(i).updateData(lessons);
         }
     }
 
