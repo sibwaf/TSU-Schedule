@@ -68,11 +68,12 @@ public class MainActivity extends AppCompatActivity implements DataFragment.List
         tabLayout.setupWithViewPager(viewPager);
 
         // Get the data fragment
-        if (fragmentManager.findFragmentByTag(FRAGMENT_DATA) == null) {
+        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(FRAGMENT_DATA);
+        if (dataFragment == null) {
             dataFragment = new DataFragment();
             fragmentManager.beginTransaction().add(dataFragment, FRAGMENT_DATA).commit();
-            dataFragment.setListener(this);
         }
+        dataFragment.setListener(this);
 
         // Open drawer if user had never seen it
         SharedPreferences preferences = getSharedPreferences("prefs", MODE_PRIVATE);
@@ -124,6 +125,12 @@ public class MainActivity extends AppCompatActivity implements DataFragment.List
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dataFragment.setListener(null);
     }
 
     /**
