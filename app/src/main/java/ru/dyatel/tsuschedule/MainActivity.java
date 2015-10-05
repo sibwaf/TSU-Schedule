@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements DataFragment.List
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            dataFragment.loadLessons("221251"); // TODO: replace with normal data refreshing
+            dataFragment.fetchData("221251"); // TODO: replace with normal data refreshing
             return true;
         }
 
