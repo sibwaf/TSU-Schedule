@@ -7,9 +7,12 @@ import android.widget.Toast;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
 
+import java.util.Collections;
 import java.util.Set;
 
 public class DataFragment extends Fragment {
+
+    private Set<Lesson> lessons = Collections.emptySet();
 
     private Listener listener = null;
 
@@ -22,7 +25,7 @@ public class DataFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    public void loadLessons(String group) {
+    public void fetchData(String group) {
         new AsyncTask<String, Void, Set<Lesson>>() {
 
             @Override
@@ -38,8 +41,15 @@ public class DataFragment extends Fragment {
             @Override
             protected void onPostExecute(Set<Lesson> lessons) {
                 if (lessons == null)
-                    Toast.makeText(getActivity(), R.string.load_failure, Toast.LENGTH_SHORT).show();
-                else if (listener != null) listener.onDataUpdate(lessons);
+                    Toast.makeText(
+                            getActivity(),
+                            R.string.load_failure,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                else {
+                    DataFragment.this.lessons = lessons;
+                    broadcastDataUpdate();
+                }
             }
 
         }.execute(group);
@@ -47,6 +57,10 @@ public class DataFragment extends Fragment {
 
     public void setListener(Listener listener) {
         this.listener = listener;
+    }
+
+    public void broadcastDataUpdate() {
+        if (listener != null) listener.onDataUpdate(lessons);
     }
 
     public interface Listener {
