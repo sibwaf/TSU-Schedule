@@ -17,6 +17,8 @@ import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 
