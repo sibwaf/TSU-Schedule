@@ -13,6 +13,7 @@ public class DataFragment extends Fragment implements DataListener {
 
     private Set<Lesson> lessons;
 
+    private SavedDataDAO dataDAO;
     private Listener listener = null;
 
     public DataFragment() {
@@ -22,6 +23,16 @@ public class DataFragment extends Fragment implements DataListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        dataDAO = new SavedDataDAO(getActivity().getApplication());
+        dataDAO.load(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        dataDAO.save(lessons);
     }
 
     @Override
