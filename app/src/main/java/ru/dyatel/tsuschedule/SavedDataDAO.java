@@ -143,7 +143,7 @@ public class SavedDataDAO extends SQLiteOpenHelper {
 
             @Override
             protected void onPostExecute(Set<Lesson> lessons) {
-                listener.onLoad(lessons);
+                listener.onDataUpdate(lessons);
             }
 
         }.execute();
