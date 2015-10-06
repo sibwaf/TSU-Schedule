@@ -6,6 +6,6 @@ import java.util.Set;
 
 public interface DataListener {
 
-    void onLoad(Set<Lesson> lessons);
+    void onDataUpdate(Set<Lesson> lessons);
 
 }

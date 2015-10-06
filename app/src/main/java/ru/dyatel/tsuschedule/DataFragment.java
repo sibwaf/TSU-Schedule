@@ -36,7 +36,7 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     @Override
-    public void onLoad(Set<Lesson> data) {
+    public void onDataUpdate(Set<Lesson> data) {
         lessons = data;
         broadcastDataUpdate();
     }
@@ -67,7 +67,7 @@ public class DataFragment extends Fragment implements DataListener {
                             Toast.LENGTH_SHORT
                     ).show();
                 else {
-                    onLoad(lessons);
+                    onDataUpdate(lessons);
                 }
             }
 
