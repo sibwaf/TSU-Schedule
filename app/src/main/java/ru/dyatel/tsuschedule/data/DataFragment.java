@@ -1,9 +1,10 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.data;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
+import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
 

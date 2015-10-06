@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.data;
 
 import ru.dyatel.tsuschedule.parsing.Lesson;
 
