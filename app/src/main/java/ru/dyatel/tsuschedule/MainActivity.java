@@ -23,7 +23,7 @@ import ru.dyatel.tsuschedule.parsing.Parity;
 import java.util.Locale;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements DataFragment.Listener {
+public class MainActivity extends AppCompatActivity implements DataListener {
 
     private static final String FRAGMENT_DATA = "data";
 
