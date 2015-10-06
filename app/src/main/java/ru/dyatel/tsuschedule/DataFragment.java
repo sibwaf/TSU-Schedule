@@ -14,7 +14,7 @@ public class DataFragment extends Fragment implements DataListener {
     private Set<Lesson> lessons;
 
     private SavedDataDAO dataDAO;
-    private Listener listener = null;
+    private DataListener listener = null;
 
     public DataFragment() {
     }
@@ -74,14 +74,8 @@ public class DataFragment extends Fragment implements DataListener {
         }.execute(group);
     }
 
-    public void setListener(Listener listener) {
+    public void setListener(DataListener listener) {
         this.listener = listener;
-    }
-
-    public interface Listener {
-
-        void onDataUpdate(Set<Lesson> lessons);
-
     }
 
 }
