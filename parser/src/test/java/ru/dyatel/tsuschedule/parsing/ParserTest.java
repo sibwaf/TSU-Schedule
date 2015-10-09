@@ -90,17 +90,9 @@ public class ParserTest {
 
         Set<Lesson> result = filter.filter(lessons);
         assertEquals(4, result.size());
+        removeDiscipline(result, "Ћаб:языки и методы программировани€");
+        assertEquals(2, result.size());
         assertTrue(containsDiscipline(result, "Ћ:‘изическа€ культура"));
-        assertTrue(containsDiscipline(result, "Ћаб:языки и методы программировани€"));
-        Lesson lab = null;
-        for (Lesson l : result) {
-            if (l.getDiscipline().equals("Ћаб:языки и методы программировани€")) {
-                lab = l;
-                break;
-            }
-        }
-        result.remove(lab);
-        assertTrue(containsDiscipline(result, "Ћаб:языки и методы программировани€"));
         assertTrue(containsDiscipline(result, "ѕр:ћатематическа€ составл€юща€ естественнонаучных дисциплин"));
     }
 
@@ -118,17 +110,9 @@ public class ParserTest {
 
         Set<Lesson> result = filter.filter(lessons);
         assertEquals(4, result.size());
+        removeDiscipline(result, "Ћаб:языки и методы программировани€");
+        assertEquals(2, result.size());
         assertTrue(containsDiscipline(result, "Ћ:‘изическа€ культура"));
-        assertTrue(containsDiscipline(result, "Ћаб:языки и методы программировани€"));
-        Lesson lab = null;
-        for (Lesson l : result) {
-            if (l.getDiscipline().equals("Ћаб:языки и методы программировани€")) {
-                lab = l;
-                break;
-            }
-        }
-        result.remove(lab);
-        assertTrue(containsDiscipline(result, "Ћаб:языки и методы программировани€"));
         assertTrue(containsDiscipline(result, "ѕр:ћатематический анализ"));
     }
 
@@ -137,6 +121,20 @@ public class ParserTest {
             if (l.getDiscipline().equals(discipline)) return true;
         }
         return false;
+    }
+
+    private void removeDiscipline(Set<Lesson> lessons, String discipline) {
+        while (true) {
+            Lesson lesson = null;
+            for (Lesson l : lessons) {
+                if (l.getDiscipline().equals(discipline)) {
+                    lesson = l;
+                    break;
+                }
+            }
+            if (lesson == null) break;
+            else lessons.remove(lesson);
+        }
     }
 
 }
