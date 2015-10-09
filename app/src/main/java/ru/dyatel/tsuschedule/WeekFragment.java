@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.util.Filter;
@@ -16,7 +17,7 @@ import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
 
 import java.util.Set;
 
-public class WeekFragment extends Fragment {
+public class WeekFragment extends Fragment implements DataListener {
 
     private static final String PARITY_ARGUMENT = "parity";
 
@@ -73,8 +74,13 @@ public class WeekFragment extends Fragment {
         return root;
     }
 
-    public void updateData(Set<Lesson> lessons) {
+    @Override
+    public void onDataUpdate(Set<Lesson> lessons) {
         weekdays.updateData(filter.filter(lessons));
+    }
+
+    @Override
+    public void afterDataUpdate() {
         swipeRefresh.setRefreshing(false);
     }
 
