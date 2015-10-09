@@ -8,4 +8,6 @@ public interface DataListener {
 
     void onDataUpdate(Set<Lesson> lessons);
 
+    void afterDataUpdate();
+
 }

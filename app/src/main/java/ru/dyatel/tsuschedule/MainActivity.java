@@ -18,14 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.data.DataListener;
-import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 
 import java.util.Locale;
-import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements DataListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String PREFERENCES_FILE = "prefs";
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
@@ -74,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements DataListener {
             dataFragment = new DataFragment();
             fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
         }
-        dataFragment.setListener(this);
 
         // Open drawer if user had never seen it
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
@@ -84,13 +80,6 @@ public class MainActivity extends AppCompatActivity implements DataListener {
             preferences.edit()
                     .putBoolean(DRAWER_LEARNED_KEY, true)
                     .apply();
-        }
-    }
-
-    @Override
-    public void onDataUpdate(Set<Lesson> lessons) {
-        for (int i = 0; i < weekFragments.size(); i++) {
-            weekFragments.valueAt(i).updateData(lessons);
         }
     }
 
@@ -130,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements DataListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dataFragment.setListener(null);
+        dataFragment.clearListeners();
     }
 
     /**
@@ -158,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements DataListener {
             // Create fragment and remember it for future data updating
             WeekFragment fragment = WeekFragment.newInstance(p);
             weekFragments.put(position, fragment);
+            dataFragment.addListener(fragment);
             return fragment;
         }
 

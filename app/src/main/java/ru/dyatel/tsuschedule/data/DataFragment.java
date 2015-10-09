@@ -8,6 +8,7 @@ import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class DataFragment extends Fragment implements DataListener {
@@ -16,10 +17,10 @@ public class DataFragment extends Fragment implements DataListener {
 
     private String group;
 
+    private SavedDataDAO dataDAO;
     private Set<Lesson> lessons;
 
-    private SavedDataDAO dataDAO;
-    private DataListener listener = null;
+    private Set<DataListener> listeners = new HashSet<DataListener>();
 
     public DataFragment() {
     }
@@ -44,6 +45,11 @@ public class DataFragment extends Fragment implements DataListener {
     public void onDataUpdate(Set<Lesson> data) {
         lessons = data;
         broadcastDataUpdate();
+    }
+
+    @Override
+    public void afterDataUpdate() {
+        for (DataListener l : listeners) l.afterDataUpdate();
     }
 
     public void setGroup(String group) {
@@ -74,13 +80,14 @@ public class DataFragment extends Fragment implements DataListener {
 
             @Override
             protected void onPostExecute(Set<Lesson> lessons) {
-                if (lessons == null)
+                if (lessons == null) {
                     Toast.makeText(
                             getActivity(),
                             errorStringId,
                             Toast.LENGTH_SHORT
                     ).show();
-                else {
+                    afterDataUpdate();
+                } else {
                     onDataUpdate(lessons);
                 }
             }
@@ -88,12 +95,17 @@ public class DataFragment extends Fragment implements DataListener {
         }.execute(group);
     }
 
-    public void setListener(DataListener listener) {
-        this.listener = listener;
+    public void addListener(DataListener listener) {
+        listeners.add(listener);
+    }
+
+    public void clearListeners() {
+        listeners.clear();
     }
 
     public void broadcastDataUpdate() {
-        if (listener != null) listener.onDataUpdate(lessons);
+        for (DataListener l : listeners) l.onDataUpdate(lessons);
+        afterDataUpdate();
     }
 
 }
