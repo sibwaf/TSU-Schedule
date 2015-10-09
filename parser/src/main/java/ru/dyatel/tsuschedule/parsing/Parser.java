@@ -37,6 +37,9 @@ public class Parser {
                 .timeout(timeout)
                 .get();
 
+        if (response.getElementById("results").children().size() == 0)
+            throw new IllegalArgumentException("Wrong group index: " + group);
+
         Set<Lesson> lessons = new HashSet<Lesson>();
         for (Element day : response.getElementById("results").children()) {
             String weekday = day.child(0).text();
