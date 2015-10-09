@@ -2,11 +2,13 @@ package ru.dyatel.tsuschedule;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.util.Filter;
@@ -20,6 +22,7 @@ public class WeekFragment extends Fragment {
 
     private IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
 
+    private SwipeRefreshLayout swipeRefresh;
     private WeekAdapter weekdays;
 
     public static WeekFragment newInstance(Parity parity) {
@@ -57,11 +60,22 @@ public class WeekFragment extends Fragment {
         weekdays = new WeekAdapter();
         weekdayList.setAdapter(weekdays);
 
+        // Wire up the SwipeRefreshLayout
+        swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((DataFragment) getFragmentManager().findFragmentByTag(DataFragment.TAG))
+                        .fetchData();
+            }
+        });
+
         return root;
     }
 
     public void updateData(Set<Lesson> lessons) {
         weekdays.updateData(filter.filter(lessons));
+        swipeRefresh.setRefreshing(false);
     }
 
 }
