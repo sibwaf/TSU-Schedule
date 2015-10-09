@@ -7,7 +7,7 @@
 
     <string name="action_settings">Настройки</string>
 
-    <string name="hint_group_index">Номер группы</string>
+    <string name="hint_group_index">Индекс группы</string>
 
     <string name="no_group_index">Введите индекс группы</string>
     <string name="wrong_group_index">Некорректный индекс группы</string>
