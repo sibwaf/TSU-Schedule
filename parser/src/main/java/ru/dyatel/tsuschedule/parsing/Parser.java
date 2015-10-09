@@ -19,7 +19,7 @@ public class Parser {
     private static final String subgroupString = "\u043f/\u0433";
 
     private static final String evenParityString = "\u0447/\u043d";
-    private static final String oddParityString = "\u043d/\u0079";
+    private static final String oddParityString = "\u043d/\u043d";
 
     private static final Pattern teacherPattern = Pattern.compile("^(.+?),.*$");
     private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
