@@ -27,6 +27,7 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements DataListener {
 
+    private static final String PREFERENCES_FILE = "prefs";
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
 
     private ActionBarDrawerToggle drawerToggle;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements DataListener {
         dataFragment.setListener(this);
 
         // Open drawer if user had never seen it
-        SharedPreferences preferences = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
         boolean seenDrawer = preferences.getBoolean(DRAWER_LEARNED_KEY, false);
         if (!seenDrawer) {
             drawerLayout.openDrawer(drawerContent);
