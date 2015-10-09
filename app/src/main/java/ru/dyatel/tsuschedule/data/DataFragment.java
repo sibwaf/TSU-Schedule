@@ -14,6 +14,8 @@ public class DataFragment extends Fragment implements DataListener {
 
     public static final String TAG = "data";
 
+    private String group;
+
     private Set<Lesson> lessons;
 
     private SavedDataDAO dataDAO;
@@ -44,19 +46,28 @@ public class DataFragment extends Fragment implements DataListener {
         broadcastDataUpdate();
     }
 
-    public void broadcastDataUpdate() {
-        if (listener != null) listener.onDataUpdate(lessons);
+    public void setGroup(String group) {
+        this.group = group;
     }
 
-    public void fetchData(String group) {
+    public void fetchData() {
         new AsyncTask<String, Void, Set<Lesson>>() {
+
+            private int errorStringId;
 
             @Override
             protected Set<Lesson> doInBackground(String... params) {
+                if (group == null || group.equals("")) {
+                    errorStringId = R.string.no_group_index;
+                    return null;
+                }
+
                 try {
                     return Parser.getLessons(params[0]);
+                } catch (IllegalArgumentException e) {
+                    errorStringId = R.string.wrong_group_index;
                 } catch (Exception e) {
-                    // Do nothing, handled in onPostExecute
+                    errorStringId = R.string.load_failure;
                 }
                 return null;
             }
@@ -66,7 +77,7 @@ public class DataFragment extends Fragment implements DataListener {
                 if (lessons == null)
                     Toast.makeText(
                             getActivity(),
-                            R.string.load_failure,
+                            errorStringId,
                             Toast.LENGTH_SHORT
                     ).show();
                 else {
@@ -79,6 +90,10 @@ public class DataFragment extends Fragment implements DataListener {
 
     public void setListener(DataListener listener) {
         this.listener = listener;
+    }
+
+    public void broadcastDataUpdate() {
+        if (listener != null) listener.onDataUpdate(lessons);
     }
 
 }
