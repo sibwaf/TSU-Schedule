@@ -27,8 +27,6 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements DataListener {
 
-    private static final String FRAGMENT_DATA = "data";
-
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
 
     private ActionBarDrawerToggle drawerToggle;
@@ -70,10 +68,10 @@ public class MainActivity extends AppCompatActivity implements DataListener {
         tabLayout.setupWithViewPager(viewPager);
 
         // Get the data fragment
-        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(FRAGMENT_DATA);
+        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
         if (dataFragment == null) {
             dataFragment = new DataFragment();
-            fragmentManager.beginTransaction().add(dataFragment, FRAGMENT_DATA).commit();
+            fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
         }
         dataFragment.setListener(this);
 

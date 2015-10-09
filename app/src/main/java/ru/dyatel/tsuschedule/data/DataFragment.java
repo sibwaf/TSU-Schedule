@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class DataFragment extends Fragment implements DataListener {
 
+    public static final String TAG = "data";
+
     private Set<Lesson> lessons;
 
     private SavedDataDAO dataDAO;
