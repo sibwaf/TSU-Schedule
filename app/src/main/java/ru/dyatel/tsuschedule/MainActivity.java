@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements DataListener {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            dataFragment.fetchData("221251"); // TODO: replace with normal data refreshing
             return true;
         }
 
