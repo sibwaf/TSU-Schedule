@@ -13,7 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActionBarDrawerToggle drawerToggle;
 
-    private SparseArray<WeekFragment> weekFragments = new SparseArray<WeekFragment>();
     private DataFragment dataFragment;
 
     @Override
@@ -84,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -105,12 +110,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
@@ -128,8 +127,14 @@ public class MainActivity extends AppCompatActivity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+        private SparseBooleanArray initializedFragments = new SparseBooleanArray(2);
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+
+            for (int i = 0; i < 2; i++) {
+                initializedFragments.put(i, false);
+            }
         }
 
         @Override
@@ -144,10 +149,21 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            // Create fragment and remember it for future data updating
+            // Create a fragment and subscribe it to data updates
             WeekFragment fragment = WeekFragment.newInstance(p);
-            weekFragments.put(position, fragment);
             dataFragment.addListener(fragment);
+            initializedFragments.put(position, true);
+
+            // Check if we are ready to load data into fragments
+            boolean fragmentsAreReady = true;
+            for (int i = 0; i < initializedFragments.size(); i++) {
+                if (!initializedFragments.valueAt(i)) {
+                    fragmentsAreReady = false;
+                    break;
+                }
+            }
+            if (fragmentsAreReady) dataFragment.loadSavedData();
+
             return fragment;
         }
 
