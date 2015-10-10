@@ -36,6 +36,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FragmentManager fragmentManager = getFragmentManager();
+
+        // Get the data fragment
+        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
+        if (dataFragment == null) {
+            dataFragment = new DataFragment();
+            fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
+        }
+
         // Replace ActionBar with Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
         );
         drawerLayout.setDrawerListener(drawerToggle);
 
-        FragmentManager fragmentManager = getFragmentManager();
-
         // Set up the ViewPager with the sections adapter.
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SectionsPagerAdapter(fragmentManager));
@@ -63,13 +70,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up the TabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
-        // Get the data fragment
-        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
-        if (dataFragment == null) {
-            dataFragment = new DataFragment();
-            fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
-        }
 
         // Open drawer if user had never seen it
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
