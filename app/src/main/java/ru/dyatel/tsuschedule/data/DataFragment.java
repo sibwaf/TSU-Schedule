@@ -31,7 +31,6 @@ public class DataFragment extends Fragment implements DataListener {
         setRetainInstance(true);
 
         dataDAO = new SavedDataDAO(getActivity().getApplication());
-        dataDAO.load(this);
     }
 
     @Override
@@ -54,6 +53,14 @@ public class DataFragment extends Fragment implements DataListener {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public void loadSavedData() {
+        if (lessons == null) {
+            dataDAO.load(this);
+        } else {
+            broadcastDataUpdate();
+        }
     }
 
     public void fetchData() {
