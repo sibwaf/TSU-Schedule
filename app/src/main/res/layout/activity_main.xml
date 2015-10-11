@@ -35,21 +35,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-                android:id="@+id/drawer_content"
-                android:background="@color/background_material_light"
-                android:scrollbars="vertical"
-                android:clickable="true"
-                android:orientation="vertical"
-                android:layout_width="@dimen/navigation_drawer_width"
-                android:layout_height="match_parent"
-                android:layout_gravity="left|start">
-            <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_group_index"
-                    android:singleLine="true"/>
-        </LinearLayout>
+        <include layout="@layout/navigation_drawer_layout"/>
 
     </android.support.v4.widget.DrawerLayout>
 
