@@ -10,9 +10,15 @@
         android:layout_height="match_parent">
 
     <EditText
+            android:id="@+id/group_index"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/hint_group_index"
             android:singleLine="true"/>
+
+        <Spinner
+                android:id="@+id/subgroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
 </LinearLayout>

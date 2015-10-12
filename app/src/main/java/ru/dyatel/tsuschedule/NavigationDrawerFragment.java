@@ -12,6 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+import ru.dyatel.tsuschedule.data.DataFragment;
 
 public class NavigationDrawerFragment extends Fragment {
 
@@ -19,10 +24,22 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle toggle;
 
+    private TextView groupIndexText;
+    private Spinner subgroupSpinner;
+
     public NavigationDrawerFragment() {
     }
 
-    public void initialize(DrawerLayout drawerLayout, Toolbar toolbar) {
+    public void initialize(
+            DrawerLayout drawerLayout, Toolbar toolbar, final DataFragment dataFragment,
+            String savedGroupIndex, int savedSubgroup
+    ) {
+        dataFragment.setGroup(savedGroupIndex);
+        dataFragment.setSubgroup(savedSubgroup);
+
+        groupIndexText.setText(savedGroupIndex);
+        subgroupSpinner.setSelection(savedSubgroup - 1); // subgroup 1 has (1 - 1) position in string array, etc.
+
         Activity activity = getActivity();
 
         toggle = new ActionBarDrawerToggle(
@@ -31,7 +48,29 @@ public class NavigationDrawerFragment extends Fragment {
                 toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close
-        );
+        ) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                //Activity activity = getActivity();
+
+                // Hide the keyboard
+                /*InputMethodManager imm =
+                        (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(groupIndex.getWindowToken(), 0);*/
+                groupIndexText.onEditorAction(EditorInfo.IME_ACTION_DONE);
+
+                String group = groupIndexText.getText().toString();
+                int subgroup = subgroupSpinner.getSelectedItemPosition() + 1;
+
+                // Save new group and subgroup in DataFragment
+                dataFragment.setGroup(group);
+                if (dataFragment.getSubgroup() != subgroup) {
+                    dataFragment.setSubgroup(subgroup);
+                    dataFragment.broadcastDataUpdate();
+                }
+            }
+        };
         drawerLayout.setDrawerListener(toggle);
 
         // Open drawer if user had never seen it
@@ -56,6 +95,16 @@ public class NavigationDrawerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.navigation_drawer_layout, container, false);
 
+        groupIndexText = (TextView) root.findViewById(R.id.group_index);
+
+        subgroupSpinner = (Spinner) root.findViewById(R.id.subgroup);
+        ArrayAdapter<CharSequence> subgroupAdapter = ArrayAdapter.createFromResource(
+                getActivity(),
+                R.array.subgroups,
+                android.R.layout.simple_spinner_item
+        );
+        subgroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subgroupSpinner.setAdapter(subgroupAdapter);
 
         return root;
     }

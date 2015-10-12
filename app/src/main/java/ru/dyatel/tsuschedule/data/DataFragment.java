@@ -7,6 +7,8 @@ import android.widget.Toast;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
+import ru.dyatel.tsuschedule.parsing.util.Filter;
+import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +18,7 @@ public class DataFragment extends Fragment implements DataListener {
     public static final String TAG = "data";
 
     private String group;
+    private int subgroup;
 
     private SavedDataDAO dataDAO;
     private Set<Lesson> lessons;
@@ -33,10 +36,7 @@ public class DataFragment extends Fragment implements DataListener {
         dataDAO = new SavedDataDAO(getActivity().getApplication());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
+    public void saveData() {
         dataDAO.save(lessons);
     }
 
@@ -53,6 +53,18 @@ public class DataFragment extends Fragment implements DataListener {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public void setSubgroup(int subgroup) {
+        this.subgroup = subgroup;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public int getSubgroup() {
+        return subgroup;
     }
 
     public void loadSavedData() {
@@ -111,7 +123,17 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     public void broadcastDataUpdate() {
-        for (DataListener l : listeners) l.onDataUpdate(lessons);
+        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        filter.apply(new Filter<Lesson>() {
+            @Override
+            public boolean accept(Lesson obj) {
+                return obj.getSubgroup() == 0 || obj.getSubgroup() == subgroup;
+            }
+        });
+        Set<Lesson> filtered = filter.filter(lessons);
+
+        for (DataListener l : listeners) l.onDataUpdate(filtered);
+
         afterDataUpdate();
     }
 
