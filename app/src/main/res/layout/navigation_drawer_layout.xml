@@ -9,7 +9,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <EditText
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                        android:id="@+id/current_parity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/parity_hint_margin"
+                        android:textSize="@dimen/parity_hint_text_size"
+                        android:layout_alignParentRight="true"/>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/parity_hint_margin"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@id/current_parity"
+                        android:textSize="@dimen/parity_hint_text_size"
+                        android:text="@string/hint_current_parity"/>
+
+        </RelativeLayout>
+
+        <View style="@style/Divider"/>
+
+        <EditText
             android:id="@+id/group_index"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

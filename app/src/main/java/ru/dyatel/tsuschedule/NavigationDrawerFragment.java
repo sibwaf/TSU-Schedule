@@ -16,7 +16,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.parsing.Parity;
+import ru.dyatel.tsuschedule.parsing.util.DateUtil;
+
+import java.util.TimeZone;
 
 public class NavigationDrawerFragment extends Fragment {
 
@@ -94,6 +99,11 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.navigation_drawer_layout, container, false);
+
+        int parityStringResource =
+                DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
+                        .equals(Parity.EVEN) ? R.string.even_week : R.string.odd_week;
+        ((TextView) root.findViewById(R.id.current_parity)).setText(getString(parityStringResource));
 
         groupIndexText = (TextView) root.findViewById(R.id.group_index);
 
