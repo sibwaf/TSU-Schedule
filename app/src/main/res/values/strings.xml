@@ -16,4 +16,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string-array name="subgroups">
+        <item>1 п/г</item>
+        <item>2 п/г</item>
+    </string-array>
+
 </resources>
