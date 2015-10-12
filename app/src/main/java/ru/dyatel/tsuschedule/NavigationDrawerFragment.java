@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import hirondelle.date4j.DateTime;
@@ -29,7 +30,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle toggle;
 
-    private TextView groupIndexText;
+    private EditText groupIndexText;
     private Spinner subgroupSpinner;
 
     public NavigationDrawerFragment() {
@@ -105,7 +106,7 @@ public class NavigationDrawerFragment extends Fragment {
                         .equals(Parity.EVEN) ? R.string.even_week : R.string.odd_week;
         ((TextView) root.findViewById(R.id.current_parity)).setText(getString(parityStringResource));
 
-        groupIndexText = (TextView) root.findViewById(R.id.group_index);
+        groupIndexText = (EditText) root.findViewById(R.id.group_index);
 
         subgroupSpinner = (Spinner) root.findViewById(R.id.subgroup);
         ArrayAdapter<CharSequence> subgroupAdapter = ArrayAdapter.createFromResource(
