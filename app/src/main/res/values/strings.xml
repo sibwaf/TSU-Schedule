@@ -2,6 +2,8 @@
 
     <string name="app_name">TSU Schedule</string>
 
+    <string name="hint_current_parity">Сейчас:</string>
+
     <string name="odd_week">н/н</string>
     <string name="even_week">ч/н</string>
 
