@@ -28,8 +28,9 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 
         View color;
 
-        TextView discipline;
+        TextView time;
         TextView auditory;
+        TextView discipline;
         TextView teacher;
 
         public Holder(View v) {
@@ -37,8 +38,9 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 
             color = v.findViewById(R.id.color);
 
-            discipline = (TextView) v.findViewById(R.id.discipline);
+            time = (TextView) v.findViewById(R.id.time);
             auditory = (TextView) v.findViewById(R.id.auditory);
+            discipline = (TextView) v.findViewById(R.id.discipline);
             teacher = (TextView) v.findViewById(R.id.teacher);
         }
 
@@ -72,8 +74,9 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
         }
         holder.color.setBackgroundResource(colorResID);
 
-        holder.discipline.setText(lesson.getDiscipline());
+        holder.time.setText(lesson.getTime());
         holder.auditory.setText(lesson.getAuditory());
+        holder.discipline.setText(lesson.getDiscipline());
         holder.teacher.setText(lesson.getTeacher());
     }
 
