@@ -2,7 +2,6 @@ package ru.dyatel.tsuschedule;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.util.SparseBooleanArray;
 import ru.dyatel.tsuschedule.data.DataFragment;
@@ -14,13 +13,12 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private SparseBooleanArray initializedFragments = new SparseBooleanArray(2);
 
-    private Context context;
     private DataFragment dataFragment;
 
-    public WeekFragmentPagerAdapter(FragmentManager fm, DataFragment dataFragment, Context context) {
+    public WeekFragmentPagerAdapter(FragmentManager fm, DataFragment dataFragment) {
         super(fm);
+
         this.dataFragment = dataFragment;
-        this.context = context;
 
         for (int i = 0; i < 2; i++) {
             initializedFragments.put(i, false);
@@ -29,15 +27,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Parity p = null;
-        switch (position) {
-            case 0:
-                p = Parity.ODD;
-                break;
-            case 1:
-                p = Parity.EVEN;
-                break;
-        }
+        Parity p = ParityReference.getParityFromIndex(position);
 
         // Create a fragment and subscribe it to data updates
         WeekFragment fragment = WeekFragment.newInstance(p);
@@ -64,14 +54,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Locale l = Locale.getDefault();
-        switch (position) {
-            case 0:
-                return context.getString(R.string.odd_week).toUpperCase(l);
-            case 1:
-                return context.getString(R.string.even_week).toUpperCase(l);
-        }
-        return null;
+        return ParityReference.getStringFromIndex(position).toUpperCase(Locale.getDefault());
     }
 
 }
