@@ -78,6 +78,10 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
         holder.auditory.setText(lesson.getAuditory());
         holder.discipline.setText(lesson.getDiscipline());
         holder.teacher.setText(lesson.getTeacher());
+
+        // Hide views if they do not contain any data
+        holder.teacher.setVisibility(
+                holder.teacher.getText().equals("") ? View.GONE : View.VISIBLE);
     }
 
     @Override
