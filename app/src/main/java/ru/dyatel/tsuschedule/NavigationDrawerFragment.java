@@ -30,6 +30,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle toggle;
 
+    private View drawerContent;
     private EditText groupIndexText;
     private Spinner subgroupSpinner;
 
@@ -84,7 +85,7 @@ public class NavigationDrawerFragment extends Fragment {
                 activity.getSharedPreferences(MainActivity.PREFERENCES_FILE, Context.MODE_PRIVATE);
         boolean seenDrawer = preferences.getBoolean(DRAWER_LEARNED_KEY, false);
         if (!seenDrawer) {
-            drawerLayout.openDrawer(drawerLayout.findViewById(R.id.drawer_content));
+            drawerLayout.openDrawer(drawerContent);
             preferences.edit()
                     .putBoolean(DRAWER_LEARNED_KEY, true)
                     .apply();
@@ -100,6 +101,8 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.navigation_drawer_layout, container, false);
+
+        drawerContent = root;
 
         int parityStringResource =
                 DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
