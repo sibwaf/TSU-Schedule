@@ -19,8 +19,16 @@ import java.util.Set;
 
 public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 
-    // TODO: proper sorting by weekday
-    private List<String> order = new ArrayList<String>();
+    private static final String[] normalWeekdayOrder = {
+            "\u043f\u043e\u043d\u0435\u0434\u0435\u043b\u044c\u043d\u0438\u043a",
+            "\u0432\u0442\u043e\u0440\u043d\u0438\u043a",
+            "\u0441\u0440\u0435\u0434\u0430",
+            "\u0447\u0435\u0442\u0432\u0435\u0440\u0433",
+            "\u043f\u044f\u0442\u043d\u0438\u0446\u0430",
+            "\u0441\u0443\u0431\u0431\u043e\u0442\u0430",
+            "\u0432\u043e\u0441\u043a\u0440\u0435\u0441\u0435\u043d\u044c\u0435"
+    };
+    private List<String> weekdayOrder = new ArrayList<String>();
 
     private Map<String, Set<Lesson>> weekdays = new HashMap<String, Set<Lesson>>();
 
@@ -49,7 +57,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        String weekday = order.get(position);
+        String weekday = weekdayOrder.get(position);
 
         holder.weekday.setText(weekday);
         WeekdayAdapter adapter = (WeekdayAdapter) holder.list.getAdapter();
@@ -62,12 +70,20 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
     }
 
     public void updateData(Set<Lesson> lessons) {
+        weekdayOrder.clear();
+
+        // Get all used weekdays
         Set<String> keys = new KeyExtractor<Lesson, String>() {
             @Override
             protected String getKey(Lesson element) {
                 return element.getWeekday();
             }
         }.extract(lessons);
+
+        // Skip a weekday if there is no lessons
+        for (String s : normalWeekdayOrder) {
+            if (keys.contains(s)) weekdayOrder.add(s);
+        }
 
         for (final String key : keys) {
             IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
@@ -78,7 +94,6 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
                 }
             });
             weekdays.put(key, filter.filter(lessons));
-            order.add(key); // TODO: remove this
         }
 
         notifyDataSetChanged();
