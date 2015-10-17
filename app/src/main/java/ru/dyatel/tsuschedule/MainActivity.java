@@ -10,7 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.parsing.util.DateUtil;
+
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,9 +53,14 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationDrawer.initialize(drawerLayout, toolbar, dataFragment, groupIndex, subgroup);
 
-        // Set up the ViewPager with the sections adapter.
+        // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new WeekFragmentPagerAdapter(fragmentManager, dataFragment));
+        viewPager.setCurrentItem(
+                ParityReference.getIndexFromParity(
+                        DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
+                )
+        );
 
         // Set up the TabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
