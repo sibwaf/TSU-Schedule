@@ -15,6 +15,9 @@ public class ScheduleApplication extends Application {
 
         // Initialize ACRA
         ACRA.init(this);
+
+        // Initialize data in reference classes
+        ParityReference.init(this);
     }
 
 }

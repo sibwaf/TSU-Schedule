@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(new WeekFragmentPagerAdapter(fragmentManager, dataFragment, this));
+        viewPager.setAdapter(new WeekFragmentPagerAdapter(fragmentManager, dataFragment));
 
         // Set up the TabLayout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
