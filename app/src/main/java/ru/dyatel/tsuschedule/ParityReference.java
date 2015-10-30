@@ -32,7 +32,7 @@ public class ParityReference {
 
     public static int getIndexFromParity(Parity parity) {
         for (int i = 0; i < indexToParity.size(); i++) {
-            if (parity.equals(indexToParity.valueAt(i))) return indexToParity.keyAt(0);
+            if (parity.equals(indexToParity.valueAt(i))) return indexToParity.keyAt(i);
         }
         return -1;
     }
