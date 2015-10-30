@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.util.DateUtil;
 
 import java.util.TimeZone;
@@ -104,13 +103,14 @@ public class NavigationDrawerFragment extends Fragment {
 
         drawerContent = root;
 
-        int parityStringResource =
+        // Show current parity string in the navigation drawer
+        ((TextView) root.findViewById(R.id.current_parity)).setText(ParityReference.getStringFromParity(
                 DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
-                        .equals(Parity.EVEN) ? R.string.even_week : R.string.odd_week;
-        ((TextView) root.findViewById(R.id.current_parity)).setText(getString(parityStringResource));
+        ));
 
         groupIndexText = (EditText) root.findViewById(R.id.group_index);
 
+        // Manage subgroup spinner
         subgroupSpinner = (Spinner) root.findViewById(R.id.subgroup);
         ArrayAdapter<CharSequence> subgroupAdapter = ArrayAdapter.createFromResource(
                 getActivity(),
