@@ -40,7 +40,7 @@ public class ParserTest {
 
     @Test
     public void testGetLessonsMonday() throws Exception {
-        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        IterableFilter<Lesson> filter = new IterableFilter<>();
         filter.apply(oddParity);
         filter.apply(new Filter<Lesson>() {
             @Override
@@ -59,7 +59,7 @@ public class ParserTest {
 
     @Test
     public void testGetLessonsTuesday() throws Exception {
-        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        IterableFilter<Lesson> filter = new IterableFilter<>();
         filter.apply(oddParity);
         filter.apply(new Filter<Lesson>() {
             @Override
@@ -78,7 +78,7 @@ public class ParserTest {
 
     @Test
     public void testGetLessonsFridayEven() throws Exception {
-        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        IterableFilter<Lesson> filter = new IterableFilter<>();
         filter.apply(evenParity);
         filter.apply(new Filter<Lesson>() {
             @Override
@@ -89,16 +89,17 @@ public class ParserTest {
         filter.apply(firstSubgroup);
 
         Set<Lesson> result = filter.filter(lessons);
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
         removeDiscipline(result, "Лаб:Языки и методы программирования");
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
+        assertTrue(containsDiscipline(result, "Пр:Иностранный язык"));
         assertTrue(containsDiscipline(result, "Л:Физическая культура"));
         assertTrue(containsDiscipline(result, "Пр:Математическая составляющая естественнонаучных дисциплин"));
     }
 
     @Test
     public void testGetLessonsFridayOdd() throws Exception {
-        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        IterableFilter<Lesson> filter = new IterableFilter<>();
         filter.apply(oddParity);
         filter.apply(new Filter<Lesson>() {
             @Override
@@ -109,9 +110,10 @@ public class ParserTest {
         filter.apply(firstSubgroup);
 
         Set<Lesson> result = filter.filter(lessons);
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
         removeDiscipline(result, "Лаб:Языки и методы программирования");
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
+        assertTrue(containsDiscipline(result, "Пр:Иностранный язык"));
         assertTrue(containsDiscipline(result, "Л:Физическая культура"));
         assertTrue(containsDiscipline(result, "Пр:Математический анализ"));
     }
