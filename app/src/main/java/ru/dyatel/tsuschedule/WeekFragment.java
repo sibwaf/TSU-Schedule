@@ -26,6 +26,8 @@ public class WeekFragment extends Fragment implements DataListener {
     private SwipeRefreshLayout swipeRefresh;
     private WeekAdapter weekdays;
 
+    private WeekFragmentPagerAdapter callback;
+
     public static WeekFragment newInstance(Parity parity) {
         WeekFragment fragment = new WeekFragment();
         Bundle arguments = new Bundle();
@@ -35,6 +37,10 @@ public class WeekFragment extends Fragment implements DataListener {
     }
 
     public WeekFragment() {
+    }
+
+    void setCallback(WeekFragmentPagerAdapter callback) {
+        this.callback = callback;
     }
 
     @Override
@@ -71,11 +77,16 @@ public class WeekFragment extends Fragment implements DataListener {
             }
         });
 
+        callback.fragmentReady();
+        callback = null; // To prevent memory leaks
+
         return root;
     }
 
     @Override
     public void beforeDataUpdate() {
+        // If refresh was invoked by swipe, there is no point
+        // in calling setRefreshing(true)
         if (!swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(true);
     }
 
