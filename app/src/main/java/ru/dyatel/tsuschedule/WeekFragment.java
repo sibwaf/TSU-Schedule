@@ -76,7 +76,7 @@ public class WeekFragment extends Fragment implements DataListener {
 
     @Override
     public void beforeDataUpdate() {
-        swipeRefresh.setRefreshing(true);
+        if (!swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(true);
     }
 
     @Override
