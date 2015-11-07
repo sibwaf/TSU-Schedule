@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.parsing.util;
+package ru.dyatel.tsuschedule.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,14 +12,14 @@ import java.util.Set;
  * Filtered collection will have all elements which were accepted by every applied filter.
  * </p>
  *
- * @see ru.dyatel.tsuschedule.parsing.util.Filter
+ * @see Filter
  */
 public class IterableFilter<T> {
 
     private List<Filter<T>> filters = new ArrayList<Filter<T>>();
 
     /**
-     * Add a {@link ru.dyatel.tsuschedule.parsing.util.Filter} which will be used
+     * Add a {@link Filter} which will be used
      * to determine if an object should pass to the resulting collection.
      * <p>
      * Filters are applied in the order they were added.

@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.parsing.util;
+package ru.dyatel.tsuschedule.util;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -1,7 +1,6 @@
-package ru.dyatel.tsuschedule.parsing.util;
+package ru.dyatel.tsuschedule.parsing;
 
 import hirondelle.date4j.DateTime;
-import ru.dyatel.tsuschedule.parsing.Parity;
 
 /**
  * An utility class to manipulate date.

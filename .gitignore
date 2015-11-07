@@ -1,5 +1,6 @@
 /.gradle
 /.idea
+/util/build
 /parser/build
 /app/build
 /build

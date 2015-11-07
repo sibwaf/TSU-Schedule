@@ -1,8 +1,7 @@
-package ru.dyatel.tsuschedule.parsing.util;
+package ru.dyatel.tsuschedule.parsing;
 
 import hirondelle.date4j.DateTime;
 import org.junit.Test;
-import ru.dyatel.tsuschedule.parsing.Parity;
 
 import static org.junit.Assert.assertEquals;
 
