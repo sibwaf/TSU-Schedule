@@ -7,8 +7,8 @@ import android.widget.Toast;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
-import ru.dyatel.tsuschedule.parsing.util.Filter;
-import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
+import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.util.IterableFilter;
 
 import java.util.HashSet;
 import java.util.Set;

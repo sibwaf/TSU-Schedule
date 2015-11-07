@@ -1,1 +1,1 @@
-include ':app', ':parser'
+include ':app', ':util', ':parser'

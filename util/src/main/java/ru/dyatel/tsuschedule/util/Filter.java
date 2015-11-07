@@ -1,12 +1,12 @@
-package ru.dyatel.tsuschedule.parsing.util;
+package ru.dyatel.tsuschedule.util;
 
 /**
- * A Filter to use in the {@link ru.dyatel.tsuschedule.parsing.util.IterableFilter} instance.
+ * A Filter to use in the {@link IterableFilter} instance.
  * <p>
  * Multiple filters can be applied.
  * </p>
  *
- * @see ru.dyatel.tsuschedule.parsing.util.IterableFilter#apply(ru.dyatel.tsuschedule.parsing.util.Filter)
+ * @see IterableFilter#apply(Filter)
  */
 public interface Filter<T> {
 

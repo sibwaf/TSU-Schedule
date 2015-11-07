@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 import ru.dyatel.tsuschedule.parsing.Lesson;
-import ru.dyatel.tsuschedule.parsing.util.Filter;
-import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
-import ru.dyatel.tsuschedule.parsing.util.KeyExtractor;
+import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.util.IterableFilter;
+import ru.dyatel.tsuschedule.util.KeyExtractor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
