@@ -20,7 +20,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
         this.dataFragment = dataFragment;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < initializedFragments.size(); i++) {
             initializedFragments.put(i, false);
         }
     }
@@ -49,7 +49,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return initializedFragments.size();
     }
 
     @Override
