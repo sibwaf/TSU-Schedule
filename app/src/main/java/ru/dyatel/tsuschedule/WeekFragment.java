@@ -75,6 +75,11 @@ public class WeekFragment extends Fragment implements DataListener {
     }
 
     @Override
+    public void beforeDataUpdate() {
+        swipeRefresh.setRefreshing(true);
+    }
+
+    @Override
     public void onDataUpdate(Set<Lesson> lessons) {
         weekdays.updateData(filter.filter(lessons));
     }
