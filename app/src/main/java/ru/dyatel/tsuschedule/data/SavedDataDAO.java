@@ -104,6 +104,10 @@ public class SavedDataDAO extends SQLiteOpenHelper {
 
     public void load(final DataListener listener) {
         new AsyncTask<Void, Void, Set<Lesson>>() {
+            @Override
+            protected void onPreExecute() {
+                listener.beforeDataUpdate();
+            }
 
             @Override
             protected Set<Lesson> doInBackground(Void... params) {
@@ -144,6 +148,7 @@ public class SavedDataDAO extends SQLiteOpenHelper {
             @Override
             protected void onPostExecute(Set<Lesson> lessons) {
                 listener.onDataUpdate(lessons);
+                listener.afterDataUpdate();
             }
 
         }.execute();
