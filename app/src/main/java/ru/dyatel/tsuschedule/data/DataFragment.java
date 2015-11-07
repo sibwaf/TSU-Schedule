@@ -96,6 +96,11 @@ public class DataFragment extends Fragment implements DataListener {
             private int errorStringId;
 
             @Override
+            protected void onPreExecute() {
+                beforeDataUpdate();
+            }
+
+            @Override
             protected Set<Lesson> doInBackground(String... params) {
                 if (group == null || group.equals("")) {
                     errorStringId = R.string.no_group_index;
@@ -120,10 +125,10 @@ public class DataFragment extends Fragment implements DataListener {
                             errorStringId,
                             Toast.LENGTH_SHORT
                     ).show();
-                    afterDataUpdate();
                 } else {
                     onDataUpdate(lessons);
                 }
+                afterDataUpdate();
             }
 
         }.execute(group);
