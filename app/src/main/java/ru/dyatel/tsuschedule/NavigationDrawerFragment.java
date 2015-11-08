@@ -37,14 +37,11 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public void initialize(
-            DrawerLayout drawerLayout, Toolbar toolbar, final DataFragment dataFragment,
-            String savedGroupIndex, int savedSubgroup
+            DrawerLayout drawerLayout, Toolbar toolbar, final DataFragment dataFragment
     ) {
-        dataFragment.setGroup(savedGroupIndex);
-        dataFragment.setSubgroup(savedSubgroup);
-
-        groupIndexText.setText(savedGroupIndex);
-        subgroupSpinner.setSelection(savedSubgroup - 1); // subgroup 1 has (1 - 1) position in string array, etc.
+        groupIndexText.setText(dataFragment.getGroup());
+        subgroupSpinner.setSelection(dataFragment.getSubgroup() - 1);
+        // subgroup 1 has (1 - 1) position in string array, etc.
 
         Activity activity = getActivity();
 
