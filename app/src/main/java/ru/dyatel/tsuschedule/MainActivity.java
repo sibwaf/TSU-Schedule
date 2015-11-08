@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.parsing.util.DateUtil;
+import ru.dyatel.tsuschedule.parsing.DateUtil;
 
 import java.util.TimeZone;
 

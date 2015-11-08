@@ -2,8 +2,8 @@ package ru.dyatel.tsuschedule.parsing;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ru.dyatel.tsuschedule.parsing.util.Filter;
-import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
+import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.util.IterableFilter;
 
 import java.util.Set;
 

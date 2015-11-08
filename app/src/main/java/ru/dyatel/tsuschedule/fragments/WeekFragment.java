@@ -15,8 +15,8 @@ import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
-import ru.dyatel.tsuschedule.parsing.util.Filter;
-import ru.dyatel.tsuschedule.parsing.util.IterableFilter;
+import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.util.IterableFilter;
 
 import java.util.Set;
 
