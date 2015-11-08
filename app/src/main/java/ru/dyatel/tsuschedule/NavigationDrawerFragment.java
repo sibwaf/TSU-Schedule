@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.parsing.util.DateUtil;
+import ru.dyatel.tsuschedule.parsing.DateUtil;
 
 import java.util.TimeZone;
 
