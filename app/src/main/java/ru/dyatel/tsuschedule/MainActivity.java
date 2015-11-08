@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
             dataFragment = new DataFragment();
             fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
         }
+        dataFragment.setGroup(groupIndex);
+        dataFragment.setSubgroup(subgroup);
 
         // Replace ActionBar with Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationDrawerFragment navigationDrawer =
                 (NavigationDrawerFragment) fragmentManager.findFragmentById(R.id.navigation_drawer);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        navigationDrawer.initialize(drawerLayout, toolbar, dataFragment, groupIndex, subgroup);
+        navigationDrawer.initialize(drawerLayout, toolbar, dataFragment);
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
