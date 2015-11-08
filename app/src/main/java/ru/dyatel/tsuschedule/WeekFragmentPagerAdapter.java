@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.fragments.WeekFragment;
 import ru.dyatel.tsuschedule.parsing.Parity;
 
 import java.util.Locale;
@@ -32,7 +33,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
         return fragment;
     }
 
-    void fragmentReady() {
+    public void fragmentReady() {
         readyFragments++;
         if (readyFragments == 2) dataFragment.loadSavedData();
     }

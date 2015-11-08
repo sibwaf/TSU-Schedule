@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import ru.dyatel.tsuschedule.R;
+import ru.dyatel.tsuschedule.WeekAdapter;
+import ru.dyatel.tsuschedule.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.parsing.Lesson;
@@ -39,7 +42,7 @@ public class WeekFragment extends Fragment implements DataListener {
     public WeekFragment() {
     }
 
-    void setCallback(WeekFragmentPagerAdapter callback) {
+    public void setCallback(WeekFragmentPagerAdapter callback) {
         this.callback = callback;
     }
 
