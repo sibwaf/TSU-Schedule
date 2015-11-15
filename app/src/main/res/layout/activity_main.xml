@@ -13,35 +13,9 @@
             android:background="?attr/colorPrimaryDark"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
 
-    <android.support.v4.widget.DrawerLayout
-            android:id="@+id/drawer_layout"
+    <FrameLayout
+            android:id="@+id/content_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            <android.support.design.widget.TabLayout
-                    android:id="@+id/tab_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            <android.support.v4.view.ViewPager
-                    android:id="@+id/pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-
-        </LinearLayout>
-
-        <fragment
-                android:id="@+id/navigation_drawer"
-                android:name="ru.dyatel.tsuschedule.NavigationDrawerFragment"
-                android:layout_width="@dimen/navigation_drawer_width"
-                android:layout_height="match_parent"
-                android:layout_gravity="left|start"/>
-
-    </android.support.v4.widget.DrawerLayout>
+            android:layout_height="match_parent"/>
 
 </LinearLayout>

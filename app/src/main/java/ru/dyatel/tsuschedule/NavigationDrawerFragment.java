@@ -89,12 +89,6 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        toggle.syncState();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.navigation_drawer_layout, container, false);
 
@@ -124,6 +118,12 @@ public class NavigationDrawerFragment extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         toggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        toggle.syncState();
     }
 
 }
