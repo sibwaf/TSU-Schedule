@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -18,6 +18,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import hirondelle.date4j.DateTime;
+import ru.dyatel.tsuschedule.MainActivity;
+import ru.dyatel.tsuschedule.ParityReference;
+import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.parsing.DateUtil;
 

@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import hirondelle.date4j.DateTime;
-import ru.dyatel.tsuschedule.NavigationDrawerFragment;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.WeekFragmentPagerAdapter;
