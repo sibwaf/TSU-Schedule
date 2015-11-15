@@ -71,6 +71,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 
     public void updateData(Set<Lesson> lessons) {
         weekdayOrder.clear();
+        weekdays.clear();
 
         // Get all used weekdays
         Set<String> keys = new KeyExtractor<Lesson, String>() {
