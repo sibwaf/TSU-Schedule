@@ -1,7 +1,7 @@
-/.gradle
-/.idea
-/util/build
-/parser/build
-/app/build
-/build
+/.gradle/
+/.idea/
+/util/build/
+/parser/build/
+/app/build/
+/build/
 /local.properties
