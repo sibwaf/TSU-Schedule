@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule.parsing;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,17 +26,14 @@ public class Parser {
     private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
     private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d) " + subgroupString + "\\))$");
 
-    private static int timeout = 5000;
+    private static Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
 
     public static void setTimeout(int timeout) {
-        Parser.timeout = timeout;
+        connection.timeout(timeout);
     }
 
     public static Set<Lesson> getLessons(String group) throws IOException {
-        Document response = Jsoup.connect("http://schedule.tsu.tula.ru/")
-                .data("group", group)
-                .timeout(timeout)
-                .get();
+        Document response = connection.data("group", group).get();
 
         if (response.getElementById("results").children().size() == 0)
             throw new IllegalArgumentException("Wrong group index: " + group);
