@@ -16,14 +16,14 @@ public class Parser {
     private static final String lectureString = "\u041b";
     private static final String laboratoryString = "\u041b\u0430\u0431";
 
-    private static final String subgroupString = "\u043f/\u0433";
+    private static final String subgroupString = "\u043f\u043e\u0434\u0433\u0440\u0443\u043f\u043f\u0430";
 
     private static final String evenParityString = "\u0447/\u043d";
     private static final String oddParityString = "\u043d/\u043d";
 
     private static final Pattern teacherPattern = Pattern.compile("^(.+?),.*$");
     private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
-    private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d)" + subgroupString + "\\))$");
+    private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d) " + subgroupString + "\\))$");
 
     private static int timeout = 5000;
 
@@ -40,7 +40,7 @@ public class Parser {
         if (response.getElementById("results").children().size() == 0)
             throw new IllegalArgumentException("Wrong group index: " + group);
 
-        Set<Lesson> lessons = new HashSet<Lesson>();
+        Set<Lesson> lessons = new HashSet<>();
         for (Element day : response.getElementById("results").children()) {
             String weekday = day.child(0).text();
 
