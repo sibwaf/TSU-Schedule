@@ -33,8 +33,7 @@ public class MainFragment extends Fragment {
         // Set up the navigation drawer
         NavigationDrawerFragment navigationDrawer =
                 (NavigationDrawerFragment) fm.findFragmentById(R.id.navigation_drawer);
-        DrawerLayout drawerLayout = (DrawerLayout) root.findViewById(R.id.drawer_layout);
-        navigationDrawer.initialize(drawerLayout, toolbar, dataFragment);
+        navigationDrawer.initialize((DrawerLayout) root, toolbar, dataFragment);
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
