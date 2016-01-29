@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,6 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBarDrawerToggle toggle;
 
-    private View drawerContent;
     private EditText groupIndexText;
     private Spinner subgroupSpinner;
 
@@ -84,7 +84,7 @@ public class NavigationDrawerFragment extends Fragment {
                 activity.getSharedPreferences(MainActivity.PREFERENCES_FILE, Context.MODE_PRIVATE);
         boolean seenDrawer = preferences.getBoolean(DRAWER_LEARNED_KEY, false);
         if (!seenDrawer) {
-            drawerLayout.openDrawer(drawerContent);
+            drawerLayout.openDrawer(Gravity.LEFT);
             preferences.edit()
                     .putBoolean(DRAWER_LEARNED_KEY, true)
                     .apply();
@@ -94,8 +94,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.navigation_drawer_layout, container, false);
-
-        drawerContent = root;
 
         // Show current parity string in the navigation drawer
         ((TextView) root.findViewById(R.id.current_parity)).setText(ParityReference.getStringFromParity(
