@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.fragments.FragmentUtil;
 import ru.dyatel.tsuschedule.fragments.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,11 +30,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
 
         // Get the data fragment
-        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
-        if (dataFragment == null) {
-            dataFragment = new DataFragment();
-            fragmentManager.beginTransaction().add(dataFragment, DataFragment.TAG).commit();
-        }
+        dataFragment = FragmentUtil.getFragment(fragmentManager, DataFragment.TAG, DataFragment.class);
         dataFragment.setGroup(groupIndex);
         dataFragment.setSubgroup(subgroup);
 
