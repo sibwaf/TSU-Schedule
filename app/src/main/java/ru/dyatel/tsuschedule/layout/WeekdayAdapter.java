@@ -1,10 +1,11 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.layout;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 
 import java.util.ArrayList;

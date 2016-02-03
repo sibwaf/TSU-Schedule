@@ -25,8 +25,8 @@ import hirondelle.date4j.DateTime;
 import ru.dyatel.tsuschedule.MainActivity;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.R;
-import ru.dyatel.tsuschedule.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.parsing.DateUtil;
 
 import java.util.TimeZone;
