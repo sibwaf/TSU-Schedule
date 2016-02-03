@@ -1,7 +1,8 @@
 /.gradle/
 /.idea/
-/util/build/
-/parser/build/
-/app/build/
 /build/
+*/build/
 /local.properties
+/gradlew
+/gradlew.bat
+*.iml
