@@ -1,8 +1,9 @@
-package ru.dyatel.tsuschedule;
+package ru.dyatel.tsuschedule.layout;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
+import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.fragments.WeekFragment;
 import ru.dyatel.tsuschedule.parsing.Parity;
