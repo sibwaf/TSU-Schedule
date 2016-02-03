@@ -24,7 +24,7 @@ public class WeekFragment extends Fragment implements DataListener {
 
     private static final String PARITY_ARGUMENT = "parity";
 
-    private IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+    private IterableFilter<Lesson> filter = new IterableFilter<>();
 
     private SwipeRefreshLayout swipeRefresh;
     private WeekAdapter weekdays;
