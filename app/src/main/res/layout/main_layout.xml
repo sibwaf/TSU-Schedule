@@ -22,9 +22,8 @@
 
     </LinearLayout>
 
-    <fragment
-            android:id="@+id/navigation_drawer"
-            android:name="ru.dyatel.tsuschedule.fragments.NavigationDrawerFragment"
+    <include
+            layout="@layout/navigation_drawer_layout"
             android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="left"/>
