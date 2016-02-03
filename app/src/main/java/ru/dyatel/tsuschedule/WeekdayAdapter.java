@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> {
 
-    private List<Lesson> lessons = new ArrayList<Lesson>();
+    private List<Lesson> lessons = new ArrayList<>();
 
     private Comparator<Lesson> comparator = new Comparator<Lesson>() {
         @Override

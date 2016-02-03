@@ -117,7 +117,7 @@ public class SavedDataDAO extends SQLiteOpenHelper {
 
                 Cursor c = db.query(Table.TABLE_NAME, null, null, null, null, null, null);
                 if (c.moveToFirst()) {
-                    result = new HashSet<Lesson>();
+                    result = new HashSet<>();
                     int indexParity = c.getColumnIndexOrThrow(Table.COLUMN_PARITY);
                     int indexWeekday = c.getColumnIndexOrThrow(Table.COLUMN_WEEKDAY);
                     int indexTime = c.getColumnIndexOrThrow(Table.COLUMN_TIME);

@@ -2,11 +2,10 @@ package ru.dyatel.tsuschedule;
 
 import android.app.Application;
 import org.acra.ACRA;
-import org.acra.annotation.ReportsCrashes;
 
-@ReportsCrashes(
+/*@ReportsCrashes(
         formUri = BuildConfig.ACRA_BACKEND
-)
+)*/
 public class ScheduleApplication extends Application {
 
     @Override

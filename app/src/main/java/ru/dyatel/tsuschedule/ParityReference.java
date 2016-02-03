@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class ParityReference {
 
-    private static final SparseArray<Parity> indexToParity = new SparseArray<Parity>();
-    private static final Map<Parity, String> parityToString = new HashMap<Parity, String>();
+    private static final SparseArray<Parity> indexToParity = new SparseArray<>();
+    private static final Map<Parity, String> parityToString = new HashMap<>();
 
     static {
         indexToParity.put(0, Parity.ODD);

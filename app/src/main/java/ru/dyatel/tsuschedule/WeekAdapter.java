@@ -28,9 +28,9 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
             "\u0441\u0443\u0431\u0431\u043e\u0442\u0430",
             "\u0432\u043e\u0441\u043a\u0440\u0435\u0441\u0435\u043d\u044c\u0435"
     };
-    private List<String> weekdayOrder = new ArrayList<String>();
+    private List<String> weekdayOrder = new ArrayList<>();
 
-    private Map<String, Set<Lesson>> weekdays = new HashMap<String, Set<Lesson>>();
+    private Map<String, Set<Lesson>> weekdays = new HashMap<>();
 
     class Holder extends RecyclerView.ViewHolder {
 
@@ -87,7 +87,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
         }
 
         for (final String key : keys) {
-            IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+            IterableFilter<Lesson> filter = new IterableFilter<>();
             filter.apply(new Filter<Lesson>() {
                 @Override
                 public boolean accept(Lesson obj) {

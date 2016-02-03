@@ -23,7 +23,7 @@ public class DataFragment extends Fragment implements DataListener {
     private SavedDataDAO dataDAO;
     private Set<Lesson> lessons;
 
-    private Set<DataListener> listeners = new HashSet<DataListener>();
+    private Set<DataListener> listeners = new HashSet<>();
 
     public DataFragment() {
     }
@@ -49,7 +49,7 @@ public class DataFragment extends Fragment implements DataListener {
     public void onDataUpdate(Set<Lesson> data) {
         lessons = data;
 
-        IterableFilter<Lesson> filter = new IterableFilter<Lesson>();
+        IterableFilter<Lesson> filter = new IterableFilter<>();
         filter.apply(new Filter<Lesson>() {
             @Override
             public boolean accept(Lesson obj) {
