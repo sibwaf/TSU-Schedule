@@ -7,6 +7,9 @@
         android:layout_height="match_parent"
         android:layout_gravity="left">
 
+    <!-- ______________________________ -->
+    <!-- Current parity indicator start -->
+
     <TextView
             android:id="@+id/current_parity_text"
             android:layout_width="wrap_content"
@@ -27,11 +30,17 @@
             android:layout_alignParentRight="true"
             android:textSize="@dimen/parity_hint_text_size"/>
 
+    <!-- Current parity indicator end -->
+    <!-- ____________________________ -->
+
     <View
             style="@style/Divider"
             android:id="@+id/navigation_drawer_parity_divider"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/current_parity_text"/>
+
+    <!-- _____________________________ -->
+    <!-- Group/subgroup selector start -->
 
     <EditText
             android:id="@+id/group_index"
@@ -50,5 +59,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/group_index"
             android:layout_alignBottom="@id/group_index"/>
+
+    <!-- Group/subgroup selector end -->
+    <!-- _____________________________ -->
 
 </RelativeLayout>
