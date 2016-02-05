@@ -38,11 +38,10 @@ public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Ho
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.menu_button, parent, false);
-
-
-        return new Holder(view);
+        return new Holder(
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.menu_button, parent, false)
+        );
     }
 
     @Override

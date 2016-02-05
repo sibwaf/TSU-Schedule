@@ -51,9 +51,10 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.weekday_layout, parent, false);
-        return new Holder(v);
+        return new Holder(
+                LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.weekday_layout, parent, false)
+        );
     }
 
     @Override
