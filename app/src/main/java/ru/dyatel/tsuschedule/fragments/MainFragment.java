@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -22,10 +23,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import hirondelle.date4j.DateTime;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 import ru.dyatel.tsuschedule.MainActivity;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.layout.MenuButtonAdapter;
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.parsing.DateUtil;
 
@@ -117,6 +120,11 @@ public class MainFragment extends Fragment {
         );
         subgroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subgroupSpinner.setAdapter(subgroupAdapter);
+
+        // Manage the app menu
+        RecyclerView appMenu = (RecyclerView) root.findViewById(R.id.menu_list);
+        appMenu.setLayoutManager(new LinearLayoutManager(root.getContext()));
+        appMenu.setAdapter(new MenuButtonAdapter());
 
         initDrawer(
                 (DrawerLayout) root,
