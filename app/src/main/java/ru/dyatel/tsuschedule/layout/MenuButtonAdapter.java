@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Holder> {
 
-    private class MenuEntry {
+    public class MenuEntry {
 
         int iconResId;
         int textResId;
