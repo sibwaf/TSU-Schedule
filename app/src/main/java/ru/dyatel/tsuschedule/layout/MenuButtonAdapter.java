@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import ru.dyatel.tsuschedule.R;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Holder> {
 
     private class MenuEntry {
@@ -24,16 +27,18 @@ public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Ho
 
     }
 
-    private MenuEntry[] menu = new MenuEntry[]{
-
-    };
-
     class Holder extends RecyclerView.ViewHolder {
 
         public Holder(View v) {
             super(v);
         }
 
+    }
+
+    private List<MenuEntry> menu = new LinkedList<>();
+
+    public void addMenuEntry(MenuEntry entry) {
+        menu.add(entry);
     }
 
     @Override
@@ -46,7 +51,7 @@ public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Ho
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        final MenuEntry entry = menu[position];
+        final MenuEntry entry = menu.get(position);
         TextView button = (TextView) holder.itemView;
         button.setCompoundDrawablesWithIntrinsicBounds(
                 ContextCompat.getDrawable(button.getContext(), entry.iconResId), null, null, null
@@ -62,7 +67,7 @@ public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Ho
 
     @Override
     public int getItemCount() {
-        return menu.length;
+        return menu.size();
     }
 
 }
