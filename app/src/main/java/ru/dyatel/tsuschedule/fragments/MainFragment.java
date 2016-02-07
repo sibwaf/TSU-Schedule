@@ -124,7 +124,20 @@ public class MainFragment extends Fragment {
         // Manage the app menu
         RecyclerView appMenu = (RecyclerView) root.findViewById(R.id.menu_list);
         appMenu.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        appMenu.setAdapter(new MenuButtonAdapter());
+        MenuButtonAdapter menuAdapter = new MenuButtonAdapter();
+        menuAdapter.addMenuEntry(new MenuButtonAdapter.MenuEntry(
+                R.drawable.icon_settings, R.string.action_settings,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getFragmentManager().beginTransaction()
+                                .replace(R.id.content_fragment, new SettingsFragment())
+                                .addToBackStack("settings_opened")
+                                .commit();
+                    }
+                })
+        );
+        appMenu.setAdapter(menuAdapter);
 
         initDrawer(
                 (DrawerLayout) root,
