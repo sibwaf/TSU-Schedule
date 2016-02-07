@@ -126,7 +126,7 @@ public class MainFragment extends Fragment {
         appMenu.setLayoutManager(new LinearLayoutManager(root.getContext()));
         MenuButtonAdapter menuAdapter = new MenuButtonAdapter();
         menuAdapter.addMenuEntry(new MenuButtonAdapter.MenuEntry(
-                R.drawable.icon_settings, R.string.action_settings,
+                R.drawable.ic_settings, R.string.action_settings,
                 new Runnable() {
                     @Override
                     public void run() {
