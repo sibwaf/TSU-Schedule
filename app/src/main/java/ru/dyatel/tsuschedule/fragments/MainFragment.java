@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,16 +28,13 @@ import ru.dyatel.tsuschedule.MainActivity;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.layout.MenuButtonAdapter;
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.parsing.DateUtil;
-import ru.dyatel.tsuschedule.parsing.Lesson;
 
-import java.util.Set;
 import java.util.TimeZone;
 
-public class MainFragment extends Fragment implements DataListener {
+public class MainFragment extends Fragment {
 
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
 
@@ -48,8 +44,6 @@ public class MainFragment extends Fragment implements DataListener {
 
     private EditText groupIndexText;
     private Spinner subgroupSpinner;
-
-    private SwipeRefreshLayout swipeRefresh;
 
     private void initDrawer(DrawerLayout layout, Toolbar toolbar, final DataFragment data) {
         groupIndexText.setText(data.getGroup());
@@ -160,16 +154,6 @@ public class MainFragment extends Fragment implements DataListener {
         // Navigation drawer end
         // ---------------------
 
-        // Wire up the SwipeRefreshLayout
-        final DataFragment tempData = dataFragment;
-        swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                tempData.fetchData();
-            }
-        });
-
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
         viewPager.setAdapter(new WeekFragmentPagerAdapter(fm, dataFragment));
@@ -184,33 +168,6 @@ public class MainFragment extends Fragment implements DataListener {
         tabLayout.setupWithViewPager(viewPager);
 
         return root;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        dataFragment.addListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        dataFragment.removeListener(this);
-    }
-
-    @Override
-    public void beforeDataUpdate() {
-        swipeRefresh.setRefreshing(true);
-    }
-
-    @Override
-    public void onDataUpdate(Set<Lesson> lessons) {
-
-    }
-
-    @Override
-    public void afterDataUpdate() {
-        swipeRefresh.setRefreshing(false);
     }
 
     @Override
