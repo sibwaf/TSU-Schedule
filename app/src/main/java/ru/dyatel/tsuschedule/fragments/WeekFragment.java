@@ -2,16 +2,15 @@ package ru.dyatel.tsuschedule.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ru.dyatel.tsuschedule.R;
+import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.layout.WeekAdapter;
-import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.util.Filter;
@@ -25,10 +24,9 @@ public class WeekFragment extends Fragment implements DataListener {
 
     private IterableFilter<Lesson> filter = new IterableFilter<>();
 
-    private SwipeRefreshLayout swipeRefresh;
-    private WeekAdapter weekdays;
+    private DataFragment dataFragment;
 
-    private WeekFragmentPagerAdapter callback;
+    private WeekAdapter weekdays;
 
     public static WeekFragment newInstance(Parity parity) {
         WeekFragment fragment = new WeekFragment();
@@ -39,10 +37,6 @@ public class WeekFragment extends Fragment implements DataListener {
     }
 
     public WeekFragment() {
-    }
-
-    public void setCallback(WeekFragmentPagerAdapter callback) {
-        this.callback = callback;
     }
 
     @Override
@@ -57,6 +51,16 @@ public class WeekFragment extends Fragment implements DataListener {
                 return obj.getParity().equals(Parity.BOTH) || obj.getParity().equals(p);
             }
         });
+
+        dataFragment = (DataFragment) getFragmentManager()
+                .findFragmentByTag(DataFragment.TAG);
+        dataFragment.addListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dataFragment.removeListener(this);
     }
 
     @Override
@@ -69,17 +73,12 @@ public class WeekFragment extends Fragment implements DataListener {
         weekdays = new WeekAdapter();
         weekdayList.setAdapter(weekdays);
 
-        callback.fragmentReady();
-        callback = null; // To prevent memory leaks
-
         return root;
     }
 
     @Override
     public void beforeDataUpdate() {
-        // If refresh was invoked by swipe, there is no point
-        // in calling setRefreshing(true)
-        if (!swipeRefresh.isRefreshing()) swipeRefresh.setRefreshing(true);
+
     }
 
     @Override
@@ -89,7 +88,7 @@ public class WeekFragment extends Fragment implements DataListener {
 
     @Override
     public void afterDataUpdate() {
-        swipeRefresh.setRefreshing(false);
+
     }
 
 }
