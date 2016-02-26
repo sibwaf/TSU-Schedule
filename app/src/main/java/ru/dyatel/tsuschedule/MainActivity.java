@@ -57,14 +57,6 @@ public class MainActivity extends AppCompatActivity {
                 .putString(GROUP_INDEX_KEY, dataFragment.getGroup())
                 .putInt(SUBGROUP_KEY, dataFragment.getSubgroup())
                 .apply();
-
-        //dataFragment.saveData();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        dataFragment.clearListeners();
     }
 
 }
