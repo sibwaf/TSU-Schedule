@@ -52,9 +52,12 @@ public class WeekFragment extends Fragment implements DataListener {
             }
         });
 
+        weekdays = new WeekAdapter();
+
         dataFragment = (DataFragment) getFragmentManager()
                 .findFragmentByTag(DataFragment.TAG);
         dataFragment.addListener(this);
+        dataFragment.requestData(this);
     }
 
     @Override
@@ -70,7 +73,6 @@ public class WeekFragment extends Fragment implements DataListener {
 
         RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
         weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        weekdays = new WeekAdapter();
         weekdayList.setAdapter(weekdays);
 
         return root;

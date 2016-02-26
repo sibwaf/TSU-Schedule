@@ -23,6 +23,7 @@ public class DataFragment extends Fragment implements DataListener {
     private SavedDataDAO dataDAO;
     private Set<Lesson> lessons;
 
+    private Set<DataListener> dataRequests = new HashSet<>();
     private Set<DataListener> listeners = new HashSet<>();
 
     public void addListener(DataListener listener) {
@@ -37,6 +38,18 @@ public class DataFragment extends Fragment implements DataListener {
         listeners.clear();
     }
 
+    public void requestData(DataListener requester) {
+        if (lessons == null) {
+            if (!listeners.contains(requester)) {
+                dataRequests.add(requester);
+            }
+        } else {
+            requester.beforeDataUpdate();
+            requester.onDataUpdate(lessons);
+            requester.afterDataUpdate();
+        }
+    }
+
     public DataFragment() {
     }
 
@@ -46,14 +59,18 @@ public class DataFragment extends Fragment implements DataListener {
         setRetainInstance(true);
 
         dataDAO = new SavedDataDAO(getActivity().getApplication());
+        dataDAO.load(this);
     }
 
-    public void saveData() {
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         dataDAO.save(lessons);
     }
 
     @Override
     public void beforeDataUpdate() {
+        for (DataListener l : dataRequests) l.beforeDataUpdate();
         for (DataListener l : listeners) l.beforeDataUpdate();
     }
 
@@ -70,12 +87,16 @@ public class DataFragment extends Fragment implements DataListener {
         });
         Set<Lesson> filtered = filter.filter(lessons);
 
+        for (DataListener l : dataRequests) l.onDataUpdate(filtered);
         for (DataListener l : listeners) l.onDataUpdate(filtered);
     }
 
     @Override
     public void afterDataUpdate() {
+        for (DataListener l : dataRequests) l.afterDataUpdate();
         for (DataListener l : listeners) l.afterDataUpdate();
+
+        dataRequests.clear();
     }
 
     public void setGroup(String group) {
@@ -92,14 +113,6 @@ public class DataFragment extends Fragment implements DataListener {
 
     public int getSubgroup() {
         return subgroup;
-    }
-
-    public void loadSavedData() {
-        if (lessons == null) {
-            dataDAO.load(this);
-        } else {
-            broadcastDataUpdate();
-        }
     }
 
     public void fetchData() {
