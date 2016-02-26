@@ -29,20 +29,27 @@ import ru.dyatel.tsuschedule.MainActivity;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.data.DataFragment;
+import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.layout.MenuButtonAdapter;
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
 import ru.dyatel.tsuschedule.parsing.DateUtil;
+import ru.dyatel.tsuschedule.parsing.Lesson;
 
+import java.util.Set;
 import java.util.TimeZone;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements DataListener {
 
     private static final String DRAWER_LEARNED_KEY = "drawer_learned";
+
+    private DataFragment dataFragment;
 
     private ActionBarDrawerToggle toggle;
 
     private EditText groupIndexText;
     private Spinner subgroupSpinner;
+
+    private SwipeRefreshLayout swipeRefresh;
 
     private void initDrawer(DrawerLayout layout, Toolbar toolbar, final DataFragment data) {
         groupIndexText.setText(data.getGroup());
@@ -95,12 +102,16 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dataFragment = (DataFragment) getFragmentManager().findFragmentByTag(DataFragment.TAG);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.main_layout, container, false);
 
         FragmentManager fm = getFragmentManager();
-
-        DataFragment dataFragment = (DataFragment) fm.findFragmentByTag(DataFragment.TAG);
 
         // -----------------------
         // Navigation drawer start
@@ -150,12 +161,12 @@ public class MainFragment extends Fragment {
         // ---------------------
 
         // Wire up the SwipeRefreshLayout
-        SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
+        final DataFragment tempData = dataFragment;
+        swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                ((DataFragment) getFragmentManager().findFragmentByTag(DataFragment.TAG))
-                        .fetchData();
+                tempData.fetchData();
             }
         });
 
@@ -173,6 +184,33 @@ public class MainFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
 
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        dataFragment.addListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        dataFragment.removeListener(this);
+    }
+
+    @Override
+    public void beforeDataUpdate() {
+        swipeRefresh.setRefreshing(true);
+    }
+
+    @Override
+    public void onDataUpdate(Set<Lesson> lessons) {
+
+    }
+
+    @Override
+    public void afterDataUpdate() {
+        swipeRefresh.setRefreshing(false);
     }
 
     @Override
