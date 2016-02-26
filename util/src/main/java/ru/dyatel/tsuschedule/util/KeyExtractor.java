@@ -24,7 +24,7 @@ public abstract class KeyExtractor<IT, KT> {
      * @see #getKey(Object)
      */
     public Set<KT> extract(Collection<IT> collection) {
-        Set<KT> result = new HashSet<KT>();
+        Set<KT> result = new HashSet<>();
         for (IT item : collection) {
             result.add(getKey(item));
         }
