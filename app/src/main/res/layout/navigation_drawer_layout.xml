@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/background_material_light"
-        android:clickable="true"
-        android:layout_width="@dimen/navigation_drawer_width"
-        android:layout_height="match_parent"
-        android:layout_gravity="left">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/background_material_light"
+    android:clickable="true"
+    android:layout_width="@dimen/navigation_drawer_width"
+    android:layout_height="match_parent"
+    android:layout_gravity="left">
 
     <!-- ______________________________ -->
     <!-- Current parity indicator start -->
 
     <TextView
-            android:id="@+id/current_parity_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/parity_hint_margin"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/current_parity"
-            android:textSize="@dimen/parity_hint_text_size"
-            android:text="@string/hint_current_parity"/>
+        android:id="@+id/current_parity_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/parity_hint_margin"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/current_parity"
+        android:textSize="@dimen/parity_hint_text_size"
+        android:text="@string/hint_current_parity"/>
 
     <TextView
-            android:id="@id/current_parity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/parity_hint_margin"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:textSize="@dimen/parity_hint_text_size"/>
+        android:id="@id/current_parity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/parity_hint_margin"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/parity_hint_text_size"/>
 
     <!-- Current parity indicator end -->
     <!-- ____________________________ -->
 
     <View
-            style="@style/Divider"
-            android:id="@+id/navigation_drawer_parity_divider"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/current_parity_text"/>
+        style="@style/Divider"
+        android:id="@+id/navigation_drawer_parity_divider"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/current_parity_text"/>
 
     <!-- _____________________________ -->
     <!-- Group/subgroup selector start -->
 
     <EditText
-            android:id="@+id/group_index"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/navigation_drawer_parity_divider"
-            android:layout_toLeftOf="@+id/subgroup"
-            android:hint="@string/hint_group_index"
-            android:singleLine="true"/>
+        android:id="@+id/group_index"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/navigation_drawer_parity_divider"
+        android:layout_toLeftOf="@+id/subgroup"
+        android:hint="@string/hint_group_index"
+        android:singleLine="true"/>
 
     <Spinner
-            android:id="@id/subgroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/group_index"
-            android:layout_alignBottom="@id/group_index"/>
+        android:id="@id/subgroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/group_index"
+        android:layout_alignBottom="@id/group_index"/>
 
     <!-- Group/subgroup selector end -->
     <!-- _____________________________ -->
@@ -67,11 +67,11 @@
     <!-- App menu start -->
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/menu_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"/>
+        android:id="@+id/menu_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"/>
 
     <!-- App menu end -->
     <!-- ____________ -->
