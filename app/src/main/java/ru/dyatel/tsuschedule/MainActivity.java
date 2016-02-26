@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 .putInt(SUBGROUP_KEY, dataFragment.getSubgroup())
                 .apply();
 
-        dataFragment.saveData();
+        //dataFragment.saveData();
     }
 
     @Override
