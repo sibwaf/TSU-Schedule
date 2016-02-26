@@ -25,6 +25,18 @@ public class DataFragment extends Fragment implements DataListener {
 
     private Set<DataListener> listeners = new HashSet<>();
 
+    public void addListener(DataListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(DataListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void clearListeners() {
+        listeners.clear();
+    }
+
     public DataFragment() {
     }
 
@@ -132,14 +144,6 @@ public class DataFragment extends Fragment implements DataListener {
             }
 
         }.execute(group);
-    }
-
-    public void addListener(DataListener listener) {
-        listeners.add(listener);
-    }
-
-    public void clearListeners() {
-        listeners.clear();
     }
 
     public void broadcastDataUpdate() {
