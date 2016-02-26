@@ -34,10 +34,6 @@ public class DataFragment extends Fragment implements DataListener {
         listeners.remove(listener);
     }
 
-    public void clearListeners() {
-        listeners.clear();
-    }
-
     public void requestData(DataListener requester) {
         if (lessons == null) {
             if (!listeners.contains(requester)) {

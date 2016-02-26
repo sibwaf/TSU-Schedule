@@ -156,7 +156,7 @@ public class MainFragment extends Fragment {
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
-        viewPager.setAdapter(new WeekFragmentPagerAdapter(fm, dataFragment));
+        viewPager.setAdapter(new WeekFragmentPagerAdapter(fm));
         viewPager.setCurrentItem(
                 ParityReference.getIndexFromParity(
                         DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
