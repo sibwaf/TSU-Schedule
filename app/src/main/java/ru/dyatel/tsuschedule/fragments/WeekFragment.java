@@ -14,7 +14,7 @@ import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.layout.WeekAdapter;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
-import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.parsing.ParityFilter;
 import ru.dyatel.tsuschedule.util.IterableFilter;
 
 import java.util.Set;
@@ -46,13 +46,10 @@ public class WeekFragment extends Fragment implements DataListener {
         super.onCreate(savedInstanceState);
 
         // Create required week filter
-        final Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
-        filter.apply(new Filter<Lesson>() {
-            @Override
-            public boolean accept(Lesson obj) {
-                return obj.getParity().equals(Parity.BOTH) || obj.getParity().equals(p);
-            }
-        });
+        // If for some reason we didn't receive parity argument,
+        // we will not filter by parity
+        Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
+        if (p != null) filter.apply(new ParityFilter(p));
 
         weekdays = new WeekAdapter();
 
