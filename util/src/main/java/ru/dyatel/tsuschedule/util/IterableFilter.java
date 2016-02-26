@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class IterableFilter<T> {
 
-    private List<Filter<T>> filters = new ArrayList<Filter<T>>();
+    private List<Filter<T>> filters = new ArrayList<>();
 
     /**
      * Add a {@link Filter} which will be used
@@ -49,7 +49,7 @@ public class IterableFilter<T> {
      * @see #filterCollection(Collection, Collection)
      */
     public Set<T> filter(Set<T> collection) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         filterCollection(collection, result);
         return result;
     }
@@ -62,7 +62,7 @@ public class IterableFilter<T> {
      * @see #filterCollection(Collection, Collection)
      */
     public List<T> filter(List<T> collection) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         filterCollection(collection, result);
         return result;
     }
