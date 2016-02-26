@@ -116,7 +116,7 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     public void fetchData() {
-        new AsyncTask<String, Void, Set<Lesson>>() {
+        new AsyncTask<Void, Void, Set<Lesson>>() {
 
             private int errorStringId;
 
@@ -126,14 +126,14 @@ public class DataFragment extends Fragment implements DataListener {
             }
 
             @Override
-            protected Set<Lesson> doInBackground(String... params) {
+            protected Set<Lesson> doInBackground(Void... params) {
                 if (group == null || group.equals("")) {
                     errorStringId = R.string.no_group_index;
                     return null;
                 }
 
                 try {
-                    return Parser.getLessons(params[0]);
+                    return Parser.getLessons(group);
                 } catch (IllegalArgumentException e) {
                     errorStringId = R.string.wrong_group_index;
                 } catch (Exception e) {
@@ -156,7 +156,7 @@ public class DataFragment extends Fragment implements DataListener {
                 afterDataUpdate();
             }
 
-        }.execute(group);
+        }.execute();
     }
 
     public void broadcastDataUpdate() {
