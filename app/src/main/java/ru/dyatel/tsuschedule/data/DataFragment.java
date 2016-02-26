@@ -95,7 +95,15 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     public void setSubgroup(int subgroup) {
-        this.subgroup = subgroup;
+        if (this.subgroup != subgroup) {
+            this.subgroup = subgroup;
+
+            beforeDataUpdate();
+            onDataUpdate(lessons);
+            afterDataUpdate();
+        } else {
+            this.subgroup = subgroup;
+        }
     }
 
     public String getGroup() {
@@ -148,12 +156,6 @@ public class DataFragment extends Fragment implements DataListener {
             }
 
         }.execute();
-    }
-
-    public void broadcastDataUpdate() {
-        beforeDataUpdate();
-        onDataUpdate(lessons);
-        afterDataUpdate();
     }
 
 }

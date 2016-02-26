@@ -70,15 +70,9 @@ public class MainFragment extends Fragment {
                 imm.hideSoftInputFromWindow(groupIndex.getWindowToken(), 0);*/
                 groupIndexText.onEditorAction(EditorInfo.IME_ACTION_DONE);
 
-                String group = groupIndexText.getText().toString();
-                int subgroup = subgroupSpinner.getSelectedItemPosition() + 1;
-
                 // Save new group and subgroup in DataFragment
-                data.setGroup(group);
-                if (data.getSubgroup() != subgroup) {
-                    data.setSubgroup(subgroup);
-                    data.broadcastDataUpdate();
-                }
+                data.setGroup(groupIndexText.getText().toString());
+                data.setSubgroup(subgroupSpinner.getSelectedItemPosition() + 1);
             }
         };
         layout.addDrawerListener(toggle);
