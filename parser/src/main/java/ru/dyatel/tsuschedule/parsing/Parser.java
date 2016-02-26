@@ -17,14 +17,12 @@ public class Parser {
     private static final String lectureString = "\u041b";
     private static final String laboratoryString = "\u041b\u0430\u0431";
 
-    private static final String subgroupString = "\u043f\u043e\u0434\u0433\u0440\u0443\u043f\u043f\u0430";
-
     private static final String evenParityString = "\u0447/\u043d";
     private static final String oddParityString = "\u043d/\u043d";
 
     private static final Pattern teacherPattern = Pattern.compile("^(.+?),.*$");
     private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
-    private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d) " + subgroupString + "\\))$");
+    private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d).*?\\))$");
 
     private static Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
 
