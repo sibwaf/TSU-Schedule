@@ -10,20 +10,12 @@ import ru.dyatel.tsuschedule.parsing.Lesson;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> {
 
     private List<Lesson> lessons = new ArrayList<>();
-
-    private Comparator<Lesson> comparator = new Comparator<Lesson>() {
-        @Override
-        public int compare(Lesson left, Lesson right) {
-            return (left.getTime().compareTo(right.getTime()));
-        }
-    };
 
     class Holder extends RecyclerView.ViewHolder {
 
@@ -94,7 +86,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
     public void updateData(Set<Lesson> lessons) {
         this.lessons.clear();
         for (Lesson l : lessons) this.lessons.add(l);
-        Collections.sort(this.lessons, comparator);
+        Collections.sort(this.lessons);
 
         notifyDataSetChanged();
     }
