@@ -1,8 +1,6 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
@@ -10,6 +8,12 @@ buildscript {
 }
 
 allprojects {
+    if (!project.name.equals('app')) {
+        apply plugin: 'java'
+        sourceCompatibility = JavaVersion.VERSION_1_7
+    } else {
+        apply plugin: 'com.android.application'
+    }
     repositories {
         mavenCentral()
     }
