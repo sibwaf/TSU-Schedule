@@ -10,18 +10,24 @@ buildscript {
     }
 }
 
+def kotlin_source_dir = 'src/main/kotlin'
+
 allprojects {
     if (!project.name.equals('app')) {
         apply plugin: 'java'
         apply plugin: 'kotlin'
         sourceCompatibility = JavaVersion.VERSION_1_7
+
+        sourceSets {
+            main.java.srcDirs += kotlin_source_dir
+        }
     } else {
         apply plugin: 'com.android.application'
         apply plugin: 'kotlin-android'
-    }
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+        android.sourceSets {
+            main.java.srcDirs += kotlin_source_dir
+        }
     }
 
     repositories {
