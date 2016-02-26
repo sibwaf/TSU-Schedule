@@ -6,37 +6,20 @@ import android.support.v13.app.FragmentPagerAdapter;
 import ru.dyatel.tsuschedule.ParityReference;
 import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.fragments.WeekFragment;
-import ru.dyatel.tsuschedule.parsing.Parity;
 
 import java.util.Locale;
 
 public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private int readyFragments = 0;
-
-    private DataFragment dataFragment;
-
     public WeekFragmentPagerAdapter(FragmentManager fm, DataFragment dataFragment) {
         super(fm);
-
-        this.dataFragment = dataFragment;
     }
 
     @Override
     public Fragment getItem(int position) {
-        Parity p = ParityReference.getParityFromIndex(position);
-
-        // Create a fragment and subscribe it to data updates
-        WeekFragment fragment = WeekFragment.newInstance(p);
-        dataFragment.addListener(fragment);
-        fragment.setCallback(this);
-
-        return fragment;
-    }
-
-    public void fragmentReady() {
-        readyFragments++;
-        if (readyFragments == 2) dataFragment.loadSavedData();
+        return WeekFragment.newInstance(
+                ParityReference.getParityFromIndex(position)
+        );
     }
 
     @Override
