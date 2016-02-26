@@ -12,30 +12,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ParserTest {
 
-    private Filter<Lesson> evenParity = new Filter<Lesson>() {
-        @Override
-        public boolean accept(Lesson obj) {
-            return obj.getParity().equals(Parity.EVEN) || obj.getParity().equals(Parity.BOTH);
-        }
-    };
-    private Filter<Lesson> oddParity = new Filter<Lesson>() {
-        @Override
-        public boolean accept(Lesson obj) {
-            return obj.getParity().equals(Parity.ODD) || obj.getParity().equals(Parity.BOTH);
-        }
-    };
-    private Filter<Lesson> firstSubgroup = new Filter<Lesson>() {
-        @Override
-        public boolean accept(Lesson obj) {
-            return obj.getSubgroup() == 0 || obj.getSubgroup() == 1;
-        }
-    };
-    private Filter<Lesson> secondSubgroup = new Filter<Lesson>() {
-        @Override
-        public boolean accept(Lesson obj) {
-            return obj.getSubgroup() == 0 || obj.getSubgroup() == 2;
-        }
-    };
+    private Filter<Lesson> firstSubgroup = new SubgroupFilter(1);
+    private Filter<Lesson> secondSubgroup = new SubgroupFilter(2);
 
     private static Set<Lesson> lessons;
 
@@ -47,7 +25,7 @@ public class ParserTest {
     @Test
     public void testGetLessonsMondayOddFirst() throws Exception {
         IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(oddParity);
+        filter.apply(ParityFiltersKt.getOddParityFilter());
         filter.apply(new Filter<Lesson>() {
             @Override
             public boolean accept(Lesson obj) {
@@ -68,7 +46,7 @@ public class ParserTest {
     @Test
     public void testGetLessonsMondayEvenFirst() throws Exception {
         IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(evenParity);
+        filter.apply(ParityFiltersKt.getEvenParityFilter());
         filter.apply(new Filter<Lesson>() {
             @Override
             public boolean accept(Lesson obj) {
@@ -87,7 +65,7 @@ public class ParserTest {
     @Test
     public void testGetLessonsMondayOddSecond() throws Exception {
         IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(oddParity);
+        filter.apply(ParityFiltersKt.getOddParityFilter());
         filter.apply(new Filter<Lesson>() {
             @Override
             public boolean accept(Lesson obj) {
@@ -105,7 +83,7 @@ public class ParserTest {
     @Test
     public void testGetLessonsFriday() throws Exception {
         IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(oddParity);
+        filter.apply(ParityFiltersKt.getOddParityFilter());
         filter.apply(new Filter<Lesson>() {
             @Override
             public boolean accept(Lesson obj) {

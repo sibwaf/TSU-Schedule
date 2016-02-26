@@ -7,7 +7,7 @@ import android.widget.Toast;
 import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parser;
-import ru.dyatel.tsuschedule.util.Filter;
+import ru.dyatel.tsuschedule.parsing.SubgroupFilter;
 import ru.dyatel.tsuschedule.util.IterableFilter;
 
 import java.util.HashSet;
@@ -79,12 +79,7 @@ public class DataFragment extends Fragment implements DataListener {
         lessons = data;
 
         IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(new Filter<Lesson>() {
-            @Override
-            public boolean accept(Lesson obj) {
-                return obj.getSubgroup() == 0 || obj.getSubgroup() == subgroup;
-            }
-        });
+        filter.apply(new SubgroupFilter(subgroup));
         Set<Lesson> filtered = filter.filter(lessons);
 
         for (DataListener l : dataRequests) l.onDataUpdate(filtered);
