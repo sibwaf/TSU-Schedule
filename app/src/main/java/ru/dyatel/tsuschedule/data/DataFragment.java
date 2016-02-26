@@ -59,8 +59,8 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         dataDAO.save(lessons);
     }
 
