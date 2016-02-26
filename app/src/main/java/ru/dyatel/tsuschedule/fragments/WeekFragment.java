@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import ru.dyatel.tsuschedule.R;
-import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.data.DataListener;
 import ru.dyatel.tsuschedule.layout.WeekAdapter;
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter;
@@ -69,16 +68,6 @@ public class WeekFragment extends Fragment implements DataListener {
         weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
         weekdays = new WeekAdapter();
         weekdayList.setAdapter(weekdays);
-
-        // Wire up the SwipeRefreshLayout
-        swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                ((DataFragment) getFragmentManager().findFragmentByTag(DataFragment.TAG))
-                        .fetchData();
-            }
-        });
 
         callback.fragmentReady();
         callback = null; // To prevent memory leaks

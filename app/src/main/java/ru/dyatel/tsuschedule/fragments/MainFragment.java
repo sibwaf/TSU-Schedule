@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -147,6 +148,16 @@ public class MainFragment extends Fragment {
 
         // Navigation drawer end
         // ---------------------
+
+        // Wire up the SwipeRefreshLayout
+        SwipeRefreshLayout swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ((DataFragment) getFragmentManager().findFragmentByTag(DataFragment.TAG))
+                        .fetchData();
+            }
+        });
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
