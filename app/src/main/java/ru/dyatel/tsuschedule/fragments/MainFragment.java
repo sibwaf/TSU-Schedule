@@ -79,7 +79,7 @@ public class MainFragment extends Fragment {
                 }
             }
         };
-        layout.setDrawerListener(toggle);
+        layout.addDrawerListener(toggle);
 
         // Open drawer if user had never seen it
         SharedPreferences preferences =
