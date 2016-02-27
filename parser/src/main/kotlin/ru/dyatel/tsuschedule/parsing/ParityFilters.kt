@@ -2,16 +2,10 @@ package ru.dyatel.tsuschedule.parsing
 
 import ru.dyatel.tsuschedule.util.Filter
 
-class ParityFilter(parity: Parity) : Filter<Lesson> {
-
-    private val parity: Parity
-
-    init {
-        this.parity = parity
-    }
+class ParityFilter(private val parity: Parity) : Filter<Lesson> {
 
     override fun accept(obj: Lesson?): Boolean =
-            obj?.parity == Parity.BOTH || obj?.parity == parity
+            obj!!.parity == Parity.BOTH || obj.parity == parity
 
 }
 
