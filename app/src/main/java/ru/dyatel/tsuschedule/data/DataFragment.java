@@ -95,7 +95,7 @@ public class DataFragment extends Fragment implements DataListener {
     }
 
     public void setSubgroup(int subgroup) {
-        if (this.subgroup != subgroup) {
+        if (this.subgroup != subgroup && lessons != null) {
             this.subgroup = subgroup;
 
             beforeDataUpdate();
