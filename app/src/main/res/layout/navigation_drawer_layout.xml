@@ -50,6 +50,7 @@
         android:layout_below="@id/navigation_drawer_parity_divider"
         android:layout_toLeftOf="@+id/subgroup"
         android:hint="@string/hint_group_index"
+        android:inputType="text|textNoSuggestions"
         android:singleLine="true"/>
 
     <Spinner
