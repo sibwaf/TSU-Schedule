@@ -27,6 +27,10 @@ public class DateUtilTest {
         assertEquals(Parity.ODD, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 1, 4)));
         assertEquals(Parity.ODD, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 1, 7)));
         assertEquals(Parity.ODD, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 1, 10)));
+
+        // September
+        assertEquals(Parity.ODD, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 9, 1)));
+        assertEquals(Parity.ODD, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 9, 4)));
     }
 
     @Test
@@ -47,6 +51,11 @@ public class DateUtilTest {
         // January
         assertEquals(Parity.EVEN, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 1, 1)));
         assertEquals(Parity.EVEN, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 1, 3)));
+
+        // September
+        assertEquals(Parity.EVEN, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 9, 5)));
+        assertEquals(Parity.EVEN, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 9, 7)));
+        assertEquals(Parity.EVEN, DateUtil.getWeekParity(DateTime.forDateOnly(2016, 9, 11)));
     }
 
 }
