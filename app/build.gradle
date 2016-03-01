@@ -3,7 +3,7 @@ android {
     buildToolsVersion '23.0.2'
 
     Properties properties = new Properties()
-    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
     defaultConfig {
         applicationId 'ru.dyatel.tsuschedule'
@@ -13,6 +13,8 @@ android {
         versionName '0.1'
 
         buildConfigField 'String', 'ACRA_BACKEND', properties.getProperty('ACRA_BACKEND')
+
+        buildConfigField 'boolean', 'DISABLE_ACRA', 'false'
     }
 
     compileOptions {
@@ -20,6 +22,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     buildTypes {
+        debug {
+            buildConfigField 'boolean', 'DISABLE_ACRA', 'true'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

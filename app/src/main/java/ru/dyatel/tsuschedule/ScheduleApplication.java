@@ -2,10 +2,11 @@ package ru.dyatel.tsuschedule;
 
 import android.app.Application;
 import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
 
-/*@ReportsCrashes(
+@ReportsCrashes(
         formUri = BuildConfig.ACRA_BACKEND
-)*/
+)
 public class ScheduleApplication extends Application {
 
     @Override
@@ -13,7 +14,7 @@ public class ScheduleApplication extends Application {
         super.onCreate();
 
         // Initialize ACRA
-        ACRA.init(this);
+        if (!BuildConfig.DISABLE_ACRA) ACRA.init(this);
 
         // Initialize data in reference classes
         ParityReference.init(this);
