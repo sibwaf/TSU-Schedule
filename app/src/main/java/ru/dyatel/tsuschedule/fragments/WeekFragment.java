@@ -58,12 +58,6 @@ public class WeekFragment extends Fragment implements DataListener {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        dataFragment.removeListener(this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_week, container, false);
@@ -81,10 +75,20 @@ public class WeekFragment extends Fragment implements DataListener {
             }
         });
 
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         dataFragment.addListener(this);
         dataFragment.requestData(this);
+    }
 
-        return root;
+    @Override
+    public void onPause() {
+        super.onPause();
+        dataFragment.removeListener(this);
     }
 
     @Override
