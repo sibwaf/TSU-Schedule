@@ -17,6 +17,9 @@ public class DataFragment extends Fragment implements DataListener {
 
     public static final String TAG = "data";
 
+    private static final String GROUP_ARGUMENT = "group";
+    private static final String SUBGROUP_ARGUMENT = "subgroup";
+
     private String group;
     private int subgroup;
 
@@ -25,6 +28,39 @@ public class DataFragment extends Fragment implements DataListener {
 
     private Set<DataListener> dataRequests = new HashSet<>();
     private Set<DataListener> listeners = new HashSet<>();
+
+    public static DataFragment newInstance(String group, int subgroup) {
+        DataFragment fragment = new DataFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(GROUP_ARGUMENT, group);
+        bundle.putInt(SUBGROUP_ARGUMENT, subgroup);
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
+    public DataFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
+        Bundle arguments = getArguments();
+        group = arguments.getString(GROUP_ARGUMENT);
+        subgroup = arguments.getInt(SUBGROUP_ARGUMENT);
+
+        dataDAO = new SavedDataDAO(getActivity().getApplication());
+        dataDAO.load(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dataDAO.save(lessons);
+    }
 
     public void addListener(DataListener listener) {
         listeners.add(listener);
@@ -44,24 +80,6 @@ public class DataFragment extends Fragment implements DataListener {
             requester.onDataUpdate(lessons);
             requester.afterDataUpdate();
         }
-    }
-
-    public DataFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-
-        dataDAO = new SavedDataDAO(getActivity().getApplication());
-        dataDAO.load(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        dataDAO.save(lessons);
     }
 
     @Override
