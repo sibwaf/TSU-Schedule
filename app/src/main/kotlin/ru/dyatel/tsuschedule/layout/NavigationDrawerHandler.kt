@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.support.v4.app.FragmentManager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.RecyclerView
@@ -25,13 +26,14 @@ import android.R as AR
 
 class NavigationDrawerHandler(
         activity: Activity,
+        fragmentManager: FragmentManager,
         layout: DrawerLayout
 ) {
 
     private val toggle: ActionBarDrawerToggle
 
     init {
-        val dataFragment = activity.fragmentManager.findFragmentByTag(DataFragment.TAG) as DataFragment
+        val dataFragment = fragmentManager.findFragmentByTag(DataFragment.TAG) as DataFragment
 
         val groupIndexEdit = layout.findViewById(R.id.group_index) as EditText
         val subgroupSpinner = layout.findViewById(R.id.subgroup) as Spinner
@@ -45,7 +47,7 @@ class NavigationDrawerHandler(
 
         // Initialize app menu
         createAppMenu(
-                activity.fragmentManager, layout.context,
+                fragmentManager, layout.context,
                 layout.findViewById(R.id.menu_list) as RecyclerView
         )
 

@@ -1,7 +1,7 @@
 package ru.dyatel.tsuschedule.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +53,7 @@ public class WeekFragment extends Fragment implements DataListener {
 
         weekdays = new WeekAdapter();
 
-        dataFragment = (DataFragment) getFragmentManager()
+        dataFragment = (DataFragment) getActivity().getSupportFragmentManager()
                 .findFragmentByTag(DataFragment.TAG);
     }
 

@@ -1,8 +1,8 @@
 package ru.dyatel.tsuschedule;
 
-import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import ru.dyatel.tsuschedule.data.DataFragment;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         String groupIndex = preferences.getString(GROUP_INDEX_KEY, "");
         int subgroup = preferences.getInt(SUBGROUP_KEY, 1);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Get the data fragment
         dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
