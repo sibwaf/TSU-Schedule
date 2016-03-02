@@ -1,10 +1,9 @@
 package ru.dyatel.tsuschedule.fragments;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -27,15 +26,13 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.main_layout, container, false);
 
-        FragmentManager fm = getFragmentManager();
-
         navigationDrawerHandler = new NavigationDrawerHandler(
-                getActivity(), (DrawerLayout) root
+                getActivity(), getActivity().getSupportFragmentManager(), (DrawerLayout) root
         );
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
-        viewPager.setAdapter(new WeekFragmentPagerAdapter(fm));
+        viewPager.setAdapter(new WeekFragmentPagerAdapter(getChildFragmentManager()));
         viewPager.setCurrentItem(
                 ParityReference.getIndexFromParity(
                         DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
