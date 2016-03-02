@@ -77,9 +77,15 @@ public class DataFragment extends Fragment implements DataListener {
             }
         } else {
             requester.beforeDataUpdate();
-            requester.onDataUpdate(lessons);
+            requester.onDataUpdate(filterData(lessons));
             requester.afterDataUpdate();
         }
+    }
+
+    private Set<Lesson> filterData(Set<Lesson> data) {
+        IterableFilter<Lesson> filter = new IterableFilter<>();
+        filter.apply(new SubgroupFilter(subgroup));
+        return filter.filter(data);
     }
 
     @Override
@@ -92,10 +98,7 @@ public class DataFragment extends Fragment implements DataListener {
     public void onDataUpdate(Set<Lesson> data) {
         lessons = data;
 
-        IterableFilter<Lesson> filter = new IterableFilter<>();
-        filter.apply(new SubgroupFilter(subgroup));
-        Set<Lesson> filtered = filter.filter(lessons);
-
+        Set<Lesson> filtered = filterData(data);
         for (DataListener l : dataRequests) l.onDataUpdate(filtered);
         for (DataListener l : listeners) l.onDataUpdate(filtered);
     }
