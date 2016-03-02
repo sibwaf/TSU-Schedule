@@ -17,6 +17,15 @@ android {
         buildConfigField 'boolean', 'DISABLE_ACRA', 'false'
     }
 
+    signingConfigs {
+        release {
+            storeFile file(properties.get('signing.storeFile'))
+            storePassword properties.get('signing.storePassword')
+            keyAlias properties.get('signing.keyAlias')
+            keyPassword properties.get('signing.keyPassword')
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
@@ -28,6 +37,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
         }
     }
 }
