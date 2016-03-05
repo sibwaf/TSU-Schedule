@@ -1,12 +1,15 @@
 package ru.dyatel.tsuschedule;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.fragments.MainFragment;
+import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String SUBGROUP_KEY = "subgroup";
 
     private DataFragment dataFragment;
+
+    private NavigationDrawerHandler drawerHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +46,20 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        drawerHandler = new NavigationDrawerHandler(
+                this, fragmentManager, dataFragment,
+                (DrawerLayout) findViewById(R.id.drawer_layout)
+        );
+
         fragmentManager.beginTransaction()
                 .replace(R.id.content_fragment, new MainFragment())
                 .commit();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerHandler.syncState();
     }
 
     @Override
@@ -60,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
                 .putString(GROUP_INDEX_KEY, dataFragment.getGroup())
                 .putInt(SUBGROUP_KEY, dataFragment.getSubgroup())
                 .apply();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerHandler.onConfigurationChanged(newConfig);
     }
 
 }
