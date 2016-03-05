@@ -23,11 +23,13 @@ import ru.dyatel.tsuschedule.parsing.DateUtil
 import java.util.TimeZone
 import android.R as AR
 
+private const val drawerGravity = Gravity.LEFT
+
 class NavigationDrawerHandler(
         activity: Activity,
         fragmentManager: FragmentManager,
         dataFragment: DataFragment,
-        layout: DrawerLayout
+        private val layout: DrawerLayout
 ) {
 
     private val toggle: ActionBarDrawerToggle
@@ -67,12 +69,15 @@ class NavigationDrawerHandler(
         // Open the drawer if app is launched for the first time
         openDrawerForTheFirstTime(
                 activity.getSharedPreferences(MainActivity.PREFERENCES_FILE, Context.MODE_PRIVATE),
-                layout
+                this
         )
     }
 
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
     fun syncState() = toggle.syncState()
+
+    fun openDrawer() = layout.openDrawer(drawerGravity)
+    fun closeDrawer() = layout.closeDrawer(drawerGravity)
 
 }
 
@@ -101,10 +106,12 @@ private fun manageLayout(
 }
 
 const val DRAWER_LEARNED_KEY = "drawer_learned"
-private fun openDrawerForTheFirstTime(preferences: SharedPreferences, layout: DrawerLayout) {
+private fun openDrawerForTheFirstTime(
+        preferences: SharedPreferences, drawerHandler: NavigationDrawerHandler
+) {
     val alreadySeen = preferences.getBoolean(DRAWER_LEARNED_KEY, false)
     if (!alreadySeen) {
-        layout.openDrawer(Gravity.LEFT)
+        drawerHandler.openDrawer()
         preferences.edit()
                 .putBoolean(DRAWER_LEARNED_KEY, true)
                 .apply()
