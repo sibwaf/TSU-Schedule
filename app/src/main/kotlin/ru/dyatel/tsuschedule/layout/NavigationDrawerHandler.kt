@@ -76,8 +76,16 @@ class NavigationDrawerHandler(
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
     fun syncState() = toggle.syncState()
 
-    fun openDrawer() = layout.openDrawer(drawerGravity)
+    fun openDrawer() = if (enabled) layout.openDrawer(drawerGravity) else Unit
     fun closeDrawer() = layout.closeDrawer(drawerGravity)
+
+    var enabled = true;
+        set(enabled) {
+            field = enabled;
+            layout.setDrawerLockMode(
+                    if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            )
+        }
 
 }
 
