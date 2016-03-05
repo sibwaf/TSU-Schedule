@@ -113,7 +113,7 @@ private fun manageLayout(
     subgroupSpinner.setSelection(dataFragment.subgroup - 1)
 }
 
-const val DRAWER_LEARNED_KEY = "drawer_learned"
+private const val DRAWER_LEARNED_KEY = "drawer_learned"
 private fun openDrawerForTheFirstTime(
         preferences: SharedPreferences, drawerHandler: NavigationDrawerHandler
 ) {
