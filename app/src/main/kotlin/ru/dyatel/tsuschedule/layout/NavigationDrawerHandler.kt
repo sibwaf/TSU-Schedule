@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
 import android.widget.ArrayAdapter
@@ -27,14 +26,13 @@ import android.R as AR
 class NavigationDrawerHandler(
         activity: Activity,
         fragmentManager: FragmentManager,
+        dataFragment: DataFragment,
         layout: DrawerLayout
 ) {
 
     private val toggle: ActionBarDrawerToggle
 
     init {
-        val dataFragment = fragmentManager.findFragmentByTag(DataFragment.TAG) as DataFragment
-
         val groupIndexEdit = layout.findViewById(R.id.group_index) as EditText
         val subgroupSpinner = layout.findViewById(R.id.subgroup) as Spinner
 
@@ -53,7 +51,7 @@ class NavigationDrawerHandler(
 
         // Manage the drawer toggle
         toggle = object : ActionBarDrawerToggle(
-                activity, layout, activity.findViewById(R.id.toolbar) as Toolbar,
+                activity, layout,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
             override fun onDrawerClosed(drawerView: View?) {
