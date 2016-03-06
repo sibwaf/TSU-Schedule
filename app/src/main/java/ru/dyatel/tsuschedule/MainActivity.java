@@ -1,6 +1,5 @@
 package ru.dyatel.tsuschedule;
 
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -15,12 +14,6 @@ import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String PREFERENCES_FILE = "prefs";
-    private static final String GROUP_INDEX_KEY = "group_index";
-    private static final String SUBGROUP_KEY = "subgroup";
-
-    private DataFragment dataFragment;
-
     private NavigationHandler navigationHandler;
     private NavigationDrawerHandler drawerHandler;
 
@@ -29,17 +22,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Load saved preferences
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
-        String groupIndex = preferences.getString(GROUP_INDEX_KEY, "");
-        int subgroup = preferences.getInt(SUBGROUP_KEY, 1);
-
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Get the data fragment
-        dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
+        DataFragment dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
         if (dataFragment == null) {
-            dataFragment = DataFragment.newInstance(groupIndex, subgroup);
+            dataFragment = new DataFragment();
+            dataFragment.initialize();
             fragmentManager.beginTransaction()
                     .add(dataFragment, DataFragment.TAG)
                     .commit();
@@ -82,17 +71,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return navigationHandler.onOptionsItemSelected(item)
                 || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        SharedPreferences preferences = getSharedPreferences(PREFERENCES_FILE, MODE_PRIVATE);
-        preferences.edit()
-                .putString(GROUP_INDEX_KEY, dataFragment.getGroup())
-                .putInt(SUBGROUP_KEY, dataFragment.getSubgroup())
-                .apply();
     }
 
     @Override

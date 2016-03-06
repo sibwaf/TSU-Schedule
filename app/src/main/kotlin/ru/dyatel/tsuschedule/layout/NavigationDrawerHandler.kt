@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import hirondelle.date4j.DateTime
-import ru.dyatel.tsuschedule.MainActivity
 import ru.dyatel.tsuschedule.ParityReference
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.DataFragment
@@ -69,7 +68,7 @@ class NavigationDrawerHandler(
 
         // Open the drawer if app is launched for the first time
         openDrawerForTheFirstTime(
-                activity.getSharedPreferences(MainActivity.PREFERENCES_FILE, Context.MODE_PRIVATE),
+                activity.getSharedPreferences(DataFragment.PREFERENCES_FILE, Context.MODE_PRIVATE),
                 this
         )
     }

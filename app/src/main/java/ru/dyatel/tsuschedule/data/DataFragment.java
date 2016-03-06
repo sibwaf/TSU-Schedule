@@ -1,5 +1,7 @@
 package ru.dyatel.tsuschedule.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,8 +19,9 @@ public class DataFragment extends Fragment implements DataListener {
 
     public static final String TAG = "data";
 
-    private static final String GROUP_ARGUMENT = "group";
-    private static final String SUBGROUP_ARGUMENT = "subgroup";
+    public static final String PREFERENCES_FILE = "prefs";
+    private static final String GROUP_INDEX_KEY = "group_index";
+    private static final String SUBGROUP_KEY = "subgroup";
 
     private String group;
     private int subgroup;
@@ -29,28 +32,21 @@ public class DataFragment extends Fragment implements DataListener {
     private Set<DataListener> dataRequests = new HashSet<>();
     private Set<DataListener> listeners = new HashSet<>();
 
-    public static DataFragment newInstance(String group, int subgroup) {
-        DataFragment fragment = new DataFragment();
-
-        Bundle bundle = new Bundle();
-        bundle.putString(GROUP_ARGUMENT, group);
-        bundle.putInt(SUBGROUP_ARGUMENT, subgroup);
-        fragment.setArguments(bundle);
-
-        return fragment;
+    public DataFragment() {
     }
 
-    public DataFragment() {
+    public void initialize() {
+        // Load saved data
+        SharedPreferences preferences = getContext()
+                .getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
+        group = preferences.getString(GROUP_INDEX_KEY, "");
+        subgroup = preferences.getInt(SUBGROUP_KEY, 1);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-
-        Bundle arguments = getArguments();
-        group = arguments.getString(GROUP_ARGUMENT);
-        subgroup = arguments.getInt(SUBGROUP_ARGUMENT);
 
         dataDAO = new SavedDataDAO(getActivity().getApplication());
         dataDAO.load(this);
@@ -59,6 +55,13 @@ public class DataFragment extends Fragment implements DataListener {
     @Override
     public void onPause() {
         super.onPause();
+
+        getContext().getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE)
+                .edit()
+                .putString(GROUP_INDEX_KEY, group)
+                .putInt(SUBGROUP_KEY, subgroup)
+                .apply();
+
         dataDAO.save(lessons);
     }
 
