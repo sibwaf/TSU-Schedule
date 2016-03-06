@@ -77,6 +77,7 @@ class NavigationDrawerHandler(
     fun syncState() = toggle.syncState()
     fun onOptionsItemSelected(item: MenuItem): Boolean = toggle.onOptionsItemSelected(item)
 
+    fun isDrawerOpened() = layout.isDrawerOpen(drawerGravity)
     fun openDrawer() = if (enabled) layout.openDrawer(drawerGravity) else Unit
     fun closeDrawer() = layout.closeDrawer(drawerGravity)
 
