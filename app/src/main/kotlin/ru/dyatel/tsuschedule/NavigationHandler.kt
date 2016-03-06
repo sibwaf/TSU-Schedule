@@ -16,6 +16,10 @@ class NavigationHandler(
     }
 
     fun onBackPressed(): Boolean {
+        if (drawerHandler.isDrawerOpened()) {
+            drawerHandler.closeDrawer()
+            return true
+        }
         if (fragmentManager.backStackEntryCount > 0) {
             fragmentManager.popBackStack()
             return true
