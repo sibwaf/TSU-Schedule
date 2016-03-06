@@ -35,9 +35,9 @@ public class DataFragment extends Fragment implements DataListener {
     public DataFragment() {
     }
 
-    public void initialize() {
+    public void initialize(Context context) {
         // Load saved data
-        SharedPreferences preferences = getContext()
+        SharedPreferences preferences = context
                 .getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
         group = preferences.getString(GROUP_INDEX_KEY, "");
         subgroup = preferences.getInt(SUBGROUP_KEY, 1);
