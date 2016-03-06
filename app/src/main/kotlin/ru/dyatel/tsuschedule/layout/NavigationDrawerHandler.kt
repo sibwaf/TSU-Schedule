@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -75,6 +76,7 @@ class NavigationDrawerHandler(
 
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
     fun syncState() = toggle.syncState()
+    fun onOptionsItemSelected(item: MenuItem): Boolean = toggle.onOptionsItemSelected(item)
 
     fun openDrawer() = if (enabled) layout.openDrawer(drawerGravity) else Unit
     fun closeDrawer() = layout.closeDrawer(drawerGravity)
@@ -85,6 +87,7 @@ class NavigationDrawerHandler(
             layout.setDrawerLockMode(
                     if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
             )
+            toggle.isDrawerIndicatorEnabled = enabled
         }
 
 }
