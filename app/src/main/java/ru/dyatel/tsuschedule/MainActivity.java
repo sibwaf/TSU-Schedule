@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         DataFragment dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
         if (dataFragment == null) {
             dataFragment = new DataFragment();
-            dataFragment.initialize();
+            dataFragment.initialize(this);
             fragmentManager.beginTransaction()
                     .add(dataFragment, DataFragment.TAG)
                     .commit();
