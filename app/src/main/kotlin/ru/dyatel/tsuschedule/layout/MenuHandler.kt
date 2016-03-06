@@ -17,8 +17,8 @@ fun createAppMenu(fragmentManager: FragmentManager, context: Context, view: Recy
     })
 
     // Manage the app menu
-    val menuAdapter = MenuButtonAdapter();
-    menuAdapter.addMenuEntry(settingsButton);
+    val menuAdapter = MenuButtonAdapter()
+    menuAdapter.addMenuEntry(settingsButton)
     view.layoutManager = LinearLayoutManager(context)
     view.adapter = menuAdapter
 }
