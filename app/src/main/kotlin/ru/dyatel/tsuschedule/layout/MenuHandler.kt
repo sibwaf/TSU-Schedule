@@ -2,8 +2,8 @@ package ru.dyatel.tsuschedule.layout
 
 import android.content.Context
 import android.support.v4.app.FragmentManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import org.solovyev.android.views.llm.LinearLayoutManager
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.fragments.SettingsFragment
 
