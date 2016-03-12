@@ -85,7 +85,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 
     public void updateData(Set<Lesson> lessons) {
         this.lessons.clear();
-        for (Lesson l : lessons) this.lessons.add(l);
+        this.lessons.addAll(lessons);
         Collections.sort(this.lessons);
 
         notifyDataSetChanged();
