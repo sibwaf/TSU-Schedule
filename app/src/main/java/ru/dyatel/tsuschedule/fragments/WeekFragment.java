@@ -60,7 +60,7 @@ public class WeekFragment extends Fragment implements DataListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_week, container, false);
+        View root = inflater.inflate(R.layout.week_fragment, container, false);
 
         RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
         weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));

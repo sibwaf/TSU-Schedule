@@ -53,7 +53,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new Holder(
                 LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.weekday_layout, parent, false)
+                        .inflate(R.layout.weekday, parent, false)
         );
     }
 

@@ -19,7 +19,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.main_layout, container, false);
+        View root = inflater.inflate(R.layout.main_screen, container, false);
 
         // Set up the ViewPager with the sections adapter and select current parity tab
         ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
