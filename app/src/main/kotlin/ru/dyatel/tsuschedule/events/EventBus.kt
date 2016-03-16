@@ -1,7 +1,5 @@
 package ru.dyatel.tsuschedule.events
 
-import android.app.Activity
-import ru.dyatel.tsuschedule.MainActivity
 import java.util.ArrayList
 import java.util.EnumMap
 
@@ -19,10 +17,6 @@ class EventBus {
             listeners.values.flatten().forEach { it.handleEvent(event) }
 
 }
-
-fun Activity.getEventBus(): EventBus =
-        if (this is MainActivity) eventBus
-        else throw IllegalArgumentException("Provided activity is not a MainActivity!")
 
 private fun <K, V> getOrInitList(map: MutableMap<K, MutableList<V>>, key: K): MutableList<V> {
     var list = map[key]
