@@ -4,8 +4,8 @@ import ru.dyatel.tsuschedule.util.Filter
 
 class ParityFilter(private val parity: Parity) : Filter<Lesson> {
 
-    override fun accept(obj: Lesson?): Boolean =
-            obj!!.parity == Parity.BOTH || obj.parity == parity
+    override fun accept(obj: Lesson): Boolean =
+            obj.parity == Parity.BOTH || obj.parity == parity
 
 }
 
