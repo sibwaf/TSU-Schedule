@@ -14,7 +14,7 @@ class EventBus {
             listeners.values.forEach { it.remove(listener) }
 
     fun broadcast(event: Event) =
-            listeners.values.flatten().forEach { it.handleEvent(event) }
+            listeners[event]?.forEach { it.handleEvent(event) }
 
 }
 
