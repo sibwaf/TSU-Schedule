@@ -56,5 +56,5 @@ dependencies {
 
     compile "com.android.support:design:$supportVersion"
 
-    compile 'ch.acra:acra:4.8.2'
+    compile 'ch.acra:acra:4.8.5'
 }
