@@ -7,8 +7,10 @@ class EventBus {
 
     private val listeners = EnumMap<Event, MutableList<EventListener>>(Event::class.java)
 
-    fun subscribe(listener: EventListener, vararg types: Event) =
-            types.forEach { getOrInitList(listeners, it) += listener }
+    fun subscribe(listener: EventListener, vararg types: Event) {
+        val typeArray = if (types.isEmpty()) Event.values() else types
+        typeArray.forEach { getOrInitList(listeners, it) += listener }
+    }
 
     fun unsubscribe(listener: EventListener) =
             listeners.values.forEach { it.remove(listener) }
