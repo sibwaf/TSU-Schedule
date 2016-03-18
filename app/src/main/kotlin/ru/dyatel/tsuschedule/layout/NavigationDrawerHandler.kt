@@ -17,7 +17,10 @@ import android.widget.TextView
 import hirondelle.date4j.DateTime
 import ru.dyatel.tsuschedule.ParityReference
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.DataFragment
+import ru.dyatel.tsuschedule.data.getGroup
+import ru.dyatel.tsuschedule.data.getSubgroup
+import ru.dyatel.tsuschedule.data.setGroup
+import ru.dyatel.tsuschedule.data.setSubgroup
 import ru.dyatel.tsuschedule.parsing.DateUtil
 import java.util.TimeZone
 import android.R as AR
@@ -27,7 +30,6 @@ private const val drawerGravity = Gravity.LEFT
 class NavigationDrawerHandler(
         activity: Activity,
         fragmentManager: FragmentManager,
-        dataFragment: DataFragment,
         private val layout: DrawerLayout
 ) {
 
@@ -40,7 +42,7 @@ class NavigationDrawerHandler(
         // Initialize drawer layout
         manageLayout(
                 layout.findViewById(R.id.current_parity) as TextView,
-                groupIndexEdit, subgroupSpinner, dataFragment,
+                groupIndexEdit, subgroupSpinner,
                 activity
         )
 
@@ -57,8 +59,8 @@ class NavigationDrawerHandler(
         ) {
             override fun onDrawerClosed(drawerView: View?) {
                 // Save new group and subgroup
-                dataFragment.group = groupIndexEdit.text.toString()
-                dataFragment.subgroup = subgroupSpinner.selectedItemPosition + 1
+                setGroup(groupIndexEdit.text.toString(), activity)
+                setSubgroup(subgroupSpinner.selectedItemPosition + 1, activity)
 
                 super.onDrawerClosed(drawerView)
             }
@@ -92,7 +94,6 @@ private fun manageLayout(
         currentParity: TextView,
         groupIndexEdit: EditText,
         subgroupSpinner: Spinner,
-        dataFragment: DataFragment,
         context: Context
 ) {
     // Show current parity string in the navigation drawer
@@ -101,7 +102,7 @@ private fun manageLayout(
     ))
 
     // Put current group index into the group index editor
-    groupIndexEdit.setText(dataFragment.group)
+    groupIndexEdit.setText(getGroup(context))
 
     // Manage the subgroup spinner
     val spinnerAdapter = ArrayAdapter.createFromResource(
@@ -109,7 +110,7 @@ private fun manageLayout(
     )
     spinnerAdapter.setDropDownViewResource(AR.layout.simple_spinner_dropdown_item)
     subgroupSpinner.adapter = spinnerAdapter
-    subgroupSpinner.setSelection(dataFragment.subgroup - 1)
+    subgroupSpinner.setSelection(getSubgroup(context) - 1)
 }
 
 private const val DRAWER_PREFERENCES = "drawer_preferences"
