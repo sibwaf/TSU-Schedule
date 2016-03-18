@@ -9,9 +9,7 @@ import ru.dyatel.tsuschedule.R;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> {
 
@@ -83,11 +81,8 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
         return lessons.size();
     }
 
-    public void updateData(Set<Lesson> lessons) {
-        this.lessons.clear();
-        this.lessons.addAll(lessons);
-        Collections.sort(this.lessons);
-
+    public void updateData(List<Lesson> lessons) {
+        this.lessons = lessons;
         notifyDataSetChanged();
     }
 
