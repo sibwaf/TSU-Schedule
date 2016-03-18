@@ -31,7 +31,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
     };
     private List<String> weekdayOrder = new ArrayList<>();
 
-    private Map<String, Set<Lesson>> weekdays = new HashMap<>();
+    private Map<String, List<Lesson>> weekdays = new HashMap<>();
 
     class Holder extends RecyclerView.ViewHolder {
 
@@ -71,7 +71,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
         return weekdays.size();
     }
 
-    public void updateData(Set<Lesson> lessons) {
+    public void updateData(List<Lesson> lessons) {
         weekdayOrder.clear();
         weekdays.clear();
 
