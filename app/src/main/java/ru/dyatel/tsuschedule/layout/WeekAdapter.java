@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule.layout;
 
+import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,12 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
     private List<String> weekdayOrder = new ArrayList<>();
 
     private Map<String, List<Lesson>> weekdays = new HashMap<>();
+
+    private Activity activity;
+
+    public WeekAdapter(Activity activity) {
+        this.activity = activity;
+    }
 
     class Holder extends RecyclerView.ViewHolder {
 
@@ -99,7 +106,12 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
             weekdays.put(key, filter.filter(lessons));
         }
 
-        notifyDataSetChanged();
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
 }
