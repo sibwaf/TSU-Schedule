@@ -1,12 +1,11 @@
 package ru.dyatel.tsuschedule.data
 
-import android.os.AsyncTask
 import ru.dyatel.tsuschedule.parsing.Lesson
 import ru.dyatel.tsuschedule.parsing.Parser
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-class DataFetchTask : AsyncTask<String, Void, Set<Lesson>?>() {
+class DataFetcher {
 
     enum class Failure {
         NONE, UNKNOWN, NO_GROUP, WRONG_GROUP, TIMEOUT, CONNECTION_FAIL
@@ -15,8 +14,7 @@ class DataFetchTask : AsyncTask<String, Void, Set<Lesson>?>() {
     var failure: Failure = Failure.NONE
         private set
 
-    override fun doInBackground(vararg params: String): Set<Lesson>? {
-        val group = params[0]
+    fun fetch(group: String): Set<Lesson>? {
         if (group.isBlank()) {
             failure = Failure.NO_GROUP
             return null
