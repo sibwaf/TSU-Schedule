@@ -18,4 +18,22 @@ public class LessonTable implements BaseColumns {
     public static final String TYPE = "type";
     public static final String SUBGROUP = "subgroup";
 
+    public static String getCreateQuery(String name) {
+        return "CREATE TABLE " + name + " (" +
+                LessonTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                LessonTable.PARITY + " TEXT," +
+                LessonTable.WEEKDAY + " TEXT," +
+                LessonTable.TIME + " TEXT," +
+                LessonTable.DISCIPLINE + " TEXT," +
+                LessonTable.AUDITORY + " TEXT," +
+                LessonTable.TEACHER + " TEXT," +
+                LessonTable.TYPE + " TEXT," +
+                LessonTable.SUBGROUP + " CHAR(1)" +
+                ")";
+    }
+
+    public static String getDropQuery(String name) {
+        return "DROP TABLE IF EXISTS " + name;
+    }
+
 }
