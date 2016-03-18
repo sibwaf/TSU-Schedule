@@ -11,8 +11,7 @@ class NavigationHandler(
 ) : FragmentManager.OnBackStackChangedListener {
 
     override fun onBackStackChanged() {
-        val hasEntries = fragmentManager.backStackEntryCount > 0
-        drawerHandler.enabled = !hasEntries
+        drawerHandler.enabled = fragmentManager.backStackEntryCount == 0
     }
 
     fun onBackPressed(): Boolean {
