@@ -11,8 +11,10 @@
 
     <string name="hint_group_index">Индекс группы</string>
 
+    <string name="unknown_failure">Неизвестная ошибка</string>
     <string name="no_group_index">Введите индекс группы</string>
     <string name="wrong_group_index">Некорректный индекс группы</string>
+    <string name="connection_timeout">Таймаут подключения, попробуйте ещё раз</string>
     <string name="load_failure">Ошибка при загрузке данных, попробуйте ещё раз</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
