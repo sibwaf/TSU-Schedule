@@ -12,24 +12,22 @@ class DataFetchTask(
         private val data: SavedDataDAO
 ) : AsyncTask<Void, Void, Void>() {
 
-    private var failed = false
+    private var error: String? = null
 
     override fun doInBackground(vararg params: Void?): Void? {
         val fetcher = DataFetcher()
+        error = fetcher.getError(context)
+
         val lessons = fetcher.fetch(getGroup(context))
+        if (!fetcher.failed()) data.update(lessons)
 
-        if (fetcher.failed()) {
-            Toast.makeText(context, fetcher.getError(context), Toast.LENGTH_LONG).show()
-            failed = true
-            return null
-        }
-
-        data.update(lessons)
         return null
     }
 
     override fun onPostExecute(result: Void?) {
-        if (!failed) eventBus.broadcast(Event.DATA_UPDATED)
+        if (error.isNullOrEmpty()) {
+            eventBus.broadcast(Event.DATA_UPDATED)
+        } else Toast.makeText(context, error, Toast.LENGTH_LONG).show()
     }
 
 }
