@@ -2,12 +2,12 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 
-private const val PREFERENCES = "data_preferences"
+private const val DATA_PREFERENCES = "data_preferences"
 private const val PREFERENCES_GROUP = "group"
 private const val PREFERENCES_SUBGROUP = "subgroup"
 
 private fun getPreferences(context: Context) =
-        context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+        context.getSharedPreferences(DATA_PREFERENCES, Context.MODE_PRIVATE)
 
 fun getGroup(context: Context) =
         getPreferences(context).getString(PREFERENCES_GROUP, "")
