@@ -21,6 +21,8 @@ import ru.dyatel.tsuschedule.data.getGroup
 import ru.dyatel.tsuschedule.data.getSubgroup
 import ru.dyatel.tsuschedule.data.setGroup
 import ru.dyatel.tsuschedule.data.setSubgroup
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.getEventBus
 import ru.dyatel.tsuschedule.parsing.DateUtil
 import java.util.TimeZone
 import android.R as AR
@@ -58,9 +60,16 @@ class NavigationDrawerHandler(
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
             override fun onDrawerClosed(drawerView: View?) {
+                val oldSubgroup = getSubgroup(activity)
+                val newSubgroup = subgroupSpinner.selectedItemPosition + 1
+
+                if (oldSubgroup != newSubgroup) {
+                    activity.getEventBus().broadcast(Event.DATA_UPDATED)
+                }
+
                 // Save new group and subgroup
                 setGroup(groupIndexEdit.text.toString(), activity)
-                setSubgroup(subgroupSpinner.selectedItemPosition + 1, activity)
+                setSubgroup(newSubgroup, activity)
 
                 super.onDrawerClosed(drawerView)
             }
