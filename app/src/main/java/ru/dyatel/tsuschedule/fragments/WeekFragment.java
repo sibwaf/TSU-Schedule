@@ -1,5 +1,7 @@
 package ru.dyatel.tsuschedule.fragments;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -8,27 +10,32 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import org.jetbrains.annotations.NotNull;
+import ru.dyatel.tsuschedule.ActivityUtilKt;
 import ru.dyatel.tsuschedule.R;
-import ru.dyatel.tsuschedule.data.DataFragment;
-import ru.dyatel.tsuschedule.data.DataListener;
+import ru.dyatel.tsuschedule.data.DataFetchTask;
+import ru.dyatel.tsuschedule.data.DataPreferenceHelperKt;
+import ru.dyatel.tsuschedule.data.SavedDataDAO;
+import ru.dyatel.tsuschedule.events.Event;
+import ru.dyatel.tsuschedule.events.EventBus;
+import ru.dyatel.tsuschedule.events.EventListener;
 import ru.dyatel.tsuschedule.layout.WeekAdapter;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.ParityFilter;
 import ru.dyatel.tsuschedule.util.IterableFilter;
 
-import java.util.Set;
-
-public class WeekFragment extends Fragment implements DataListener {
+public class WeekFragment extends Fragment implements EventListener {
 
     private static final String PARITY_ARGUMENT = "parity";
 
     private IterableFilter<Lesson> filter = new IterableFilter<>();
 
-    private DataFragment dataFragment;
-
     private SwipeRefreshLayout swipeRefresh;
     private WeekAdapter weekdays;
+
+    private EventBus eventBus;
+    private SavedDataDAO data;
 
     public static WeekFragment newInstance(Parity parity) {
         WeekFragment fragment = new WeekFragment();
@@ -51,10 +58,22 @@ public class WeekFragment extends Fragment implements DataListener {
         Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
         if (p != null) filter.apply(new ParityFilter(p));
 
-        weekdays = new WeekAdapter();
+        Activity activity = getActivity();
 
-        dataFragment = (DataFragment) getActivity().getSupportFragmentManager()
-                .findFragmentByTag(DataFragment.TAG);
+        weekdays = new WeekAdapter(activity);
+
+        eventBus = ActivityUtilKt.getEventBus(activity);
+        data = ActivityUtilKt.getData(activity);
+
+        eventBus.subscribe(this, Event.DATA_UPDATED);
+
+        new RefreshTask().execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        eventBus.unsubscribe(this);
+        super.onDestroy();
     }
 
     @Override
@@ -71,7 +90,7 @@ public class WeekFragment extends Fragment implements DataListener {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                dataFragment.fetchData();
+                new DataFetchTask(getContext(), eventBus, data).execute();
             }
         });
 
@@ -79,31 +98,26 @@ public class WeekFragment extends Fragment implements DataListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        dataFragment.addListener(this);
-        dataFragment.requestData(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        dataFragment.removeListener(this);
-    }
-
-    @Override
-    public void beforeDataUpdate() {
+    public void handleEvent(@NotNull Event type) {
         swipeRefresh.setRefreshing(true);
+        new RefreshTask().execute();
     }
 
-    @Override
-    public void onDataUpdate(Set<Lesson> lessons) {
-        weekdays.updateData(filter.filter(lessons));
-    }
+    private class RefreshTask extends AsyncTask<Void, Void, Void> {
 
-    @Override
-    public void afterDataUpdate() {
-        swipeRefresh.setRefreshing(false);
+        @Override
+        protected Void doInBackground(Void... params) {
+            weekdays.updateData(filter.filter(
+                    data.request(DataPreferenceHelperKt.getSubgroup(getContext()))
+            ));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            swipeRefresh.setRefreshing(false);
+        }
+
     }
 
 }
