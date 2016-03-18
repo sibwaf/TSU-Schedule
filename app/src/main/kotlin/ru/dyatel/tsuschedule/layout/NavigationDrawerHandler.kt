@@ -37,6 +37,15 @@ class NavigationDrawerHandler(
 
     private val toggle: ActionBarDrawerToggle
 
+    var enabled = true;
+        set(enabled) {
+            field = enabled;
+            layout.setDrawerLockMode(
+                    if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            )
+            toggle.isDrawerIndicatorEnabled = enabled
+        }
+
     init {
         val groupIndexEdit = layout.findViewById(R.id.group_index) as EditText
         val subgroupSpinner = layout.findViewById(R.id.subgroup) as Spinner
@@ -87,15 +96,6 @@ class NavigationDrawerHandler(
     fun isDrawerOpened() = layout.isDrawerOpen(drawerGravity)
     fun openDrawer() = if (enabled) layout.openDrawer(drawerGravity) else Unit
     fun closeDrawer() = layout.closeDrawer(drawerGravity)
-
-    var enabled = true;
-        set(enabled) {
-            field = enabled;
-            layout.setDrawerLockMode(
-                    if (enabled) DrawerLayout.LOCK_MODE_UNLOCKED else DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-            )
-            toggle.isDrawerIndicatorEnabled = enabled
-        }
 
 }
 
