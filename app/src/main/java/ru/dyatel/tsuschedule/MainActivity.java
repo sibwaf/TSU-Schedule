@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import ru.dyatel.tsuschedule.data.DataFragment;
 import ru.dyatel.tsuschedule.data.SavedDataDAO;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.fragments.MainFragment;
@@ -32,16 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Get the data fragment
-        DataFragment dataFragment = (DataFragment) fragmentManager.findFragmentByTag(DataFragment.TAG);
-        if (dataFragment == null) {
-            dataFragment = new DataFragment();
-            dataFragment.initialize(this);
-            fragmentManager.beginTransaction()
-                    .add(dataFragment, DataFragment.TAG)
-                    .commit();
-        }
-
         // Replace ActionBar with Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         drawerHandler = new NavigationDrawerHandler(
-                this, fragmentManager, dataFragment,
+                this, fragmentManager,
                 (DrawerLayout) findViewById(R.id.drawer_layout)
         );
 
