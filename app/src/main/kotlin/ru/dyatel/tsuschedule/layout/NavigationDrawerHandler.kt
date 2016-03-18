@@ -2,7 +2,6 @@ package ru.dyatel.tsuschedule.layout
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.support.v4.app.FragmentManager
 import android.support.v4.widget.DrawerLayout
@@ -67,10 +66,7 @@ class NavigationDrawerHandler(
         layout.addDrawerListener(toggle)
 
         // Open the drawer if app is launched for the first time
-        openDrawerForTheFirstTime(
-                activity.getSharedPreferences(DataFragment.PREFERENCES_FILE, Context.MODE_PRIVATE),
-                this
-        )
+        openDrawerForTheFirstTime(activity, this)
     }
 
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
@@ -116,10 +112,13 @@ private fun manageLayout(
     subgroupSpinner.setSelection(dataFragment.subgroup - 1)
 }
 
+private const val DRAWER_PREFERENCES = "drawer_preferences"
 private const val DRAWER_LEARNED_KEY = "drawer_learned"
 private fun openDrawerForTheFirstTime(
-        preferences: SharedPreferences, drawerHandler: NavigationDrawerHandler
+        context: Context, drawerHandler: NavigationDrawerHandler
 ) {
+    val preferences = context.getSharedPreferences(DRAWER_PREFERENCES, Context.MODE_PRIVATE)
+
     val alreadySeen = preferences.getBoolean(DRAWER_LEARNED_KEY, false)
     if (!alreadySeen) {
         drawerHandler.openDrawer()
