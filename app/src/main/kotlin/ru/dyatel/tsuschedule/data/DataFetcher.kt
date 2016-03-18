@@ -1,9 +1,19 @@
 package ru.dyatel.tsuschedule.data
 
+import android.content.Context
+import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
 import ru.dyatel.tsuschedule.parsing.Parser
 import java.io.IOException
 import java.net.SocketTimeoutException
+
+private val errorStrings = mapOf(
+        DataFetcher.Failure.UNKNOWN to R.string.unknown_failure,
+        DataFetcher.Failure.NO_GROUP to R.string.no_group_index,
+        DataFetcher.Failure.WRONG_GROUP to R.string.wrong_group_index,
+        DataFetcher.Failure.TIMEOUT to R.string.connection_timeout,
+        DataFetcher.Failure.CONNECTION_FAIL to R.string.load_failure
+)
 
 class DataFetcher {
 
@@ -11,8 +21,14 @@ class DataFetcher {
         NONE, UNKNOWN, NO_GROUP, WRONG_GROUP, TIMEOUT, CONNECTION_FAIL
     }
 
-    var failure: Failure = Failure.NONE
-        private set
+    private var failure: Failure = Failure.NONE
+    fun failed() = failure != Failure.NONE
+
+    fun getError(context: Context): String? {
+        val stringRes = errorStrings[failure]
+        if (stringRes != null) return context.getString(stringRes)
+        return ""
+    }
 
     fun fetch(group: String): Set<Lesson>? {
         if (group.isBlank()) {
