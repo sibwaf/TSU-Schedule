@@ -1,156 +1,130 @@
 package ru.dyatel.tsuschedule.data;
 
-import android.content.ContentValues;
-import android.content.Context;
+import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.provider.BaseColumns;
+import org.jetbrains.annotations.NotNull;
+import ru.dyatel.tsuschedule.ActivityUtilKt;
+import ru.dyatel.tsuschedule.events.Event;
+import ru.dyatel.tsuschedule.events.EventBus;
+import ru.dyatel.tsuschedule.events.EventListener;
 import ru.dyatel.tsuschedule.parsing.Lesson;
-import ru.dyatel.tsuschedule.parsing.Parity;
+import ru.dyatel.tsuschedule.parsing.LessonUtilKt;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-public class SavedDataDAO extends SQLiteOpenHelper {
+public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
 
-    private static final int DB_VERSION = 1;
-    private static final String DB_FILE = "lessons.db";
+    private static final int DB_VERSION = 2;
+    private static final String DB_FILE = "data.db";
 
-    private class Table implements BaseColumns {
+    private static final String TABLE_UNFILTERED = "lessons";
+    private static final String TABLE_FILTERED = "filtered";
 
-        public static final String TABLE_NAME = "lessons";
+    private static final String QUERY_WHERE_SUBGROUP =
+            LessonTable.SUBGROUP + "=0 OR " + LessonTable.SUBGROUP + "=?";
 
-        public static final String COLUMN_PARITY = "parity";
-        public static final String COLUMN_WEEKDAY = "weekday";
-        public static final String COLUMN_TIME = "time";
+    private EventBus eventBus;
 
-        public static final String COLUMN_DISCIPLINE = "discipline";
-        public static final String COLUMN_AUDITORY = "auditory";
-        public static final String COLUMN_TEACHER = "teacher";
-
-        public static final String COLUMN_TYPE = "type";
-        public static final String COLUMN_SUBGROUP = "subgroup";
-
-    }
-
-    private static final String QUERY_CREATE_TABLE =
-            "CREATE TABLE " + Table.TABLE_NAME + " (" +
-                    Table._ID + " INTEGER PRIMARY KEY," +
-                    Table.COLUMN_PARITY + " TEXT," +
-                    Table.COLUMN_WEEKDAY + " TEXT," +
-                    Table.COLUMN_TIME + " TEXT," +
-                    Table.COLUMN_DISCIPLINE + " TEXT," +
-                    Table.COLUMN_AUDITORY + " TEXT," +
-                    Table.COLUMN_TEACHER + " TEXT," +
-                    Table.COLUMN_TYPE + " TEXT," +
-                    Table.COLUMN_SUBGROUP + " CHAR(1)" +
-                    " )";
-
-    private static final String QUERY_DROP_TABLE =
-            "DROP TABLE IF EXISTS " + Table.TABLE_NAME;
-
-    public SavedDataDAO(Context context) {
-        super(context, DB_FILE, null, DB_VERSION);
+    public SavedDataDAO(Activity activity) {
+        super(activity, DB_FILE, null, DB_VERSION);
+        eventBus = ActivityUtilKt.getEventBus(activity);
+        eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(QUERY_CREATE_TABLE);
+        db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
+        db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Recreate table
-        db.execSQL(QUERY_DROP_TABLE);
+        // Recreate tables
+        db.execSQL(LessonTable.getDropQuery(TABLE_UNFILTERED));
+        db.execSQL(LessonTable.getDropQuery(TABLE_FILTERED));
         onCreate(db);
     }
 
-    public void save(final Set<Lesson> lessons) {
+    public void update(Collection<Lesson> lessons) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_UNFILTERED, null, null); // Clear table from previous data
+            for (Lesson l : lessons) {
+                db.insert(TABLE_UNFILTERED, null, LessonUtilKt.toContentValues(l));
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        applyModifiers();
+    }
+
+    private void applyModifiers() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        Cursor cursor = db.query(TABLE_UNFILTERED, null, null, null, null, null, null);
+        Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
+
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_FILTERED, null, null);
+            while (cursor.moveToNext()) {
+                Lesson lesson = LessonUtilKt.constructLessonFromCursor(cursor, indices);
+                // TODO: apply modifiers to the lesson
+                db.insert(TABLE_FILTERED, null, LessonUtilKt.toContentValues(lesson));
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        cursor.close();
+    }
+
+    public List<Lesson> request(int subgroup) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_FILTERED,
+                null,
+                QUERY_WHERE_SUBGROUP, new String[]{String.valueOf(subgroup)},
+                null, null,
+                LessonTable.TIME
+        );
+        Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
+
+        List<Lesson> lessons = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            lessons.add(LessonUtilKt.constructLessonFromCursor(cursor, indices));
+        }
+
+        cursor.close();
+
+        return lessons;
+    }
+
+    @Override
+    public void handleEvent(@NotNull Event type) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                SQLiteDatabase db = getWritableDatabase();
-
-                db.beginTransaction();
-                try {
-                    db.delete(Table.TABLE_NAME, null, null); // Clear table from previous data
-
-                    for (Lesson l : lessons) {
-                        ContentValues values = new ContentValues();
-                        values.put(Table.COLUMN_PARITY, l.getParity().toString());
-                        values.put(Table.COLUMN_WEEKDAY, l.getWeekday());
-                        values.put(Table.COLUMN_TIME, l.getTime());
-                        values.put(Table.COLUMN_DISCIPLINE, l.getDiscipline());
-                        values.put(Table.COLUMN_AUDITORY, l.getAuditory());
-                        values.put(Table.COLUMN_TEACHER, l.getTeacher());
-                        values.put(Table.COLUMN_TYPE, l.getType().toString());
-                        values.put(Table.COLUMN_SUBGROUP, l.getSubgroup());
-                        db.insert(Table.TABLE_NAME, null, values);
-                    }
-
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-
-                db.close();
+                applyModifiers();
                 return null;
             }
-        }.execute();
-    }
-
-    public void load(final DataListener listener) {
-        new AsyncTask<Void, Void, Set<Lesson>>() {
-            @Override
-            protected void onPreExecute() {
-                listener.beforeDataUpdate();
-            }
 
             @Override
-            protected Set<Lesson> doInBackground(Void... params) {
-                Set<Lesson> result = Collections.emptySet();
-
-                SQLiteDatabase db = getReadableDatabase();
-
-                Cursor c = db.query(Table.TABLE_NAME, null, null, null, null, null, null);
-                if (c.moveToFirst()) {
-                    result = new HashSet<>();
-                    int indexParity = c.getColumnIndexOrThrow(Table.COLUMN_PARITY);
-                    int indexWeekday = c.getColumnIndexOrThrow(Table.COLUMN_WEEKDAY);
-                    int indexTime = c.getColumnIndexOrThrow(Table.COLUMN_TIME);
-                    int indexDiscipline = c.getColumnIndexOrThrow(Table.COLUMN_DISCIPLINE);
-                    int indexAuditory = c.getColumnIndexOrThrow(Table.COLUMN_AUDITORY);
-                    int indexTeacher = c.getColumnIndexOrThrow(Table.COLUMN_TEACHER);
-                    int indexType = c.getColumnIndexOrThrow(Table.COLUMN_TYPE);
-                    int indexSubgroup = c.getColumnIndexOrThrow(Table.COLUMN_SUBGROUP);
-                    do {
-                        result.add(new Lesson(
-                                Enum.valueOf(Parity.class, c.getString(indexParity)),
-                                c.getString(indexWeekday),
-                                c.getString(indexTime),
-                                c.getString(indexDiscipline),
-                                c.getString(indexAuditory),
-                                c.getString(indexTeacher),
-                                Enum.valueOf(Lesson.Type.class, c.getString(indexType)),
-                                c.getInt(indexSubgroup)
-                        ));
-                    } while (c.moveToNext());
-                }
-                c.close();
-
-                db.close();
-                return result;
+            protected void onPostExecute(Void aVoid) {
+                eventBus.broadcast(Event.DATA_UPDATED);
             }
-
-            @Override
-            protected void onPostExecute(Set<Lesson> lessons) {
-                listener.onDataUpdate(lessons);
-                listener.afterDataUpdate();
-            }
-
         }.execute();
     }
 
