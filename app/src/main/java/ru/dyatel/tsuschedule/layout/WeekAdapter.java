@@ -38,7 +38,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
         TextView weekday;
         RecyclerView list;
 
-        public Holder(View v) {
+        Holder(View v) {
             super(v);
 
             weekday = (TextView) v.findViewById(R.id.weekday);
