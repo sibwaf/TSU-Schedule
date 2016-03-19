@@ -36,9 +36,11 @@ class DataFetcher {
             return null
         }
 
+        val parser = Parser();
+
         var lessons: Set<Lesson>? = null
         try {
-            lessons = Parser.getLessons(group)
+            lessons = parser.getLessons(group)
         } catch(e: IllegalArgumentException) {
             failure = Failure.WRONG_GROUP
         } catch(e: SocketTimeoutException) {
