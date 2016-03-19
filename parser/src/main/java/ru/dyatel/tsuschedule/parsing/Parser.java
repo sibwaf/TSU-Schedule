@@ -24,13 +24,13 @@ public class Parser {
     private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
     private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d).*?\\))$");
 
-    private static Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
+    private Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
 
-    public static void setTimeout(int timeout) {
+    public void setTimeout(int timeout) {
         connection.timeout(timeout);
     }
 
-    public static Set<Lesson> getLessons(String group) throws IOException {
+    public Set<Lesson> getLessons(String group) throws IOException {
         Document response = connection.data("group", group).get();
 
         if (response.getElementById("results").children().size() == 0)
