@@ -27,7 +27,10 @@ class DataFetchTask(
     override fun onPostExecute(result: Void?) {
         if (error.isNullOrEmpty()) {
             eventBus.broadcast(Event.DATA_UPDATED)
-        } else Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        } else {
+            eventBus.broadcast(Event.DATA_UPDATE_FAILED)
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        }
     }
 
 }
