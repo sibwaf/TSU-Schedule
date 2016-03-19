@@ -65,7 +65,7 @@ public class WeekFragment extends Fragment implements EventListener {
         eventBus = ActivityUtilKt.getEventBus(activity);
         data = ActivityUtilKt.getData(activity);
 
-        eventBus.subscribe(this, Event.DATA_UPDATED);
+        eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
 
         new RefreshTask().execute();
     }
@@ -99,8 +99,15 @@ public class WeekFragment extends Fragment implements EventListener {
 
     @Override
     public void handleEvent(@NotNull Event type) {
-        swipeRefresh.setRefreshing(true);
-        new RefreshTask().execute();
+        switch (type) {
+            case DATA_UPDATED:
+                swipeRefresh.setRefreshing(true);
+                new RefreshTask().execute();
+                break;
+            case DATA_UPDATE_FAILED:
+                swipeRefresh.setRefreshing(false);
+                break;
+        }
     }
 
     private class RefreshTask extends AsyncTask<Void, Void, Void> {
