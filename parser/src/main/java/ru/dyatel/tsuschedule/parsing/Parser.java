@@ -113,10 +113,14 @@ public class Parser {
     private static Lesson.Type getType(String discipline) {
         Matcher m = typePattern.matcher(discipline);
         if (m.matches()) {
-            String typeString = m.group(1);
-            if (typeString.equals(practiceString)) return Lesson.Type.PRACTICE;
-            if (typeString.equals(lectureString)) return Lesson.Type.LECTURE;
-            if (typeString.equals(laboratoryString)) return Lesson.Type.LABORATORY;
+            switch (m.group(1)) {
+                case practiceString:
+                    return Lesson.Type.PRACTICE;
+                case lectureString:
+                    return Lesson.Type.LECTURE;
+                case laboratoryString:
+                    return Lesson.Type.LABORATORY;
+            }
         }
         return Lesson.Type.UNKNOWN;
     }
