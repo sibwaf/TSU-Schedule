@@ -56,10 +56,11 @@ public class ParserTest {
         filter.apply(firstSubgroup);
 
         Set<Lesson> result = filter.filter(lessons);
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
         assertTrue(containsDiscipline(result, "Л:Языки и методы программирования"));
         assertTrue(containsDiscipline(result, "Л:Алгебра и аналитическая геометрия"));
         assertTrue(containsDiscipline(result, "Пр:Алгебра и аналитическая геометрия"));
+        assertTrue(containsDiscipline(result, "Кураторский час"));
     }
 
     @Test
