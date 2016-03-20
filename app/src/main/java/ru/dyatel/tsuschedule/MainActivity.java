@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         eventBus = new EventBus();
         data = new SavedDataDAO(this);
