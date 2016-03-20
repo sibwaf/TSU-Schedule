@@ -17,6 +17,9 @@
     <string name="connection_timeout">Таймаут подключения, попробуйте ещё раз</string>
     <string name="load_failure">Ошибка при загрузке данных, попробуйте ещё раз</string>
 
+    <string name="preferences_timeout_title">Таймаут подключения</string>
+    <string name="preferences_timeout_description">В миллисекундах, 0 для отключения</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

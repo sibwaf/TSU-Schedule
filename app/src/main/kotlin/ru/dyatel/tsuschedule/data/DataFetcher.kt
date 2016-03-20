@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import ru.dyatel.tsuschedule.R
+import ru.dyatel.tsuschedule.getConnectionTimeout
 import ru.dyatel.tsuschedule.parsing.Lesson
 import ru.dyatel.tsuschedule.parsing.Parser
 import java.io.IOException
@@ -37,6 +38,7 @@ class DataFetcher(private val context: Context) {
         }
 
         val parser = Parser();
+        parser.setTimeout(getConnectionTimeout(context))
 
         var lessons: Set<Lesson>? = null
         try {
