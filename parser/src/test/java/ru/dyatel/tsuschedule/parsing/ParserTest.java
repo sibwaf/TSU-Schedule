@@ -19,7 +19,7 @@ public class ParserTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        lessons = Parser.getLessons("221251");
+        lessons = new Parser().getLessons("221251");
     }
 
     @Test

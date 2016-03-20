@@ -6,7 +6,7 @@ public class ParserWrongDataTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongGroup() throws Exception {
-        Parser.getLessons("221");
+        new Parser().getLessons("221");
     }
 
 }
