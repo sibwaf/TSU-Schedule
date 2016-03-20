@@ -15,7 +15,7 @@ private val errorStrings = mapOf(
         DataFetcher.Failure.CONNECTION_FAIL to R.string.load_failure
 )
 
-class DataFetcher {
+class DataFetcher(private val context: Context) {
 
     enum class Failure {
         NONE, UNKNOWN, NO_GROUP, WRONG_GROUP, TIMEOUT, CONNECTION_FAIL
@@ -24,7 +24,7 @@ class DataFetcher {
     private var failure: Failure = Failure.NONE
     fun failed() = failure != Failure.NONE
 
-    fun getError(context: Context): String? {
+    fun getError(): String? {
         val stringRes = errorStrings[failure]
         if (stringRes != null) return context.getString(stringRes)
         return ""

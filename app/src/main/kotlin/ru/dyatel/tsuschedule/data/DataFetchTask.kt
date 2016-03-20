@@ -15,10 +15,10 @@ class DataFetchTask(
     private var error: String? = null
 
     override fun doInBackground(vararg params: Void?): Void? {
-        val fetcher = DataFetcher()
+        val fetcher = DataFetcher(context)
 
         val lessons = fetcher.fetch(getGroup(context))
-        error = fetcher.getError(context)
+        error = fetcher.getError()
         if (!fetcher.failed()) data.update(lessons)
 
         return null
