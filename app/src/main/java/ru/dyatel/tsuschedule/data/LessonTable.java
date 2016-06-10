@@ -20,15 +20,15 @@ public class LessonTable implements BaseColumns {
 
     public static String getCreateQuery(String name) {
         return "CREATE TABLE " + name + " (" +
-                LessonTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                LessonTable.PARITY + " TEXT," +
-                LessonTable.WEEKDAY + " TEXT," +
-                LessonTable.TIME + " TEXT," +
-                LessonTable.DISCIPLINE + " TEXT," +
-                LessonTable.AUDITORY + " TEXT," +
-                LessonTable.TEACHER + " TEXT," +
-                LessonTable.TYPE + " TEXT," +
-                LessonTable.SUBGROUP + " CHAR(1)" +
+                _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                PARITY + " TEXT," +
+                WEEKDAY + " TEXT," +
+                TIME + " TEXT," +
+                DISCIPLINE + " TEXT," +
+                AUDITORY + " TEXT," +
+                TEACHER + " TEXT," +
+                TYPE + " TEXT," +
+                SUBGROUP + " CHAR(1)" +
                 ")";
     }
 
