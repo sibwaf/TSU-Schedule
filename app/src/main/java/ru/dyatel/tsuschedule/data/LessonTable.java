@@ -32,8 +32,4 @@ public class LessonTable implements BaseColumns {
                 ")";
     }
 
-    public static String getDropQuery(String name) {
-        return "DROP TABLE IF EXISTS " + name;
-    }
-
 }
