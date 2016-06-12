@@ -9,7 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import ru.dyatel.tsuschedule.data.SavedDataDAO;
+import ru.dyatel.tsuschedule.data.LessonDAO;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.fragments.MainFragment;
 import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
@@ -17,7 +17,7 @@ import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
 public class MainActivity extends AppCompatActivity {
 
     private EventBus eventBus;
-    private SavedDataDAO data;
+    private LessonDAO lessonDAO;
 
     private NavigationHandler navigationHandler;
     private NavigationDrawerHandler drawerHandler;
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         eventBus = new EventBus();
-        data = new SavedDataDAO(this);
+        lessonDAO = new LessonDAO(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
         return eventBus;
     }
 
-    public SavedDataDAO getData() {
-        return data;
+    public LessonDAO getLessonDAO() {
+        return lessonDAO;
     }
 
 }
