@@ -3,7 +3,6 @@ package ru.dyatel.tsuschedule.data;
 import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import org.jetbrains.annotations.NotNull;
 import ru.dyatel.tsuschedule.ActivityUtilKt;
@@ -18,10 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
-
-    private static final int DB_VERSION = 2;
-    private static final String DB_FILE = "data.db";
+public class LessonDAO implements EventListener {
 
     private static final String TABLE_UNFILTERED = "lessons";
     private static final String TABLE_FILTERED = "filtered";
@@ -30,29 +26,28 @@ public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
             LessonTable.SUBGROUP + "=0 OR " + LessonTable.SUBGROUP + "=?";
 
     private EventBus eventBus;
+	private DatabaseManager manager;
 
-    public SavedDataDAO(Activity activity) {
-        super(activity, DB_FILE, null, DB_VERSION);
-        eventBus = ActivityUtilKt.getEventBus(activity);
+	public LessonDAO(Activity activity, DatabaseManager manager) {
+		eventBus = ActivityUtilKt.getEventBus(activity);
         eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
-    }
+		this.manager = manager;
+	}
 
-    @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
         db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
     }
 
-    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Recreate tables
-        db.execSQL(LessonTable.getDropQuery(TABLE_UNFILTERED));
-        db.execSQL(LessonTable.getDropQuery(TABLE_FILTERED));
-        onCreate(db);
+		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_UNFILTERED));
+		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_FILTERED));
+		onCreate(db);
     }
 
     public void update(Collection<Lesson> lessons) {
-        SQLiteDatabase db = getWritableDatabase();
+		SQLiteDatabase db = manager.getWritableDatabase();
 
         db.beginTransaction();
         try {
@@ -69,7 +64,7 @@ public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
     }
 
     private void applyModifiers() {
-        SQLiteDatabase db = getWritableDatabase();
+		SQLiteDatabase db = manager.getWritableDatabase();
 
         Cursor cursor = db.query(TABLE_UNFILTERED, null, null, null, null, null, null);
         Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
@@ -91,7 +86,7 @@ public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
     }
 
     public List<Lesson> request(int subgroup) {
-        SQLiteDatabase db = getReadableDatabase();
+		SQLiteDatabase db = manager.getReadableDatabase();
 
         Cursor cursor = db.query(
                 TABLE_FILTERED,

@@ -9,14 +9,14 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 
 private val errorStrings = mapOf(
-        DataFetcher.Failure.UNKNOWN to R.string.unknown_failure,
-        DataFetcher.Failure.NO_GROUP to R.string.no_group_index,
-        DataFetcher.Failure.WRONG_GROUP to R.string.wrong_group_index,
-        DataFetcher.Failure.TIMEOUT to R.string.connection_timeout,
-        DataFetcher.Failure.CONNECTION_FAIL to R.string.load_failure
+        LessonFetcher.Failure.UNKNOWN to R.string.unknown_failure,
+        LessonFetcher.Failure.NO_GROUP to R.string.no_group_index,
+        LessonFetcher.Failure.WRONG_GROUP to R.string.wrong_group_index,
+        LessonFetcher.Failure.TIMEOUT to R.string.connection_timeout,
+        LessonFetcher.Failure.CONNECTION_FAIL to R.string.load_failure
 )
 
-class DataFetcher(private val context: Context) {
+class LessonFetcher(private val context: Context) {
 
     enum class Failure {
         NONE, UNKNOWN, NO_GROUP, WRONG_GROUP, TIMEOUT, CONNECTION_FAIL

@@ -72,13 +72,11 @@ class NavigationDrawerHandler(
                 val oldSubgroup = getSubgroup(activity)
                 val newSubgroup = subgroupSpinner.selectedItemPosition + 1
 
-                if (oldSubgroup != newSubgroup) {
-                    activity.getEventBus().broadcast(Event.DATA_UPDATED)
-                }
-
                 // Save new group and subgroup
                 setGroup(groupIndexEdit.text.toString(), activity)
                 setSubgroup(newSubgroup, activity)
+
+                if (oldSubgroup != newSubgroup) activity.getEventBus().broadcast(Event.DATA_UPDATED)
 
                 super.onDrawerClosed(drawerView)
             }

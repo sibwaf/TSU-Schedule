@@ -6,16 +6,16 @@ import android.widget.Toast
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 
-class DataFetchTask(
+class LessonFetchTask(
         private val context: Context,
         private val eventBus: EventBus,
-        private val data: SavedDataDAO
+        private val data: LessonDAO
 ) : AsyncTask<Void, Void, Void>() {
 
     private var error: String? = null
 
     override fun doInBackground(vararg params: Void?): Void? {
-        val fetcher = DataFetcher(context)
+        val fetcher = LessonFetcher(context)
 
         val lessons = fetcher.fetch(getGroup(context))
         error = fetcher.getError()
