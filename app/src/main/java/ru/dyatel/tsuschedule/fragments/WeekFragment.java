@@ -63,7 +63,7 @@ public class WeekFragment extends Fragment implements EventListener {
         weekdays = new WeekAdapter(activity);
 
         eventBus = ActivityUtilKt.getEventBus(activity);
-        lessonDAO = ActivityUtilKt.getLessons(activity);
+        lessonDAO = ActivityUtilKt.getDatabaseManager(activity).getLessonDAO();
 
         eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
 
