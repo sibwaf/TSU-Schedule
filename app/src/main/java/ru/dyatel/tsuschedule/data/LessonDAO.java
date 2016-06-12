@@ -41,9 +41,9 @@ public class LessonDAO implements EventListener {
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Recreate tables
-        db.execSQL(LessonTable.getDropQuery(TABLE_UNFILTERED));
-        db.execSQL(LessonTable.getDropQuery(TABLE_FILTERED));
-        onCreate(db);
+		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_UNFILTERED));
+		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_FILTERED));
+		onCreate(db);
     }
 
     public void update(Collection<Lesson> lessons) {

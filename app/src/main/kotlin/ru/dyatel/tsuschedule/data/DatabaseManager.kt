@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 3
 
+fun getDropTableQuery(name: String) = "DROP TABLE IF EXISTS " + name
+
 class DatabaseManager(activity: Activity) : SQLiteOpenHelper(activity, DB_FILE, null, DB_VERSION) {
 
     val lessonDAO = LessonDAO(activity, this)
