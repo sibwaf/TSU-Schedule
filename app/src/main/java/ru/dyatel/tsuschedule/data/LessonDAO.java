@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
+public class LessonDAO extends SQLiteOpenHelper implements EventListener {
 
     private static final int DB_VERSION = 2;
     private static final String DB_FILE = "data.db";
@@ -31,7 +31,7 @@ public class SavedDataDAO extends SQLiteOpenHelper implements EventListener {
 
     private EventBus eventBus;
 
-    public SavedDataDAO(Activity activity) {
+    public LessonDAO(Activity activity) {
         super(activity, DB_FILE, null, DB_VERSION);
         eventBus = ActivityUtilKt.getEventBus(activity);
         eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
