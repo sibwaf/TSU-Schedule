@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import org.jetbrains.annotations.NotNull;
 import ru.dyatel.tsuschedule.ActivityUtilKt;
 import ru.dyatel.tsuschedule.R;
-import ru.dyatel.tsuschedule.data.DataFetchTask;
 import ru.dyatel.tsuschedule.data.DataPreferenceHelperKt;
-import ru.dyatel.tsuschedule.data.SavedDataDAO;
+import ru.dyatel.tsuschedule.data.LessonDAO;
+import ru.dyatel.tsuschedule.data.LessonFetchTask;
 import ru.dyatel.tsuschedule.events.Event;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.events.EventListener;
@@ -35,7 +35,7 @@ public class WeekFragment extends Fragment implements EventListener {
     private WeekAdapter weekdays;
 
     private EventBus eventBus;
-    private SavedDataDAO data;
+    private LessonDAO lessonDAO;
 
     public static WeekFragment newInstance(Parity parity) {
         WeekFragment fragment = new WeekFragment();
@@ -63,7 +63,7 @@ public class WeekFragment extends Fragment implements EventListener {
         weekdays = new WeekAdapter(activity);
 
         eventBus = ActivityUtilKt.getEventBus(activity);
-        data = ActivityUtilKt.getData(activity);
+        lessonDAO = ActivityUtilKt.getDatabaseManager(activity).getLessonDAO();
 
         eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
 
@@ -90,7 +90,7 @@ public class WeekFragment extends Fragment implements EventListener {
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new DataFetchTask(getContext(), eventBus, data).execute();
+                new LessonFetchTask(getContext(), eventBus, lessonDAO).execute();
             }
         });
 
@@ -115,7 +115,7 @@ public class WeekFragment extends Fragment implements EventListener {
         @Override
         protected Void doInBackground(Void... params) {
             weekdays.updateData(filter.filter(
-                    data.request(DataPreferenceHelperKt.getSubgroup(getContext()))
+                    lessonDAO.request(DataPreferenceHelperKt.getSubgroup(getContext()))
             ));
             return null;
         }
