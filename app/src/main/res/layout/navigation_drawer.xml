@@ -11,24 +11,24 @@
     <!-- Current parity indicator start -->
 
     <TextView
-        android:id="@+id/current_parity_text"
+        android:id="@+id/even_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/parity_hint_margin"
-        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/current_parity_margin"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/current_parity"
-        android:textSize="@dimen/parity_hint_text_size"
-        android:text="@string/hint_current_parity"/>
+        android:layout_alignParentTop="true"
+        android:text="@string/even_week"
+        style="@style/TextAppearance.AppCompat.Medium"/>
 
     <TextView
-        android:id="@id/current_parity"
+        android:id="@+id/odd_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/parity_hint_margin"
-        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/current_parity_margin"
         android:layout_alignParentRight="true"
-        android:textSize="@dimen/parity_hint_text_size"/>
+        android:layout_alignParentTop="true"
+        android:text="@string/odd_week"
+        style="@style/TextAppearance.AppCompat.Medium"/>
 
     <!-- Current parity indicator end -->
     <!-- ____________________________ -->
@@ -37,7 +37,7 @@
         style="@style/Divider"
         android:id="@+id/navigation_drawer_parity_divider"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/current_parity_text"/>
+        android:layout_below="@id/even_week"/>
 
     <!-- _____________________________ -->
     <!-- Group/subgroup selector start -->

@@ -4,9 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.support.v4.app.FragmentManager
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.RecyclerView
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -15,7 +18,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import hirondelle.date4j.DateTime
-import ru.dyatel.tsuschedule.ParityReference
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.getGroup
 import ru.dyatel.tsuschedule.data.getSubgroup
@@ -24,6 +26,7 @@ import ru.dyatel.tsuschedule.data.setSubgroup
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.getEventBus
 import ru.dyatel.tsuschedule.parsing.DateUtil
+import ru.dyatel.tsuschedule.parsing.Parity
 import java.util.TimeZone
 import android.R as AR
 
@@ -52,7 +55,8 @@ class NavigationDrawerHandler(
 
         // Initialize drawer layout
         manageLayout(
-                layout.findViewById(R.id.current_parity) as TextView,
+                layout.findViewById(R.id.even_week) as TextView,
+                layout.findViewById(R.id.odd_week) as TextView,
                 groupIndexEdit, subgroupSpinner,
                 activity
         )
@@ -98,15 +102,26 @@ class NavigationDrawerHandler(
 }
 
 private fun manageLayout(
-        currentParity: TextView,
+        evenWeekText: TextView,
+        oddWeekText: TextView,
         groupIndexEdit: EditText,
         subgroupSpinner: Spinner,
         context: Context
 ) {
-    // Show current parity string in the navigation drawer
-    currentParity.text = ParityReference.getStringFromParity(DateUtil.getWeekParity(
-            DateTime.now(TimeZone.getDefault())
-    ))
+    // Recolor parity labels to show current parity
+    val enabledWeek: TextView
+    val disabledWeek: TextView
+    if (DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())) == Parity.EVEN) {
+        enabledWeek = evenWeekText; disabledWeek = oddWeekText;
+    } else {
+        enabledWeek = oddWeekText; disabledWeek = evenWeekText;
+    }
+    enabledWeek.setTextColor(ContextCompat.getColor(context, R.color.enabled_week))
+    val content = SpannableString(enabledWeek.text)
+    content.setSpan(UnderlineSpan(), 0, enabledWeek.text.length, 0)
+    enabledWeek.text = content
+    disabledWeek.setTextColor(ContextCompat.getColor(context, R.color.disabled_week))
+    disabledWeek.text = SpannableString(disabledWeek.text)
 
     // Put current group index into the group index editor
     groupIndexEdit.setText(getGroup(context))

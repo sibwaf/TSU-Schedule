@@ -4,6 +4,9 @@
     <color name="primary_color">#0288D1</color>
     <color name="primary_dark_color">#01579B</color>
 
+    <color name="enabled_week">#212121</color>
+    <color name="disabled_week">#9E9E9E</color>
+
     <color name="practice_color">#76FF03</color>
     <color name="lecture_color">#03A9F4</color>
     <color name="laboratory_color">#F44336</color>
