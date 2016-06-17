@@ -55,8 +55,8 @@ class NavigationDrawerHandler(
 
         // Initialize drawer layout
         manageLayout(
-                layout.findViewById(R.id.even_week) as TextView,
                 layout.findViewById(R.id.odd_week) as TextView,
+                layout.findViewById(R.id.even_week) as TextView,
                 groupIndexEdit, subgroupSpinner,
                 activity
         )
@@ -102,8 +102,8 @@ class NavigationDrawerHandler(
 }
 
 private fun manageLayout(
-        evenWeekText: TextView,
         oddWeekText: TextView,
+        evenWeekText: TextView,
         groupIndexEdit: EditText,
         subgroupSpinner: Spinner,
         context: Context

@@ -11,23 +11,23 @@
     <!-- Current parity indicator start -->
 
     <TextView
-        android:id="@+id/even_week"
+        android:id="@+id/odd_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/current_parity_margin"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="@string/even_week"
+        android:text="@string/odd_week"
         style="@style/TextAppearance.AppCompat.Medium"/>
 
     <TextView
-        android:id="@+id/odd_week"
+        android:id="@+id/even_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/current_parity_margin"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="@string/odd_week"
+        android:text="@string/even_week"
         style="@style/TextAppearance.AppCompat.Medium"/>
 
     <!-- Current parity indicator end -->
