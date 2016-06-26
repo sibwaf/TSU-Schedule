@@ -1,6 +1,6 @@
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 24
+    buildToolsVersion '24'
 
     Properties properties = new Properties()
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId 'ru.dyatel.tsuschedule'
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 3
         versionName '0.6'
 
@@ -43,7 +43,7 @@ android {
     }
 }
 
-def supportVersion = '23.2.1'
+def supportVersion = '24.0.0'
 
 dependencies {
     compile project(':util')
@@ -56,5 +56,5 @@ dependencies {
 
     compile "com.android.support:design:$supportVersion"
 
-    compile 'ch.acra:acra:4.8.5'
+    compile 'ch.acra:acra:4.9.0'
 }
