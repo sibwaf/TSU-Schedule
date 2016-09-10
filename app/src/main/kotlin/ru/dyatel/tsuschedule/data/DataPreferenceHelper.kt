@@ -18,7 +18,7 @@ fun setGroup(group: String, context: Context) =
                 .apply()
 
 fun getSubgroup(context: Context) =
-        getPreferences(context).getInt(PREFERENCES_SUBGROUP, 1)
+        getPreferences(context).getInt(PREFERENCES_SUBGROUP, 0)
 
 fun setSubgroup(subgroup: Int, context: Context) =
         getPreferences(context).edit()

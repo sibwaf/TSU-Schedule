@@ -17,24 +17,24 @@ import java.util.TimeZone;
 
 public class MainFragment extends Fragment {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.main_screen, container, false);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View root = inflater.inflate(R.layout.main_screen, container, false);
 
-        // Set up the ViewPager with the sections adapter and select current parity tab
-        ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
-        viewPager.setAdapter(new WeekFragmentPagerAdapter(getChildFragmentManager()));
-        viewPager.setCurrentItem(
-                ParityReference.getIndexFromParity(
-                        DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
-                )
-        );
+		// Set up the ViewPager with the sections adapter and select current parity tab
+		ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
+		viewPager.setAdapter(new WeekFragmentPagerAdapter(getChildFragmentManager()));
+		viewPager.setCurrentItem(
+				ParityReference.getIndexFromParity(
+						DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
+				)
+		);
 
-        // Set up the TabLayout
-        TabLayout tabLayout = (TabLayout) root.findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+		// Set up the TabLayout
+		TabLayout tabLayout = (TabLayout) root.findViewById(R.id.tab_layout);
+		tabLayout.setupWithViewPager(viewPager);
 
-        return root;
-    }
+		return root;
+	}
 
 }

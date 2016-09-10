@@ -6,9 +6,9 @@ import ru.dyatel.tsuschedule.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    @Override
-    public void onCreatePreferences(Bundle bundle, String s) {
-        addPreferencesFromResource(R.xml.preferences);
-    }
+	@Override
+	public void onCreatePreferences(Bundle bundle, String s) {
+		addPreferencesFromResource(R.xml.preferences);
+	}
 
 }

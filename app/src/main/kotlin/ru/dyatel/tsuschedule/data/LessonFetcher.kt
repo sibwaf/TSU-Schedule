@@ -37,7 +37,7 @@ class LessonFetcher(private val context: Context) {
             return null
         }
 
-        val parser = Parser();
+        val parser = Parser()
         parser.setTimeout(getConnectionTimeout(context))
 
         var lessons: Set<Lesson>? = null

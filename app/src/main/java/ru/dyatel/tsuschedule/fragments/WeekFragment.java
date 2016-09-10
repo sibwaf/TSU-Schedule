@@ -27,104 +27,104 @@ import ru.dyatel.tsuschedule.util.IterableFilter;
 
 public class WeekFragment extends Fragment implements EventListener {
 
-    private static final String PARITY_ARGUMENT = "parity";
+	private static final String PARITY_ARGUMENT = "parity";
 
-    private IterableFilter<Lesson> filter = new IterableFilter<>();
+	private IterableFilter<Lesson> filter = new IterableFilter<>();
 
-    private SwipeRefreshLayout swipeRefresh;
-    private WeekAdapter weekdays;
+	private SwipeRefreshLayout swipeRefresh;
+	private WeekAdapter weekdays;
 
-    private EventBus eventBus;
-    private LessonDAO lessonDAO;
+	private EventBus eventBus;
+	private LessonDAO lessonDAO;
 
-    public static WeekFragment newInstance(Parity parity) {
-        WeekFragment fragment = new WeekFragment();
-        Bundle arguments = new Bundle();
-        arguments.putSerializable(PARITY_ARGUMENT, parity);
-        fragment.setArguments(arguments);
-        return fragment;
-    }
+	public static WeekFragment newInstance(Parity parity) {
+		WeekFragment fragment = new WeekFragment();
+		Bundle arguments = new Bundle();
+		arguments.putSerializable(PARITY_ARGUMENT, parity);
+		fragment.setArguments(arguments);
+		return fragment;
+	}
 
-    public WeekFragment() {
-    }
+	public WeekFragment() {
+	}
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        // Create required week filter
-        // If for some reason we didn't receive parity argument,
-        // we will not filter by parity
-        Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
-        if (p != null) filter.apply(new ParityFilter(p));
+		// Create required week filter
+		// If for some reason we didn't receive parity argument,
+		// we will not filter by parity
+		Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
+		if (p != null) filter.apply(new ParityFilter(p));
 
-        Activity activity = getActivity();
+		Activity activity = getActivity();
 
-        weekdays = new WeekAdapter(activity);
+		weekdays = new WeekAdapter(activity);
 
-        eventBus = ActivityUtilKt.getEventBus(activity);
-        lessonDAO = ActivityUtilKt.getDatabaseManager(activity).getLessonDAO();
+		eventBus = ActivityUtilKt.getEventBus(activity);
+		lessonDAO = ActivityUtilKt.getDatabaseManager(activity).getLessonDAO();
 
-        eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
+		eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
 
-        new RefreshTask().execute();
-    }
+		new RefreshTask().execute();
+	}
 
-    @Override
-    public void onDestroy() {
-        eventBus.unsubscribe(this);
-        super.onDestroy();
-    }
+	@Override
+	public void onDestroy() {
+		eventBus.unsubscribe(this);
+		super.onDestroy();
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.week_fragment, container, false);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Inflate the layout for this fragment
+		View root = inflater.inflate(R.layout.week_fragment, container, false);
 
-        RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
-        weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
-        weekdayList.setAdapter(weekdays);
+		RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
+		weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
+		weekdayList.setAdapter(weekdays);
 
-        // Wire up the SwipeRefreshLayout
-        swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new LessonFetchTask(getContext(), eventBus, lessonDAO).execute();
-            }
-        });
+		// Wire up the SwipeRefreshLayout
+		swipeRefresh = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh);
+		swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				new LessonFetchTask(getContext(), eventBus, lessonDAO).execute();
+			}
+		});
 
-        return root;
-    }
+		return root;
+	}
 
-    @Override
-    public void handleEvent(@NotNull Event type) {
-        switch (type) {
-            case DATA_UPDATED:
-                swipeRefresh.setRefreshing(true);
-                new RefreshTask().execute();
-                break;
-            case DATA_UPDATE_FAILED:
-                swipeRefresh.setRefreshing(false);
-                break;
-        }
-    }
+	@Override
+	public void handleEvent(@NotNull Event type) {
+		switch (type) {
+			case DATA_UPDATED:
+				swipeRefresh.setRefreshing(true);
+				new RefreshTask().execute();
+				break;
+			case DATA_UPDATE_FAILED:
+				swipeRefresh.setRefreshing(false);
+				break;
+		}
+	}
 
-    private class RefreshTask extends AsyncTask<Void, Void, Void> {
+	private class RefreshTask extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... params) {
-            weekdays.updateData(filter.filter(
-                    lessonDAO.request(DataPreferenceHelperKt.getSubgroup(getContext()))
-            ));
-            return null;
-        }
+		@Override
+		protected Void doInBackground(Void... params) {
+			weekdays.updateData(filter.filter(
+					lessonDAO.request(DataPreferenceHelperKt.getSubgroup(getContext()))
+			));
+			return null;
+		}
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            swipeRefresh.setRefreshing(false);
-        }
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			swipeRefresh.setRefreshing(false);
+		}
 
-    }
+	}
 
 }
