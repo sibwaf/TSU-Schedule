@@ -6,3 +6,5 @@
 -keepattributes *Annotation*
 -keep class org.acra.** { *; }
 -dontwarn android.support.v4.app.NotificationCompat*
+
+-keepattributes EnclosingMethod
