@@ -19,108 +19,108 @@ import java.util.Map;
 
 public class LessonDAO implements EventListener {
 
-    private static final String TABLE_UNFILTERED = "lessons";
-    private static final String TABLE_FILTERED = "filtered";
+	private static final String TABLE_UNFILTERED = "lessons";
+	private static final String TABLE_FILTERED = "filtered";
 
-    private static final String QUERY_WHERE_SUBGROUP =
-            LessonTable.SUBGROUP + "=0 OR " + LessonTable.SUBGROUP + "=?";
+	private static final String QUERY_WHERE_SUBGROUP =
+			LessonTable.SUBGROUP + "=0 OR " + LessonTable.SUBGROUP + "=?";
 
-    private EventBus eventBus;
+	private EventBus eventBus;
 	private DatabaseManager manager;
 
 	public LessonDAO(Activity activity, DatabaseManager manager) {
 		eventBus = ActivityUtilKt.getEventBus(activity);
-        eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
+		eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
 		this.manager = manager;
 	}
 
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
-        db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
-    }
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
+		db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
+	}
 
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Recreate tables
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// Recreate tables
 		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_UNFILTERED));
 		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_FILTERED));
 		onCreate(db);
-    }
+	}
 
-    public void update(Collection<Lesson> lessons) {
+	public void update(Collection<Lesson> lessons) {
 		SQLiteDatabase db = manager.getWritableDatabase();
 
-        db.beginTransaction();
-        try {
-            db.delete(TABLE_UNFILTERED, null, null); // Clear table from previous data
-            for (Lesson l : lessons) {
-                db.insert(TABLE_UNFILTERED, null, LessonUtilKt.toContentValues(l));
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+		db.beginTransaction();
+		try {
+			db.delete(TABLE_UNFILTERED, null, null); // Clear table from previous data
+			for (Lesson l : lessons) {
+				db.insert(TABLE_UNFILTERED, null, LessonUtilKt.toContentValues(l));
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 
-        applyModifiers();
-    }
+		applyModifiers();
+	}
 
-    private void applyModifiers() {
+	private void applyModifiers() {
 		SQLiteDatabase db = manager.getWritableDatabase();
 
-        Cursor cursor = db.query(TABLE_UNFILTERED, null, null, null, null, null, null);
-        Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
+		Cursor cursor = db.query(TABLE_UNFILTERED, null, null, null, null, null, null);
+		Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
 
-        db.beginTransaction();
-        try {
-            db.delete(TABLE_FILTERED, null, null);
-            while (cursor.moveToNext()) {
-                Lesson lesson = LessonUtilKt.constructLessonFromCursor(cursor, indices);
-                // TODO: apply modifiers to the lesson
-                db.insert(TABLE_FILTERED, null, LessonUtilKt.toContentValues(lesson));
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+		db.beginTransaction();
+		try {
+			db.delete(TABLE_FILTERED, null, null);
+			while (cursor.moveToNext()) {
+				Lesson lesson = LessonUtilKt.constructLessonFromCursor(cursor, indices);
+				// TODO: apply modifiers to the lesson
+				db.insert(TABLE_FILTERED, null, LessonUtilKt.toContentValues(lesson));
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
 
-        cursor.close();
-    }
+		cursor.close();
+	}
 
-    public List<Lesson> request(int subgroup) {
+	public List<Lesson> request(int subgroup) {
 		SQLiteDatabase db = manager.getReadableDatabase();
 
-        Cursor cursor = db.query(
-                TABLE_FILTERED,
-                null,
-                QUERY_WHERE_SUBGROUP, new String[]{String.valueOf(subgroup)},
-                null, null,
-                LessonTable.TIME
-        );
-        Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
+		Cursor cursor = db.query(
+				TABLE_FILTERED,
+				null,
+				subgroup == 0 ? null : QUERY_WHERE_SUBGROUP, subgroup == 0 ? null : new String[]{String.valueOf(subgroup)},
+				null, null,
+				LessonTable.TIME
+		);
+		Map<String, Integer> indices = LessonUtilKt.getLessonColumnIndices(cursor);
 
-        List<Lesson> lessons = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            lessons.add(LessonUtilKt.constructLessonFromCursor(cursor, indices));
-        }
+		List<Lesson> lessons = new ArrayList<>();
+		while (cursor.moveToNext()) {
+			lessons.add(LessonUtilKt.constructLessonFromCursor(cursor, indices));
+		}
 
-        cursor.close();
+		cursor.close();
 
-        return lessons;
-    }
+		return lessons;
+	}
 
-    @Override
-    public void handleEvent(@NotNull Event type) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                applyModifiers();
-                return null;
-            }
+	@Override
+	public void handleEvent(@NotNull Event type) {
+		new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				applyModifiers();
+				return null;
+			}
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                eventBus.broadcast(Event.DATA_UPDATED);
-            }
-        }.execute();
-    }
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				eventBus.broadcast(Event.DATA_UPDATED);
+			}
+		}.execute();
+	}
 
 }

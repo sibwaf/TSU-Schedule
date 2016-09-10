@@ -40,7 +40,7 @@ class NavigationDrawerHandler(
 
     private val toggle: ActionBarDrawerToggle
 
-    var enabled = true;
+    var enabled = true
         set(enabled) {
             field = enabled;
             layout.setDrawerLockMode(
@@ -74,7 +74,7 @@ class NavigationDrawerHandler(
         ) {
             override fun onDrawerClosed(drawerView: View?) {
                 val oldSubgroup = getSubgroup(activity)
-                val newSubgroup = subgroupSpinner.selectedItemPosition + 1
+                val newSubgroup = subgroupSpinner.selectedItemPosition
 
                 // Save new group and subgroup
                 setGroup(groupIndexEdit.text.toString(), activity)
@@ -112,9 +112,9 @@ private fun manageLayout(
     val enabledWeek: TextView
     val disabledWeek: TextView
     if (DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())) == Parity.EVEN) {
-        enabledWeek = evenWeekText; disabledWeek = oddWeekText;
+        enabledWeek = evenWeekText; disabledWeek = oddWeekText
     } else {
-        enabledWeek = oddWeekText; disabledWeek = evenWeekText;
+        enabledWeek = oddWeekText; disabledWeek = evenWeekText
     }
     enabledWeek.setTextColor(ContextCompat.getColor(context, R.color.enabled_week))
     val content = SpannableString(enabledWeek.text)
@@ -132,7 +132,7 @@ private fun manageLayout(
     )
     spinnerAdapter.setDropDownViewResource(AR.layout.simple_spinner_dropdown_item)
     subgroupSpinner.adapter = spinnerAdapter
-    subgroupSpinner.setSelection(getSubgroup(context) - 1)
+    subgroupSpinner.setSelection(getSubgroup(context))
 }
 
 private const val DRAWER_PREFERENCES = "drawer_preferences"

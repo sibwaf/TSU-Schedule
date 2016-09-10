@@ -10,25 +10,25 @@ import java.util.Locale;
 
 public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public WeekFragmentPagerAdapter(FragmentManager fm) {
-        super(fm);
-    }
+	public WeekFragmentPagerAdapter(FragmentManager fm) {
+		super(fm);
+	}
 
-    @Override
-    public Fragment getItem(int position) {
-        return WeekFragment.newInstance(
-                ParityReference.getParityFromIndex(position)
-        );
-    }
+	@Override
+	public Fragment getItem(int position) {
+		return WeekFragment.newInstance(
+				ParityReference.getParityFromIndex(position)
+		);
+	}
 
-    @Override
-    public int getCount() {
-        return 2;
-    }
+	@Override
+	public int getCount() {
+		return 2;
+	}
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return ParityReference.getStringFromIndex(position).toUpperCase(Locale.getDefault());
-    }
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return ParityReference.getStringFromIndex(position).toUpperCase(Locale.getDefault());
+	}
 
 }

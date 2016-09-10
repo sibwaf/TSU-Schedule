@@ -16,72 +16,72 @@ import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EventBus eventBus = new EventBus();
-    private DatabaseManager databaseManager = new DatabaseManager(this);
+	private EventBus eventBus = new EventBus();
+	private DatabaseManager databaseManager = new DatabaseManager(this);
 
-    private NavigationHandler navigationHandler;
-    private NavigationDrawerHandler drawerHandler;
+	private NavigationHandler navigationHandler;
+	private NavigationDrawerHandler drawerHandler;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+		FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // Replace ActionBar with Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayShowHomeEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+		// Replace ActionBar with Toolbar
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
 
-        drawerHandler = new NavigationDrawerHandler(
-                this, fragmentManager,
-                (DrawerLayout) findViewById(R.id.drawer_layout)
-        );
+		drawerHandler = new NavigationDrawerHandler(
+				this, fragmentManager,
+				(DrawerLayout) findViewById(R.id.drawer_layout)
+		);
 
-        navigationHandler = new NavigationHandler(fragmentManager, drawerHandler);
-        fragmentManager.addOnBackStackChangedListener(navigationHandler);
+		navigationHandler = new NavigationHandler(fragmentManager, drawerHandler);
+		fragmentManager.addOnBackStackChangedListener(navigationHandler);
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_fragment, new MainFragment())
-                .commit();
-    }
+		fragmentManager.beginTransaction()
+				.replace(R.id.content_fragment, new MainFragment())
+				.commit();
+	}
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerHandler.syncState();
-    }
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		drawerHandler.syncState();
+	}
 
-    @Override
-    public void onBackPressed() {
-        if (!navigationHandler.onBackPressed()) super.onBackPressed();
-    }
+	@Override
+	public void onBackPressed() {
+		if (!navigationHandler.onBackPressed()) super.onBackPressed();
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return navigationHandler.onOptionsItemSelected(item)
-                || super.onOptionsItemSelected(item);
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		return navigationHandler.onOptionsItemSelected(item)
+				|| super.onOptionsItemSelected(item);
+	}
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        drawerHandler.onConfigurationChanged(newConfig);
-    }
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		drawerHandler.onConfigurationChanged(newConfig);
+	}
 
-    public EventBus getEventBus() {
-        return eventBus;
-    }
+	public EventBus getEventBus() {
+		return eventBus;
+	}
 
-    public DatabaseManager getDatabaseManager() {
-        return databaseManager;
-    }
+	public DatabaseManager getDatabaseManager() {
+		return databaseManager;
+	}
 
 }
