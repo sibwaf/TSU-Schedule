@@ -16,8 +16,8 @@ import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EventBus eventBus;
-    private DatabaseManager databaseManager;
+    private EventBus eventBus = new EventBus();
+    private DatabaseManager databaseManager = new DatabaseManager(this);
 
     private NavigationHandler navigationHandler;
     private NavigationDrawerHandler drawerHandler;
@@ -28,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        eventBus = new EventBus();
-        databaseManager = new DatabaseManager(this);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
