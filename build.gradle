@@ -1,39 +1,33 @@
 buildscript {
-    ext.kotlin_version = '1.0.1'
+    ext.kotlinVersion = "1.0.3"
 
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.android.tools.build:gradle:2.2.0-rc2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
-def kotlin_source_dir = 'src/main/kotlin'
+ext.kotlinSourceDir = "src/main/kotlin"
 
-allprojects {
-    if (!project.name.equals('app')) {
-        apply plugin: 'java'
-        apply plugin: 'kotlin'
+subprojects {
+    if (project.name != "app") {
+        apply plugin: "java"
+        apply plugin: "kotlin"
         sourceCompatibility = JavaVersion.VERSION_1_7
 
         sourceSets {
-            main.java.srcDirs += kotlin_source_dir
+            main.java.srcDirs += kotlinSourceDir
         }
-    } else {
-        apply plugin: 'com.android.application'
-        apply plugin: 'kotlin-android'
 
-        android.sourceSets {
-            main.java.srcDirs += kotlin_source_dir
+        dependencies {
+            compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         }
     }
 
     repositories {
         mavenCentral()
-    }
-    dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     }
 }
