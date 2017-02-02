@@ -34,7 +34,7 @@ public class Parser {
         Document response = connection.data("group", group).get();
 
         if (response.getElementById("results").children().size() == 0)
-            throw new IllegalArgumentException("Wrong group index: " + group);
+			throw new BadGroupException();
 
         Set<Lesson> lessons = new HashSet<>();
         for (Element day : response.getElementById("results").children()) {

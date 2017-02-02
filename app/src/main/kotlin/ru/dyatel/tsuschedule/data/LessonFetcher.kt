@@ -3,6 +3,7 @@ package ru.dyatel.tsuschedule.data
 import android.content.Context
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.getConnectionTimeout
+import ru.dyatel.tsuschedule.parsing.BadGroupException
 import ru.dyatel.tsuschedule.parsing.Lesson
 import ru.dyatel.tsuschedule.parsing.Parser
 import java.io.IOException
@@ -43,7 +44,7 @@ class LessonFetcher(private val context: Context) {
         var lessons: Set<Lesson>? = null
         try {
             lessons = parser.getLessons(group)
-        } catch(e: IllegalArgumentException) {
+        } catch(e: BadGroupException) {
             failure = Failure.WRONG_GROUP
         } catch(e: SocketTimeoutException) {
             failure = Failure.TIMEOUT
