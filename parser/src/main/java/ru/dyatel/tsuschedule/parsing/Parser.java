@@ -4,6 +4,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -13,116 +14,107 @@ import java.util.regex.Pattern;
 
 public class Parser {
 
-    private static final String practiceString = "\u041f\u0440";
-    private static final String lectureString = "\u041b";
-    private static final String laboratoryString = "\u041b\u0430\u0431";
+	private static final String practiceString = "\u041F\u0440\u0430\u043A\u0442. \u0437\u0430\u043D\u044F\u0442\u0438\u044F";
+	private static final String lectureString = "\u041B\u0435\u043A\u0446\u0438\u0438";
+	private static final String laboratoryString = "\u041B\u0430\u0431. \u0437\u0430\u043D\u044F\u0442\u0438\u044F";
 
-    private static final String evenParityString = "\u0447/\u043d";
-    private static final String oddParityString = "\u043d/\u043d";
+	private static final String evenParityString = "\u0447/\u043D";
+	private static final String oddParityString = "\u043D/\u043D";
 
-    private static final Pattern teacherPattern = Pattern.compile("^(.+?),.*$");
-    private static final Pattern typePattern = Pattern.compile("^(.+?):.*$");
-    private static final Pattern subgroupPattern = Pattern.compile("^.*( \\((\\d).*?\\))$");
+	private static final String subgroupString = "\u043F/\u0433\u0440";
 
-    private Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
+	private static final Pattern timePattern = Pattern.compile("^(?:(\\S+?) )?(\\S+)$");
+	private static final Pattern disciplinePattern = Pattern.compile("^(.+?)" +
+			" \\((.+?)\\)" +
+			"(?: \\((\\d) " + subgroupString + "\\))?$");
 
-    public void setTimeout(int timeout) {
-        connection.timeout(timeout);
-    }
+	private Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
 
-    public Set<Lesson> getLessons(String group) throws IOException {
-        Document response = connection.data("group", group).get();
+	private String currentWeekday = null;
 
-        if (response.getElementById("results").children().size() == 0)
-			throw new BadGroupException();
+	public void setTimeout(int timeout) {
+		connection.timeout(timeout);
+	}
 
-        Set<Lesson> lessons = new HashSet<>();
-        for (Element day : response.getElementById("results").children()) {
-            String weekday = day.child(0).text();
+	public Set<Lesson> getLessons(String group) throws IOException {
+		Document response = connection.data("group", group).get();
+		Element result = response.getElementById("results");
 
-            for (Element lesson : day.child(1).child(0).children()) {
-                String time = lesson.child(0).text();
+		if (result.childNodeSize() == 0) throw new BadGroupException();
 
-                Element lessonContainer = lesson.child(1);
-                if (lessonContainer.child(0).tag().getName().equals("table")) {
-                    // there will be only one lesson
-                    String teacher = lessonContainer.getElementsByClass("teac").size() == 0 ?
-                            "" : lessonContainer.getElementsByClass("teac").get(0).text();
-                    lessons.add(constructLesson(weekday, time, teacher, Parity.BOTH, lessonContainer));
-                } else {
-                    // there will be two lessons (or more?)
-                    int counter = 0;
-                    while (counter < lessonContainer.children().size()) {
-                        Element e = lessonContainer.child(counter);
-                        if (e.classNames().contains("teac"))
-                            throw new IllegalStateException("Can't parse: got \"teac\" div!");
+		Set<Lesson> lessons = new HashSet<>();
 
-                        String parityString = e.getElementsByClass("parity").get(0).text().trim();
-                        Parity parity = Parity.BOTH;
-                        if (parityString.equals(evenParityString)) parity = Parity.EVEN;
-                        else if (parityString.equals(oddParityString)) parity = Parity.ODD;
+		for (Element lessonElement : result.children()) {
+			Elements rows = lessonElement.child(0).child(0).children();
+			// Ignore the padding row if it is present
+			Element lessonDataElement = rows.size() == 1 ? rows.get(0) : rows.get(1);
 
-                        // find teacher
-                        String teacher = "";
-                        Element next = e.nextElementSibling();
-                        if (next != null && next.classNames().contains("teac")) {
-                            teacher = next.text();
-                            counter++;
-                        }
+			String time = extractTime(lessonDataElement.getElementsByClass("time").text().trim());
+			if (currentWeekday == null) throw new ParsingException("Can't find weekday of the lesson");
 
-                        lessons.add(constructLesson(weekday, time, teacher, parity, e));
-                        counter++;
-                    }
-                }
-            }
-        }
-        return lessons;
-    }
+			Parity parity = extractParity(lessonDataElement.getElementsByClass("parity").text().trim());
 
-    private static Lesson constructLesson(String weekday, String time, String teacher, Parity parity, Element e) {
-        String discipline = e.getElementsByClass("disc").get(0).text().replace(",", "");
-        String auditory = e.getElementsByClass("aud").get(0).text();
+			String discipline;
+			Lesson.Type type;
+			int subgroup = 0;
 
-        // extract subgroup
-        int subgroup = 0;
-        Matcher m = subgroupPattern.matcher(auditory);
-        if (m.matches()) {
-            subgroup = Integer.parseInt(m.group(2));
-            auditory = auditory.replace(m.group(1), "");
-        }
+			String disciplineString = lessonDataElement.getElementsByClass("disc").text().trim();
+			if (disciplineString.endsWith(","))
+				disciplineString = disciplineString.substring(0, disciplineString.length() - 1);
 
-        return new Lesson(
-                parity,
-                weekday, time,
-                discipline,
-                auditory,
-                getTeacherName(teacher),
-                getType(discipline),
-                subgroup
-        );
-    }
+			Matcher disciplineMatcher = disciplinePattern.matcher(disciplineString);
+			if (disciplineMatcher.matches()) {
+				discipline = disciplineMatcher.group(1);
+				type = extractType(disciplineMatcher.group(2));
 
-    private static String getTeacherName(String teacher) {
-        Matcher m = teacherPattern.matcher(teacher);
-        if (m.matches()) {
-            return m.group(1);
-        }
-        return "";
-    }
+				String subgroupText = disciplineMatcher.group(3);
+				if (subgroupText != null)
+					subgroup = Integer.parseInt(subgroupText);
+			} else throw new ParsingException("Can't parse discipline string: " + disciplineString);
 
-    private static Lesson.Type getType(String discipline) {
-        Matcher m = typePattern.matcher(discipline);
-        if (m.matches()) {
-            switch (m.group(1)) {
-                case practiceString:
-                    return Lesson.Type.PRACTICE;
-                case lectureString:
-                    return Lesson.Type.LECTURE;
-                case laboratoryString:
-                    return Lesson.Type.LABORATORY;
-            }
-        }
-        return Lesson.Type.UNKNOWN;
-    }
+			String auditory = lessonDataElement.getElementsByClass("aud").text().trim();
+
+			String teacher = "";
+			Elements teacherElements = lessonDataElement.getElementsByClass("teac");
+			if (teacherElements.size() == 1) teacher = teacherElements.text().trim();
+
+			lessons.add(new Lesson(parity, currentWeekday, time, discipline, auditory, teacher, type, subgroup));
+		}
+
+		return lessons;
+	}
+
+	private String extractTime(String timeText) {
+		Matcher m = timePattern.matcher(timeText);
+		if (m.matches()) {
+			String weekday = m.group(1);
+			if (weekday != null) currentWeekday = weekday;
+
+			return m.group(2);
+		}
+		throw new ParsingException("Can't parse time string: " + timeText);
+	}
+
+	private Parity extractParity(String parityText) {
+		switch (parityText) {
+			case oddParityString:
+				return Parity.ODD;
+			case evenParityString:
+				return Parity.EVEN;
+		}
+		throw new ParsingException("Unknown parity: " + parityText);
+	}
+
+	private Lesson.Type extractType(String typeText) {
+		switch (typeText) {
+			case practiceString:
+				return Lesson.Type.PRACTICE;
+			case lectureString:
+				return Lesson.Type.LECTURE;
+			case laboratoryString:
+				return Lesson.Type.LABORATORY;
+		}
+		return Lesson.Type.UNKNOWN;
+	}
 
 }
