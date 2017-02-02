@@ -15,7 +15,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 
 	private List<Lesson> lessons = new ArrayList<>();
 
-	class Holder extends RecyclerView.ViewHolder {
+	static class Holder extends RecyclerView.ViewHolder {
 
 		View color;
 
@@ -24,7 +24,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 		TextView discipline;
 		TextView teacher;
 
-		public Holder(View v) {
+		Holder(View v) {
 			super(v);
 
 			color = v.findViewById(R.id.color);

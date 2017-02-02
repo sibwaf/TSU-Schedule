@@ -16,9 +16,7 @@ public class WeekFragmentPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public Fragment getItem(int position) {
-		return WeekFragment.newInstance(
-				ParityReference.getParityFromIndex(position)
-		);
+		return WeekFragment.newInstance(ParityReference.getParityFromIndex(position));
 	}
 
 	@Override

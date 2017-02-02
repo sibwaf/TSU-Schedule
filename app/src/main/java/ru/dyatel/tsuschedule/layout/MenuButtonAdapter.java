@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import ru.dyatel.tsuschedule.NavigationHandler;
 import ru.dyatel.tsuschedule.R;
 
 import java.util.LinkedList;
@@ -13,29 +14,21 @@ import java.util.List;
 
 public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Holder> {
 
-	public static class MenuEntry {
+	static class Holder extends RecyclerView.ViewHolder {
 
-		int iconResId;
-		int textResId;
-		Runnable action;
-
-		public MenuEntry(int iconResId, int textResId, Runnable action) {
-			this.iconResId = iconResId;
-			this.textResId = textResId;
-			this.action = action;
-		}
-
-	}
-
-	class Holder extends RecyclerView.ViewHolder {
-
-		public Holder(View v) {
+		Holder(View v) {
 			super(v);
 		}
 
 	}
 
 	private List<MenuEntry> menu = new LinkedList<>();
+
+	private NavigationHandler navigationHandler;
+
+	public MenuButtonAdapter(NavigationHandler navigationHandler) {
+		this.navigationHandler = navigationHandler;
+	}
 
 	public void addMenuEntry(MenuEntry entry) {
 		menu.add(entry);
@@ -54,13 +47,13 @@ public class MenuButtonAdapter extends RecyclerView.Adapter<MenuButtonAdapter.Ho
 		final MenuEntry entry = menu.get(position);
 		TextView button = (TextView) holder.itemView;
 		button.setCompoundDrawablesWithIntrinsicBounds(
-				ContextCompat.getDrawable(button.getContext(), entry.iconResId), null, null, null
+				ContextCompat.getDrawable(button.getContext(), entry.getIconResId()), null, null, null
 		);
-		button.setText(entry.textResId);
+		button.setText(entry.getTextResId());
 		button.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				entry.action.run();
+				navigationHandler.navigate(entry.getFragmentProvider().invoke(), entry.getName());
 			}
 		});
 	}
