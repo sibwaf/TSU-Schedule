@@ -10,9 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import org.jetbrains.annotations.NotNull;
-import ru.dyatel.tsuschedule.ActivityUtilKt;
 import ru.dyatel.tsuschedule.R;
+import ru.dyatel.tsuschedule.ScheduleApplication;
 import ru.dyatel.tsuschedule.data.DataPreferenceHelperKt;
 import ru.dyatel.tsuschedule.data.LessonDAO;
 import ru.dyatel.tsuschedule.data.LessonFetchTask;
@@ -38,32 +37,29 @@ public class WeekFragment extends Fragment implements EventListener {
 	private LessonDAO lessonDAO;
 
 	public static WeekFragment newInstance(Parity parity) {
-		WeekFragment fragment = new WeekFragment();
 		Bundle arguments = new Bundle();
 		arguments.putSerializable(PARITY_ARGUMENT, parity);
+
+		WeekFragment fragment = new WeekFragment();
 		fragment.setArguments(arguments);
 		return fragment;
-	}
-
-	public WeekFragment() {
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Create required week filter
-		// If for some reason we didn't receive parity argument,
-		// we will not filter by parity
 		Parity p = (Parity) getArguments().getSerializable(PARITY_ARGUMENT);
-		if (p != null) filter.apply(new ParityFilter(p));
+		if (p == null) throw new IllegalArgumentException("No parity supplied!");
+		filter.apply(new ParityFilter(p));
 
 		Activity activity = getActivity();
 
 		weekdays = new WeekAdapter(activity);
 
-		eventBus = ActivityUtilKt.getEventBus(activity);
-		lessonDAO = ActivityUtilKt.getDatabaseManager(activity).getLessonDAO();
+		ScheduleApplication application = (ScheduleApplication) activity.getApplication();
+		eventBus = application.getEventBus();
+		lessonDAO = application.getDatabaseManager().getLessonDAO();
 
 		eventBus.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED);
 
@@ -82,7 +78,7 @@ public class WeekFragment extends Fragment implements EventListener {
 		View root = inflater.inflate(R.layout.week_fragment, container, false);
 
 		RecyclerView weekdayList = (RecyclerView) root.findViewById(R.id.weekday_list);
-		weekdayList.setLayoutManager(new LinearLayoutManager(root.getContext()));
+		weekdayList.setLayoutManager(new LinearLayoutManager(getContext()));
 		weekdayList.setAdapter(weekdays);
 
 		// Wire up the SwipeRefreshLayout
@@ -98,7 +94,7 @@ public class WeekFragment extends Fragment implements EventListener {
 	}
 
 	@Override
-	public void handleEvent(@NotNull Event type) {
+	public void handleEvent(Event type) {
 		switch (type) {
 			case DATA_UPDATED:
 				swipeRefresh.setRefreshing(true);
@@ -122,7 +118,7 @@ public class WeekFragment extends Fragment implements EventListener {
 
 		@Override
 		protected void onPostExecute(Void aVoid) {
-			swipeRefresh.setRefreshing(false);
+			if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
 		}
 
 	}

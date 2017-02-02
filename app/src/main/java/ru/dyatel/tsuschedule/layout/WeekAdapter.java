@@ -40,7 +40,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 		this.activity = activity;
 	}
 
-	class Holder extends RecyclerView.ViewHolder {
+	static class Holder extends RecyclerView.ViewHolder {
 
 		TextView weekday;
 		RecyclerView list;
@@ -69,6 +69,7 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 		String weekday = weekdayOrder.get(position);
 
 		holder.weekday.setText(weekday);
+
 		WeekdayAdapter adapter = (WeekdayAdapter) holder.list.getAdapter();
 		adapter.updateData(weekdays.get(weekday));
 	}

@@ -1,7 +1,7 @@
 dependencies {
-    compile "org.jsoup:jsoup:1.9.2"
-    compile "com.darwinsys:hirondelle-date4j:1.5.1"
+    compile "org.jsoup:jsoup:$jsoupVersion"
+    compile "com.darwinsys:hirondelle-date4j:$date4jVersion"
     compile project(":util")
 
-    testCompile "junit:junit:4.12"
+    testCompile "junit:junit:$junitVersion"
 }

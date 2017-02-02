@@ -1,16 +1,23 @@
 buildscript {
-    ext.kotlinVersion = "1.0.3"
+    ext.kotlinVersion = "1.0.6"
 
     repositories {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:2.2.0-rc2"
+        classpath "com.android.tools.build:gradle:2.2.2"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 ext.kotlinSourceDir = "src/main/kotlin"
+
+ext.androidSupportVersion = "25.1.1"
+ext.jsoupVersion = "1.10.2"
+ext.date4jVersion = "1.5.1"
+ext.acraVersion = "4.9.2"
+
+ext.junitVersion = "4.12"
 
 subprojects {
     if (project.name != "app") {

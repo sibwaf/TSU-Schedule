@@ -1,11 +1,8 @@
 package ru.dyatel.tsuschedule.data;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import org.jetbrains.annotations.NotNull;
-import ru.dyatel.tsuschedule.ActivityUtilKt;
 import ru.dyatel.tsuschedule.events.Event;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.events.EventListener;
@@ -17,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class LessonDAO implements EventListener {
+public class LessonDAO implements DatabasePart, EventListener {
 
 	private static final String TABLE_UNFILTERED = "lessons";
 	private static final String TABLE_FILTERED = "filtered";
@@ -28,22 +25,25 @@ public class LessonDAO implements EventListener {
 	private EventBus eventBus;
 	private DatabaseManager manager;
 
-	public LessonDAO(Activity activity, DatabaseManager manager) {
-		eventBus = ActivityUtilKt.getEventBus(activity);
-		eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
+	public LessonDAO(DatabaseManager manager, EventBus eventBus) {
 		this.manager = manager;
+		this.eventBus = eventBus;
+
+		eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED);
 	}
 
-	public void onCreate(SQLiteDatabase db) {
+	@Override
+	public void createTables(SQLiteDatabase db) {
 		db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
 		db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
 	}
 
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+	@Override
+	public void upgradeTables(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// Recreate tables
 		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_UNFILTERED));
 		db.execSQL(DatabaseManagerKt.getDropTableQuery(TABLE_FILTERED));
-		onCreate(db);
+		createTables(db);
 	}
 
 	public void update(Collection<Lesson> lessons) {
@@ -83,6 +83,8 @@ public class LessonDAO implements EventListener {
 		}
 
 		cursor.close();
+
+		eventBus.broadcast(Event.DATA_UPDATED);
 	}
 
 	public List<Lesson> request(int subgroup) {
@@ -108,17 +110,12 @@ public class LessonDAO implements EventListener {
 	}
 
 	@Override
-	public void handleEvent(@NotNull Event type) {
+	public void handleEvent(Event type) {
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				applyModifiers();
 				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				eventBus.broadcast(Event.DATA_UPDATED);
 			}
 		}.execute();
 	}

@@ -1,7 +1,6 @@
 package ru.dyatel.tsuschedule.events
 
-import java.util.ArrayList
-import java.util.EnumMap
+import java.util.*
 
 class EventBus {
 
@@ -9,7 +8,7 @@ class EventBus {
 
     fun subscribe(listener: EventListener, vararg types: Event) {
         val typeArray = if (types.isEmpty()) Event.values() else types
-        typeArray.forEach { getOrInitList(listeners, it) += listener }
+        typeArray.forEach { listeners.getOrPut(it, { ArrayList() }) += listener }
     }
 
     fun unsubscribe(listener: EventListener) =
@@ -18,13 +17,4 @@ class EventBus {
     fun broadcast(event: Event) =
             listeners[event]?.forEach { it.handleEvent(event) }
 
-}
-
-private fun <K, V> getOrInitList(map: MutableMap<K, MutableList<V>>, key: K): MutableList<V> {
-    var list = map[key]
-    if (list == null) {
-        list = ArrayList<V>()
-        map[key] = list
-    }
-    return list
 }
