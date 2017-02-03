@@ -2,7 +2,6 @@ package ru.dyatel.tsuschedule.data;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import ru.dyatel.tsuschedule.events.Event;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.events.EventListener;
@@ -111,13 +110,7 @@ public class LessonDAO implements DatabasePart, EventListener {
 
 	@Override
 	public void handleEvent(Event type) {
-		new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				applyModifiers();
-				return null;
-			}
-		}.execute();
+		applyModifiers();
 	}
 
 }

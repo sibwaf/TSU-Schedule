@@ -24,6 +24,8 @@ import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.ParityFilter;
 import ru.dyatel.tsuschedule.util.IterableFilter;
 
+import java.util.List;
+
 public class WeekFragment extends Fragment implements EventListener {
 
 	private static final String PARITY_ARGUMENT = "parity";
@@ -94,25 +96,33 @@ public class WeekFragment extends Fragment implements EventListener {
 	}
 
 	@Override
-	public void handleEvent(Event type) {
-		switch (type) {
-			case DATA_UPDATED:
-				swipeRefresh.setRefreshing(true);
-				new RefreshTask().execute();
-				break;
-			case DATA_UPDATE_FAILED:
-				swipeRefresh.setRefreshing(false);
-				break;
-		}
+	public void handleEvent(final Event type) {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				switch (type) {
+					case DATA_UPDATED:
+						new RefreshTask().execute();
+						break;
+					case DATA_UPDATE_FAILED:
+						swipeRefresh.setRefreshing(false);
+						break;
+				}
+			}
+		});
 	}
 
 	private class RefreshTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
+		protected void onPreExecute() {
+			if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
+		}
+
+		@Override
 		protected Void doInBackground(Void... params) {
-			weekdays.updateData(filter.filter(
-					lessonDAO.request(DataPreferenceHelperKt.getSubgroup(getContext()))
-			));
+			List<Lesson> lessons = lessonDAO.request(DataPreferenceHelperKt.getSubgroup(getContext()));
+			weekdays.updateData(filter.filter(lessons));
 			return null;
 		}
 
