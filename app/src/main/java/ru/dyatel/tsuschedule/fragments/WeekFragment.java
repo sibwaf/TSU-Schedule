@@ -18,7 +18,7 @@ import ru.dyatel.tsuschedule.data.LessonFetchTask;
 import ru.dyatel.tsuschedule.events.Event;
 import ru.dyatel.tsuschedule.events.EventBus;
 import ru.dyatel.tsuschedule.events.EventListener;
-import ru.dyatel.tsuschedule.layout.WeekAdapter;
+import ru.dyatel.tsuschedule.layout.WeekdayListAdapter;
 import ru.dyatel.tsuschedule.parsing.Lesson;
 import ru.dyatel.tsuschedule.parsing.Parity;
 import ru.dyatel.tsuschedule.parsing.ParityFilter;
@@ -33,7 +33,7 @@ public class WeekFragment extends Fragment implements EventListener {
 	private IterableFilter<Lesson> filter = new IterableFilter<>();
 
 	private SwipeRefreshLayout swipeRefresh;
-	private WeekAdapter weekdays;
+	private WeekdayListAdapter weekdays;
 
 	private EventBus eventBus;
 	private LessonDAO lessonDAO;
@@ -57,7 +57,7 @@ public class WeekFragment extends Fragment implements EventListener {
 
 		Activity activity = getActivity();
 
-		weekdays = new WeekAdapter(activity);
+		weekdays = new WeekdayListAdapter(activity);
 
 		ScheduleApplication application = (ScheduleApplication) activity.getApplication();
 		eventBus = application.getEventBus();
