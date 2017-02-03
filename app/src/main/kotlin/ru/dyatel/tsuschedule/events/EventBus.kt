@@ -11,10 +11,8 @@ class EventBus {
         typeArray.forEach { listeners.getOrPut(it, { ArrayList() }) += listener }
     }
 
-    fun unsubscribe(listener: EventListener) =
-            listeners.values.forEach { it.remove(listener) }
+    fun unsubscribe(listener: EventListener) = listeners.values.forEach { it.remove(listener) }
 
-    fun broadcast(event: Event) =
-            listeners[event]?.forEach { it.handleEvent(event) }
+    fun broadcast(event: Event) = listeners[event]?.forEach { it.handleEvent(event) }
 
 }

@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule.layout;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,12 @@ import java.util.List;
 public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> {
 
 	private List<Lesson> lessons = new ArrayList<>();
+
+	private Activity activity;
+
+	public WeekdayAdapter(Activity activity) {
+		this.activity = activity;
+	}
 
 	static class Holder extends RecyclerView.ViewHolder {
 
@@ -72,8 +79,7 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 		holder.teacher.setText(lesson.getTeacher());
 
 		// Hide views if they do not contain any data
-		holder.teacher.setVisibility(
-				holder.teacher.getText().equals("") ? View.GONE : View.VISIBLE);
+		holder.teacher.setVisibility(holder.teacher.getText().equals("") ? View.GONE : View.VISIBLE);
 	}
 
 	@Override
@@ -83,7 +89,12 @@ public class WeekdayAdapter extends RecyclerView.Adapter<WeekdayAdapter.Holder> 
 
 	public void updateData(List<Lesson> lessons) {
 		this.lessons = lessons;
-		notifyDataSetChanged();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				notifyDataSetChanged();
+			}
+		});
 	}
 
 }

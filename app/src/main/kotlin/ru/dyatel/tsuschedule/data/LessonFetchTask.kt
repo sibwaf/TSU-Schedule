@@ -21,14 +21,13 @@ class LessonFetchTask(
         error = fetcher.getError()
         if (!fetcher.failed()) data.update(lessons)
 
+        if (!error.isNullOrEmpty()) eventBus.broadcast(Event.DATA_UPDATE_FAILED)
+
         return null
     }
 
     override fun onPostExecute(result: Void?) {
-        if (!error.isNullOrEmpty()) {
-            eventBus.broadcast(Event.DATA_UPDATE_FAILED)
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-        }
+        if (!error.isNullOrEmpty()) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
     }
 
 }

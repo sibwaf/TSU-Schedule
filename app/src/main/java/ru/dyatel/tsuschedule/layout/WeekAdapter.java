@@ -22,13 +22,13 @@ import java.util.Set;
 public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 
 	private static final String[] normalWeekdayOrder = {
-			"\u043f\u043e\u043d\u0435\u0434\u0435\u043b\u044c\u043d\u0438\u043a",
-			"\u0432\u0442\u043e\u0440\u043d\u0438\u043a",
-			"\u0441\u0440\u0435\u0434\u0430",
-			"\u0447\u0435\u0442\u0432\u0435\u0440\u0433",
-			"\u043f\u044f\u0442\u043d\u0438\u0446\u0430",
-			"\u0441\u0443\u0431\u0431\u043e\u0442\u0430",
-			"\u0432\u043e\u0441\u043a\u0440\u0435\u0441\u0435\u043d\u044c\u0435"
+			"\u041F\u043E\u043D\u0435\u0434\u0435\u043B\u044C\u043D\u0438\u043A",
+			"\u0412\u0442\u043E\u0440\u043D\u0438\u043A",
+			"\u0421\u0440\u0435\u0434\u0430",
+			"\u0427\u0435\u0442\u0432\u0435\u0440\u0433",
+			"\u041F\u044F\u0442\u043D\u0438\u0446\u0430",
+			"\u0421\u0443\u0431\u0431\u043E\u0442\u0430",
+			"\u0412\u043E\u0441\u043A\u0440\u0435\u0441\u0435\u043D\u044C\u0435"
 	};
 	private List<String> weekdayOrder = new ArrayList<>();
 
@@ -45,23 +45,22 @@ public class WeekAdapter extends RecyclerView.Adapter<WeekAdapter.Holder> {
 		TextView weekday;
 		RecyclerView list;
 
-		Holder(View v) {
+		Holder(View v, Activity activity) {
 			super(v);
 
 			weekday = (TextView) v.findViewById(R.id.weekday);
 			list = (RecyclerView) v.findViewById(R.id.lesson_list);
 			list.setLayoutManager(new LinearLayoutManager(v.getContext()));
-			list.setAdapter(new WeekdayAdapter());
+			list.setAdapter(new WeekdayAdapter(activity));
 		}
 
 	}
 
 	@Override
 	public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new Holder(
-				LayoutInflater.from(parent.getContext())
-						.inflate(R.layout.weekday, parent, false)
-		);
+		View v = LayoutInflater.from(parent.getContext())
+				.inflate(R.layout.weekday, parent, false);
+		return new Holder(v, activity);
 	}
 
 	@Override
