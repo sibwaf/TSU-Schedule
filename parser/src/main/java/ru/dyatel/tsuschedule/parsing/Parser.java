@@ -24,8 +24,8 @@ public class Parser {
 	private static final String subgroupString = "\u043F/\u0433\u0440";
 
 	private static final Pattern timePattern = Pattern.compile("^(?:(\\S+?) )?(\\S+)$");
-	private static final Pattern disciplinePattern = Pattern.compile("^(.+?)" +
-			" \\((.+?)\\)" +
+	private static final Pattern disciplinePattern = Pattern.compile("^(.+?" +
+			" \\((.+?)\\))" +
 			"(?: \\((\\d) " + subgroupString + "\\))?$");
 
 	private Connection connection = Jsoup.connect("http://schedule.tsu.tula.ru/");
