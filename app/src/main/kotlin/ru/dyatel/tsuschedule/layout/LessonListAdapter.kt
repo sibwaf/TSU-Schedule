@@ -23,7 +23,7 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
 
     }
 
-    val lessons = ArrayList<Lesson>()
+    private val lessons = ArrayList<Lesson>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.lesson, parent, false)
