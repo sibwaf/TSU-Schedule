@@ -44,6 +44,13 @@ android {
     sourceSets {
         main.java.srcDirs += kotlinSourceDir
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(output.outputFile.parent,
+                    "${rootProject.name}-${variant.versionName}-${output.baseName}.apk")
+        }
+    }
 }
 
 dependencies {
