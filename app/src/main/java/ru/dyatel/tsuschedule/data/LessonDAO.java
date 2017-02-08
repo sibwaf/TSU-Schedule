@@ -33,8 +33,8 @@ public class LessonDAO implements DatabasePart, EventListener {
 
 	@Override
 	public void createTables(SQLiteDatabase db) {
-		db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED));
-		db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED));
+		db.execSQL(LessonTable.INSTANCE.getCreateQuery(TABLE_UNFILTERED));
+		db.execSQL(LessonTable.INSTANCE.getCreateQuery(TABLE_FILTERED));
 	}
 
 	@Override
