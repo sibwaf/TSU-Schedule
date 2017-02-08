@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule
 
 import android.app.Application
+import android.content.Context
 import android.preference.PreferenceManager
 import org.acra.ACRA
 import org.acra.annotation.ReportsCrashes
@@ -13,10 +14,13 @@ class ScheduleApplication : Application() {
     val eventBus = EventBus()
     val databaseManager = DatabaseManager(this, eventBus)
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
+        if (!BuildConfig.DISABLE_ACRA) ACRA.init(this)
+    }
+
     override fun onCreate() {
         super.onCreate()
-
-        if (!BuildConfig.DISABLE_ACRA) ACRA.init(this)
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         ParityReference.init(this)
