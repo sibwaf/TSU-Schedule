@@ -83,7 +83,7 @@ class NavigationDrawerHandler(
 
     fun initMenu(navigationHandler: NavigationHandler) {
         val menuAdapter = MenuButtonAdapter(navigationHandler)
-        menuAdapter.addMenuEntry(
+        menuAdapter.addEntry(
                 MenuEntry("settings", R.drawable.ic_settings, R.string.action_settings, { SettingsFragment() }))
 
         val menu = layout.findViewById(R.id.menu_list) as RecyclerView
