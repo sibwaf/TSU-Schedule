@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import org.acra.ACRA
+import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.getConnectionTimeout
 import ru.dyatel.tsuschedule.parsing.BadGroupException
@@ -58,7 +59,7 @@ class LessonFetcher(private val context: Context) {
         } catch(e: Exception) {
             failure = Failure.UNKNOWN
             e.printStackTrace()
-            ACRA.getErrorReporter().handleSilentException(e)
+            if (!BuildConfig.DISABLE_ACRA) ACRA.getErrorReporter().handleSilentException(e)
         }
         return lessons
     }
