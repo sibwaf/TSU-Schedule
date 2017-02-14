@@ -12,9 +12,9 @@ fun getDropTableQuery(name: String) = "DROP TABLE IF EXISTS " + name
 
 class DatabaseManager(context: Context, eventBus: EventBus) : SQLiteOpenHelper(context, DB_FILE, null, DB_VERSION) {
 
-    val lessonDAO = LessonDAO(this, eventBus)
+    val lessonDao = LessonDao(eventBus, this)
 
-    private val parts = mutableSetOf(lessonDAO)
+    private val parts = mutableSetOf(lessonDao)
 
     override fun onCreate(db: SQLiteDatabase) {
         parts.forEach { it.createTables(db) }

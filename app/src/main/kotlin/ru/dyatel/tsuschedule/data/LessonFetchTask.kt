@@ -9,7 +9,7 @@ import ru.dyatel.tsuschedule.events.EventBus
 class LessonFetchTask(
         private val context: Context,
         private val eventBus: EventBus,
-        private val data: LessonDAO
+        private val data: LessonDao
 ) : AsyncTask<Void, Void, Void>() {
 
     private var error: String? = null
