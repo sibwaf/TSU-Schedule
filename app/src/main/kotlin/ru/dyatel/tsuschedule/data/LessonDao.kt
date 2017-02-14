@@ -72,7 +72,7 @@ class LessonDao(private val eventBus: EventBus,
         eventBus.broadcast(Event.DATA_UPDATED)
     }
 
-    fun request(subgroup: Int): List<Lesson> {
+    fun request(subgroup: Int): MutableList<Lesson> {
         val db = databaseManager.readableDatabase
 
         val cursor = if (subgroup != 0) db.queryDV(TABLE_FILTERED)
