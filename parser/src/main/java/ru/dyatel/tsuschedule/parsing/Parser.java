@@ -14,9 +14,9 @@ import java.util.regex.Pattern;
 
 public class Parser {
 
-	private static final String practiceString = "\u041F\u0440\u0430\u043A\u0442. \u0437\u0430\u043D\u044F\u0442\u0438\u044F";
-	private static final String lectureString = "\u041B\u0435\u043A\u0446\u0438\u0438";
-	private static final String laboratoryString = "\u041B\u0430\u0431. \u0437\u0430\u043D\u044F\u0442\u0438\u044F";
+	private static final String practiceString = "\u041F\u0440.";
+	private static final String lectureString = "\u041B";
+	private static final String laboratoryString = "\u041B\u0430\u0431.";
 
 	private static final String evenParityString = "\u0447/\u043D";
 	private static final String oddParityString = "\u043D/\u043D";
