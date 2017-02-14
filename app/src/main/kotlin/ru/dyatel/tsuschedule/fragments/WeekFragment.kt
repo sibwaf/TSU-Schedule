@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
-import ru.dyatel.tsuschedule.data.LessonDAO
+import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.LessonFetchTask
 import ru.dyatel.tsuschedule.data.getSubgroup
 import ru.dyatel.tsuschedule.events.Event
@@ -45,7 +45,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
     private var weekdays: WeekdayListAdapter? = null
 
     private var eventBus: EventBus? = null
-    private var lessonDao: LessonDAO? = null
+    private var lessonDao: LessonDao? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +54,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
         val application = activity.application as ScheduleApplication
         eventBus = application.eventBus
-        lessonDao = application.databaseManager.lessonDAO
+        lessonDao = application.databaseManager.lessonDao
 
         eventBus!!.subscribe(this, Event.DATA_UPDATED, Event.DATA_UPDATE_FAILED)
 
