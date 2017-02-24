@@ -11,8 +11,8 @@ import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler
 
 class MainActivity : AppCompatActivity() {
 
-    private var navigationHandler: NavigationHandler? = null
-    private var drawerHandler: NavigationDrawerHandler? = null
+    private lateinit var drawerHandler: NavigationDrawerHandler
+    private lateinit var navigationHandler: NavigationHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +28,10 @@ class MainActivity : AppCompatActivity() {
         val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
         drawerHandler = NavigationDrawerHandler(this, drawer, eventBus)
 
-        navigationHandler = NavigationHandler(fragmentManager, drawerHandler!!)
+        navigationHandler = NavigationHandler(fragmentManager, drawerHandler)
         fragmentManager.addOnBackStackChangedListener(navigationHandler)
 
-        drawerHandler!!.initMenu(navigationHandler!!)
+        drawerHandler.initMenu(navigationHandler)
 
         fragmentManager.beginTransaction()
                 .replace(R.id.content_fragment, MainFragment())
@@ -40,21 +40,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        drawerHandler!!.syncState()
+        drawerHandler.syncState()
     }
 
     override fun onBackPressed() {
-        if (!navigationHandler!!.onBackPressed()) super.onBackPressed()
+        if (!navigationHandler.onBackPressed()) super.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return navigationHandler!!.onOptionsItemSelected(item) ||
+        return navigationHandler.onOptionsItemSelected(item) ||
                 super.onOptionsItemSelected(item)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        drawerHandler!!.onConfigurationChanged(newConfig)
+        drawerHandler.onConfigurationChanged(newConfig)
     }
 
 }
