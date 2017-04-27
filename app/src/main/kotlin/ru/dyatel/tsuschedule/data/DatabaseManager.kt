@@ -2,19 +2,18 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
+import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import ru.dyatel.tsuschedule.events.EventBus
 
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 3
 
-fun getDropTableQuery(name: String) = "DROP TABLE IF EXISTS " + name
-
-class DatabaseManager(context: Context, eventBus: EventBus) : SQLiteOpenHelper(context, DB_FILE, null, DB_VERSION) {
+class DatabaseManager(context: Context, eventBus: EventBus) :
+        ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val lessonDao = LessonDao(eventBus, this)
 
-    private val parts = mutableSetOf(lessonDao)
+    private val parts = setOf(lessonDao)
 
     override fun onCreate(db: SQLiteDatabase) {
         parts.forEach { it.createTables(db) }

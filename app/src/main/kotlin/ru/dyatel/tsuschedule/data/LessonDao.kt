@@ -1,20 +1,21 @@
 package ru.dyatel.tsuschedule.data
 
+import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.db.MapRowParser
+import org.jetbrains.anko.db.createTable
+import org.jetbrains.anko.db.delete
+import org.jetbrains.anko.db.dropTable
+import org.jetbrains.anko.db.select
+import org.jetbrains.anko.db.transaction
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.parsing.Lesson
-import ru.dyatel.tsuschedule.parsing.constructLessonFromCursor
-import ru.dyatel.tsuschedule.parsing.getLessonColumnIndices
-import ru.dyatel.tsuschedule.parsing.toContentValues
-import ru.dyatel.tsuschedule.queryDV
-import java.util.ArrayList
+import ru.dyatel.tsuschedule.parsing.Parity
 
 private const val TABLE_UNFILTERED = "lessons"
 private const val TABLE_FILTERED = "filtered"
-
-private const val WHERE_SUBGROUP = "${LessonTable.SUBGROUP}=0 OR ${LessonTable.SUBGROUP}=?"
 
 class LessonDao(private val eventBus: EventBus,
                 private val databaseManager: DatabaseManager) : DatabasePart, EventListener {
@@ -24,72 +25,88 @@ class LessonDao(private val eventBus: EventBus,
     }
 
     override fun createTables(db: SQLiteDatabase) {
-        db.execSQL(LessonTable.getCreateQuery(TABLE_UNFILTERED))
-        db.execSQL(LessonTable.getCreateQuery(TABLE_FILTERED))
+        db.use {
+            it.createTable(TABLE_UNFILTERED, columns = *LessonTable.columns)
+            it.createTable(TABLE_FILTERED, columns = *LessonTable.columns)
+        }
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL(getDropTableQuery(TABLE_UNFILTERED))
-        db.execSQL(getDropTableQuery(TABLE_FILTERED))
+        db.use {
+            it.dropTable(TABLE_UNFILTERED, true)
+            it.dropTable(TABLE_FILTERED, true)
+        }
         createTables(db)
     }
 
     fun update(lessons: Collection<Lesson>) {
-        val db = databaseManager.writableDatabase
-
-        db.beginTransaction()
-        try {
-            db.delete(TABLE_UNFILTERED, null, null)
-            lessons.forEach { db.insert(TABLE_UNFILTERED, null, it.toContentValues()) }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
+        databaseManager.use {
+            transaction {
+                delete(TABLE_UNFILTERED)
+                lessons.forEach {
+                    insert(TABLE_UNFILTERED, null, it.toContentValues())
+                }
+            }
         }
 
         applyModifiers()
     }
 
     private fun applyModifiers() {
-        val db = databaseManager.writableDatabase
+        databaseManager.use {
+            transaction {
+                delete(TABLE_FILTERED)
 
-        val cursor = db.queryDV(TABLE_UNFILTERED)
-        val columnIndices = getLessonColumnIndices(cursor)
-
-        db.beginTransaction()
-        try {
-            db.delete(TABLE_FILTERED, null, null)
-            while (cursor.moveToNext()) {
-                val lesson = constructLessonFromCursor(cursor, columnIndices)
+                val lessons = select(TABLE_UNFILTERED).parseList(lessonParser)
                 // TODO: apply filters
-                db.insert(TABLE_FILTERED, null, lesson.toContentValues())
+                lessons.forEach { insert(TABLE_FILTERED, null, it.toContentValues()) }
             }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-            cursor.close()
         }
 
         eventBus.broadcast(Event.DATA_UPDATED)
     }
 
-    fun request(subgroup: Int): MutableList<Lesson> {
-        val db = databaseManager.readableDatabase
+    fun request(subgroup: Int): List<Lesson> = databaseManager.use {
+        val select = select(TABLE_FILTERED).orderBy(LessonTable.TIME)
 
-        val cursor = if (subgroup != 0) db.queryDV(TABLE_FILTERED)
-        else db.queryDV(TABLE_FILTERED, where = WHERE_SUBGROUP, whereArgs = arrayOf(subgroup.toString()))
+        if (subgroup != 0) select.where("${LessonTable.SUBGROUP}=0 OR ${LessonTable.SUBGROUP}={subgroup}",
+                "subgroup" to subgroup)
 
-        val indices = getLessonColumnIndices(cursor)
-
-        val result = ArrayList<Lesson>()
-        while (cursor.moveToNext()) result += constructLessonFromCursor(cursor, indices)
-
-        cursor.close()
-
-        return result
+        select.parseList(lessonParser)
     }
 
     override fun handleEvent(type: Event) {
         applyModifiers()
+    }
+
+}
+
+private fun Lesson.toContentValues(): ContentValues {
+    val values = ContentValues()
+    values.put(LessonTable.PARITY, parity.toString())
+    values.put(LessonTable.WEEKDAY, weekday)
+    values.put(LessonTable.TIME, time)
+    values.put(LessonTable.DISCIPLINE, discipline)
+    values.put(LessonTable.AUDITORY, auditory)
+    values.put(LessonTable.TEACHER, teacher)
+    values.put(LessonTable.TYPE, type.toString())
+    values.put(LessonTable.SUBGROUP, subgroup)
+    return values
+}
+
+private val lessonParser = object : MapRowParser<Lesson> {
+
+    override fun parseRow(columns: Map<String, Any?>): Lesson {
+        return Lesson(
+                Parity.valueOf(columns[LessonTable.PARITY] as String),
+                columns[LessonTable.WEEKDAY] as String,
+                columns[LessonTable.TIME] as String,
+                columns[LessonTable.DISCIPLINE] as String,
+                columns[LessonTable.AUDITORY] as String,
+                columns[LessonTable.TEACHER] as String,
+                Lesson.Type.valueOf(columns[LessonTable.TYPE] as String),
+                (columns[LessonTable.SUBGROUP] as String).toInt()
+        )
     }
 
 }

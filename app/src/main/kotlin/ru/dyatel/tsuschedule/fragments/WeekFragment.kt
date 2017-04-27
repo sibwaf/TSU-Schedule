@@ -73,7 +73,8 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
         swipeRefresh?.isRefreshing = true
         doAsync {
             val lessons = lessonDao.request(getSubgroup(context))
-            lessons.removeAll { it.parity != parity && it.parity != Parity.BOTH }
+                    .filter { it.parity == parity || it.parity == Parity.BOTH }
+                    .toCollection(ArrayList())
             weekdays.updateData(lessons)
 
             uiThread { swipeRefresh?.isRefreshing = false }
