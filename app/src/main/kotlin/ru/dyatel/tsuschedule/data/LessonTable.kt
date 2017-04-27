@@ -2,6 +2,11 @@ package ru.dyatel.tsuschedule.data
 
 import android.provider.BaseColumns
 import android.provider.BaseColumns._ID
+import org.jetbrains.anko.db.AUTOINCREMENT
+import org.jetbrains.anko.db.INTEGER
+import org.jetbrains.anko.db.PRIMARY_KEY
+import org.jetbrains.anko.db.TEXT
+import org.jetbrains.anko.db.plus
 
 object LessonTable : BaseColumns {
 
@@ -16,16 +21,16 @@ object LessonTable : BaseColumns {
     const val TYPE = "type"
     const val SUBGROUP = "subgroup"
 
-    fun getCreateQuery(name: String) = "CREATE TABLE $name (" +
-            "$_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "$PARITY TEXT," +
-            "$WEEKDAY TEXT," +
-            "$TIME TEXT," +
-            "$DISCIPLINE TEXT," +
-            "$AUDITORY TEXT," +
-            "$TEACHER TEXT," +
-            "$TYPE TEXT," +
-            "$SUBGROUP CHAR(1)" +
-            ")"
+    val columns = arrayOf(
+            _ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+            PARITY to TEXT,
+            WEEKDAY to TEXT,
+            TIME to TEXT,
+            DISCIPLINE to TEXT,
+            AUDITORY to TEXT,
+            TEACHER to TEXT,
+            TYPE to TEXT,
+            SUBGROUP to TEXT
+    )
 
 }
