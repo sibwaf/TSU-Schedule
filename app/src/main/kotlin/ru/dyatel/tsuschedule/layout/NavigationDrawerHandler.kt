@@ -18,6 +18,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import hirondelle.date4j.DateTime
+import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.NavigationHandler
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.getGroup
@@ -59,8 +60,8 @@ class NavigationDrawerHandler(
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
             override fun onDrawerClosed(drawerView: View?) {
-                val groupIndexEdit = layout.findViewById(R.id.group_index) as EditText
-                val subgroupSpinner = layout.findViewById(R.id.subgroup) as Spinner
+                val groupIndexEdit = layout.find<EditText>(R.id.group_index)
+                val subgroupSpinner = layout.find<Spinner>(R.id.subgroup)
 
                 val oldSubgroup = getSubgroup(activity)
                 val newSubgroup = subgroupSpinner.selectedItemPosition
@@ -112,19 +113,19 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
         disabled.setTextColor(ContextCompat.getColor(context, R.color.disabled_week))
     }
 
-    val oddWeekText = layout.findViewById(R.id.odd_week) as TextView
-    val evenWeekText = layout.findViewById(R.id.even_week) as TextView
+    val oddWeekText = layout.find<TextView>(R.id.odd_week)
+    val evenWeekText = layout.find<TextView>(R.id.even_week)
     if (DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())) == Parity.ODD) {
         highlightView(oddWeekText, evenWeekText)
     } else {
         highlightView(evenWeekText, oddWeekText)
     }
 
-    (layout.findViewById(R.id.group_index) as EditText).setText(getGroup(context))
+    layout.find<EditText>(R.id.group_index).setText(getGroup(context))
 
     val spinnerAdapter = ArrayAdapter.createFromResource(context, R.array.subgroups, AR.layout.simple_spinner_item)
     spinnerAdapter.setDropDownViewResource(AR.layout.simple_spinner_dropdown_item)
-    val subgroupSpinner = layout.findViewById(R.id.subgroup) as Spinner
+    val subgroupSpinner = layout.find<Spinner>(R.id.subgroup)
     subgroupSpinner.adapter = spinnerAdapter
     subgroupSpinner.setSelection(getSubgroup(context))
 }

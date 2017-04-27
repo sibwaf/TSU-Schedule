@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.fragments.MainFragment
 import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler
 
@@ -20,12 +21,12 @@ class MainActivity : AppCompatActivity() {
 
         val fragmentManager = supportFragmentManager
 
-        setSupportActionBar(findViewById(R.id.toolbar) as Toolbar)
+        setSupportActionBar(find<Toolbar>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
         val eventBus = (application as ScheduleApplication).eventBus
-        val drawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        val drawer = find<DrawerLayout>(R.id.drawer_layout)
         drawerHandler = NavigationDrawerHandler(this, drawer, eventBus)
 
         navigationHandler = NavigationHandler(fragmentManager, drawerHandler)
