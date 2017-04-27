@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
 import java.util.ArrayList
@@ -19,8 +20,8 @@ class WeekdayListAdapter(private val activity: Activity) : RecyclerView.Adapter<
 
     class Holder(v: View, activity: Activity) : RecyclerView.ViewHolder(v) {
 
-        val weekdayName = v.findViewById(R.id.weekday) as TextView
-        val lessonList = v.findViewById(R.id.lesson_list) as RecyclerView
+        val weekdayName = v.find<TextView>(R.id.weekday)
+        val lessonList = v.find<RecyclerView>(R.id.lesson_list)
 
         val adapter = LessonListAdapter(activity)
 
@@ -50,8 +51,8 @@ class WeekdayListAdapter(private val activity: Activity) : RecyclerView.Adapter<
         weekdays.clear()
 
         normalWeekdayOrder.forEach { weekday ->
-            val weekdayLessons = ArrayList<Lesson>()
-            lessons.filter { it.weekday.toLowerCase() == weekday }.toCollection(weekdayLessons)
+            val weekdayLessons = lessons.filter { it.weekday.toLowerCase() == weekday }
+                    .toCollection(ArrayList<Lesson>())
             if (weekdayLessons.size > 0) weekdays += weekday to weekdayLessons
         }
 

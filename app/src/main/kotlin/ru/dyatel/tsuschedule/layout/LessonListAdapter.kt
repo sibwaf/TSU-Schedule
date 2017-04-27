@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
 import java.util.ArrayList
@@ -14,12 +15,12 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
 
     class Holder(v: View) : RecyclerView.ViewHolder(v) {
 
-        val color: View = v.findViewById(R.id.color)
+        val color: View = v.find<View>(R.id.color)
 
-        val time = v.findViewById(R.id.time) as TextView
-        val auditory = v.findViewById(R.id.auditory) as TextView
-        val discipline = v.findViewById(R.id.discipline) as TextView
-        val teacher = v.findViewById(R.id.teacher) as TextView
+        val time = v.find<TextView>(R.id.time)
+        val auditory = v.find<TextView>(R.id.auditory)
+        val discipline = v.find<TextView>(R.id.discipline)
+        val teacher = v.find<TextView>(R.id.teacher)
 
     }
 
