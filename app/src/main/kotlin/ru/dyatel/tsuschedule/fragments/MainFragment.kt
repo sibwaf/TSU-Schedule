@@ -31,7 +31,9 @@ class MainFragment : Fragment(), EventListener {
         super.onCreate(savedInstanceState)
 
         val application = activity.application as ScheduleApplication
-        application.eventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
+        eventBus = application.eventBus
+
+        eventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
     }
 
     override fun onDestroy() {
