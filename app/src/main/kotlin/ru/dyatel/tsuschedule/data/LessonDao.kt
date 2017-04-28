@@ -25,22 +25,19 @@ class LessonDao(private val eventBus: EventBus,
     }
 
     override fun createTables(db: SQLiteDatabase) {
-        db.use {
-            it.createTable(TABLE_UNFILTERED, columns = *LessonTable.columns)
-            it.createTable(TABLE_FILTERED, columns = *LessonTable.columns)
-        }
+        db.createTable(TABLE_UNFILTERED, columns = *LessonTable.columns)
+        db.createTable(TABLE_FILTERED, columns = *LessonTable.columns)
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.use {
-            it.dropTable(TABLE_UNFILTERED, true)
-            it.dropTable(TABLE_FILTERED, true)
-        }
+        db.dropTable(TABLE_UNFILTERED, true)
+        db.dropTable(TABLE_FILTERED, true)
+
         createTables(db)
     }
 
     fun update(lessons: Collection<Lesson>) {
-        databaseManager.use {
+        with(databaseManager.writableDatabase) {
             transaction {
                 delete(TABLE_UNFILTERED)
                 lessons.forEach {
@@ -53,7 +50,7 @@ class LessonDao(private val eventBus: EventBus,
     }
 
     private fun applyModifiers() {
-        databaseManager.use {
+        with(databaseManager.writableDatabase) {
             transaction {
                 delete(TABLE_FILTERED)
 
@@ -66,7 +63,7 @@ class LessonDao(private val eventBus: EventBus,
         eventBus.broadcast(Event.DATA_UPDATED)
     }
 
-    fun request(subgroup: Int): List<Lesson> = databaseManager.use {
+    fun request(subgroup: Int): List<Lesson> = with(databaseManager.readableDatabase) {
         val select = select(TABLE_FILTERED).orderBy(LessonTable.TIME)
 
         if (subgroup != 0) select.where("${LessonTable.SUBGROUP}=0 OR ${LessonTable.SUBGROUP}={subgroup}",
