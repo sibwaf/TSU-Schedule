@@ -23,12 +23,15 @@ import java.util.TimeZone
 
 class MainFragment : Fragment(), EventListener {
 
+    private lateinit var weekAdapter: WeekFragmentPagerAdapter
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private lateinit var eventBus: EventBus
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        weekAdapter = WeekFragmentPagerAdapter(childFragmentManager)
 
         val application = activity.application as ScheduleApplication
         eventBus = application.eventBus
@@ -44,10 +47,8 @@ class MainFragment : Fragment(), EventListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root = inflater.inflate(R.layout.main_screen, container, false)
 
-        val adapter = WeekFragmentPagerAdapter(childFragmentManager)
-
         val pager = root.find<ViewPager>(R.id.pager)
-        pager.adapter = adapter
+        pager.adapter = weekAdapter
         pager.currentItem = ParityReference.getIndexFromParity(
                 DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
         )
@@ -59,7 +60,7 @@ class MainFragment : Fragment(), EventListener {
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
         swipeRefresh.setOnRefreshListener { LessonFetchTask(context, eventBus, lessonDao).execute() }
         swipeRefresh.setOnChildScrollUpCallback { _, _ ->
-            val week = adapter.getFragment(pager.currentItem)
+            val week = weekAdapter.getFragment(pager.currentItem)
             week.view?.canScrollVertically(-1) ?: false
         }
 
