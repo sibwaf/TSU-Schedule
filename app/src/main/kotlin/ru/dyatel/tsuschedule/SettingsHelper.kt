@@ -7,12 +7,12 @@ private fun getPreferences(context: Context) =
         PreferenceManager.getDefaultSharedPreferences(context)
 
 fun getConnectionTimeout(context: Context): Int {
+    val timeoutPreference = context.getString(R.string.preference_timeout)
     val fallback = context.getString(R.string.preference_timeout_default)
+
     try {
-        return Integer.parseInt(getPreferences(context).getString(
-                context.getString(R.string.preference_timeout), fallback)
-        )
+        return getPreferences(context).getString(timeoutPreference, fallback).toInt()
     } catch(e: Exception) {
-        return Integer.parseInt(fallback)
+        return fallback.toInt()
     }
 }
