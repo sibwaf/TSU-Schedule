@@ -2,8 +2,8 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import android.os.AsyncTask
-import android.widget.Toast
 import org.acra.ACRA
+import org.jetbrains.anko.longToast
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
@@ -55,8 +55,7 @@ class LessonFetchTask(
     }
 
     override fun onPostExecute(result: Void?) {
-        val error = failureTextRes
-        if (error != null) Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+        context.longToast(failureTextRes ?: return)
     }
 
 }
