@@ -15,11 +15,7 @@ import ru.dyatel.tsuschedule.parsing.ParsingException
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-class LessonFetchTask(
-        private val context: Context,
-        private val eventBus: EventBus,
-        private val data: LessonDao
-) : AsyncTask<Void, Void, Void>() {
+class LessonFetchTask(private val context: Context, private val data: LessonDao) : AsyncTask<Void, Void, Void>() {
 
     private var failureTextRes: Int? = null
 
@@ -49,7 +45,7 @@ class LessonFetchTask(
             if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleSilentException(e)
         }
 
-        if (failureTextRes != null) eventBus.broadcast(Event.DATA_UPDATE_FAILED)
+        if (failureTextRes != null) EventBus.broadcast(Event.DATA_UPDATE_FAILED)
 
         return null
     }

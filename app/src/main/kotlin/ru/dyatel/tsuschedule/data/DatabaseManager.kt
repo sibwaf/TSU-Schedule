@@ -3,15 +3,14 @@ package ru.dyatel.tsuschedule.data
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
-import ru.dyatel.tsuschedule.events.EventBus
 
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 3
 
-class DatabaseManager(context: Context, eventBus: EventBus) :
+class DatabaseManager(context: Context) :
         ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
-    val lessonDao = LessonDao(eventBus, this)
+    val lessonDao = LessonDao(this)
 
     private val parts = setOf(lessonDao)
 

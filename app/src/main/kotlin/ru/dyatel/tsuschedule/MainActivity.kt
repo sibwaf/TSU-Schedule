@@ -25,9 +25,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        val eventBus = (application as ScheduleApplication).eventBus
         val drawer = find<DrawerLayout>(R.id.drawer_layout)
-        drawerHandler = NavigationDrawerHandler(this, drawer, eventBus)
+        drawerHandler = NavigationDrawerHandler(this, drawer)
 
         navigationHandler = NavigationHandler(fragmentManager, drawerHandler)
         fragmentManager.addOnBackStackChangedListener(navigationHandler)

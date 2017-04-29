@@ -1,8 +1,9 @@
 package ru.dyatel.tsuschedule.events
 
-import java.util.*
+import java.util.ArrayList
+import java.util.EnumMap
 
-class EventBus {
+object EventBus {
 
     private val listeners = EnumMap<Event, MutableList<EventListener>>(Event::class.java)
 

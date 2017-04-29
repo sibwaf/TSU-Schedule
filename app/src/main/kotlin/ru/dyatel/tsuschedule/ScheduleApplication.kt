@@ -6,13 +6,11 @@ import android.preference.PreferenceManager
 import org.acra.ACRA
 import org.acra.annotation.ReportsCrashes
 import ru.dyatel.tsuschedule.data.DatabaseManager
-import ru.dyatel.tsuschedule.events.EventBus
 
 @ReportsCrashes(formUri = BuildConfig.ACRA_BACKEND)
 class ScheduleApplication : Application() {
 
-    val eventBus = EventBus()
-    val databaseManager = DatabaseManager(this, eventBus)
+    val databaseManager = DatabaseManager(this)
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
