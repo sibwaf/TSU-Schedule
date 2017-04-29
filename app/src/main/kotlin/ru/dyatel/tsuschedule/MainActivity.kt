@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity() {
         navigationHandler = NavigationHandler(fragmentManager, drawerHandler)
         fragmentManager.addOnBackStackChangedListener(navigationHandler)
 
-        drawerHandler.initMenu(navigationHandler)
-
         fragmentManager.beginTransaction()
                 .replace(R.id.content_fragment, MainFragment())
                 .commit()

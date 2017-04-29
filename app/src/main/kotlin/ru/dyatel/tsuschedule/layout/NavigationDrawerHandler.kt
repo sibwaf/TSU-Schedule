@@ -19,7 +19,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import hirondelle.date4j.DateTime
 import org.jetbrains.anko.find
-import ru.dyatel.tsuschedule.NavigationHandler
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.getGroup
 import ru.dyatel.tsuschedule.data.getSubgroup
@@ -78,16 +77,6 @@ class NavigationDrawerHandler(private val activity: Activity, private val layout
         openDrawerForTheFirstTime(activity, this)
     }
 
-    fun initMenu(navigationHandler: NavigationHandler) {
-        val menuAdapter = MenuButtonAdapter(navigationHandler)
-        menuAdapter.addEntry(
-                MenuEntry("settings", R.drawable.ic_settings, R.string.action_settings, { SettingsFragment() }))
-
-        val menu = layout.findViewById(R.id.menu_list) as RecyclerView
-        menu.layoutManager = LinearLayoutManager(activity)
-        menu.adapter = menuAdapter
-    }
-
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
     fun syncState() = toggle.syncState()
     fun onOptionsItemSelected(item: MenuItem): Boolean = toggle.onOptionsItemSelected(item)
@@ -124,6 +113,14 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
     val subgroupSpinner = layout.find<Spinner>(R.id.subgroup)
     subgroupSpinner.adapter = spinnerAdapter
     subgroupSpinner.setSelection(getSubgroup(context))
+
+    val menuAdapter = MenuButtonAdapter()
+    menuAdapter.addEntry(
+            MenuEntry("settings", R.drawable.ic_settings, R.string.action_settings, { SettingsFragment() }))
+
+    val menu = layout.findViewById(R.id.menu_list) as RecyclerView
+    menu.layoutManager = LinearLayoutManager(context)
+    menu.adapter = menuAdapter
 }
 
 private const val DRAWER_PREFERENCES = "drawer_preferences"

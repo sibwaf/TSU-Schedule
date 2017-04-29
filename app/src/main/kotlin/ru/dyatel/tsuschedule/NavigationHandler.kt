@@ -1,21 +1,20 @@
 package ru.dyatel.tsuschedule
 
-import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.view.MenuItem
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.layout.MenuEntry
 import ru.dyatel.tsuschedule.layout.NavigationDrawerHandler
-import android.R as AR
 
 class NavigationHandler(
         private val fragmentManager: FragmentManager,
         private val drawerHandler: NavigationDrawerHandler
-) : FragmentManager.OnBackStackChangedListener {
+) : FragmentManager.OnBackStackChangedListener, EventListener {
 
-    fun navigate(fragment: Fragment, name: String) {
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_fragment, fragment)
-                .addToBackStack(name)
-                .commit()
+    init {
+        EventBus.subscribe(this, Event.NAVIGATE_TO)
     }
 
     override fun onBackStackChanged() {
@@ -36,8 +35,17 @@ class NavigationHandler(
 
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (drawerHandler.onOptionsItemSelected(item)) return true
-        if (item.itemId == AR.id.home && onBackPressed()) return true
+        if (item.itemId == android.R.id.home && onBackPressed()) return true
         return false
+    }
+
+    override fun handleEvent(type: Event, payload: Any?) {
+        payload as MenuEntry
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.content_fragment, payload.fragment)
+                .addToBackStack(payload.name)
+                .commit()
     }
 
 }
