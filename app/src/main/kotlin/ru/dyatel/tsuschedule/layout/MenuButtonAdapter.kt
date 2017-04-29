@@ -7,17 +7,10 @@ import android.widget.TextView
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-import java.util.LinkedList
 
 class MenuButtonAdapter : RecyclerView.Adapter<MenuButtonAdapter.Holder>() {
 
     class Holder(val button: TextView) : RecyclerView.ViewHolder(button)
-
-    private val entries: MutableList<MenuEntry> = LinkedList()
-
-    fun addEntry(entry: MenuEntry) {
-        entries += entry
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.menu_button, parent, false)
@@ -25,7 +18,7 @@ class MenuButtonAdapter : RecyclerView.Adapter<MenuButtonAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val entry = entries[position]
+        val entry = APPLICATION_MENU[position]
         with(holder.button) {
             setCompoundDrawablesWithIntrinsicBounds(entry.iconResId, 0, 0, 0)
             setText(entry.textResId)
@@ -33,6 +26,6 @@ class MenuButtonAdapter : RecyclerView.Adapter<MenuButtonAdapter.Holder>() {
         }
     }
 
-    override fun getItemCount() = entries.size
+    override fun getItemCount() = APPLICATION_MENU.size
 
 }
