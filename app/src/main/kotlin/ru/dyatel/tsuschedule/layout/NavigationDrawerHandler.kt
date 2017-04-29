@@ -26,13 +26,12 @@ import ru.dyatel.tsuschedule.data.setGroup
 import ru.dyatel.tsuschedule.data.setSubgroup
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-import ru.dyatel.tsuschedule.fragments.SettingsFragment
 import ru.dyatel.tsuschedule.parsing.DateUtil
 import ru.dyatel.tsuschedule.parsing.Parity
 import java.util.TimeZone
 import android.R as AR
 
-private const val drawerGravity = Gravity.LEFT
+private const val DRAWER_GRAVITY = Gravity.LEFT
 
 class NavigationDrawerHandler(private val activity: Activity, private val layout: DrawerLayout) {
 
@@ -81,9 +80,9 @@ class NavigationDrawerHandler(private val activity: Activity, private val layout
     fun syncState() = toggle.syncState()
     fun onOptionsItemSelected(item: MenuItem): Boolean = toggle.onOptionsItemSelected(item)
 
-    fun isDrawerOpened() = layout.isDrawerOpen(drawerGravity)
-    fun openDrawer() = if (enabled) layout.openDrawer(drawerGravity) else Unit
-    fun closeDrawer() = layout.closeDrawer(drawerGravity)
+    fun isDrawerOpened() = layout.isDrawerOpen(DRAWER_GRAVITY)
+    fun openDrawer() = if (enabled) layout.openDrawer(DRAWER_GRAVITY) else Unit
+    fun closeDrawer() = layout.closeDrawer(DRAWER_GRAVITY)
 
 }
 
@@ -114,13 +113,9 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
     subgroupSpinner.adapter = spinnerAdapter
     subgroupSpinner.setSelection(getSubgroup(context))
 
-    val menuAdapter = MenuButtonAdapter()
-    menuAdapter.addEntry(
-            MenuEntry("settings", R.drawable.ic_settings, R.string.action_settings, { SettingsFragment() }))
-
-    val menu = layout.findViewById(R.id.menu_list) as RecyclerView
+    val menu = layout.find<RecyclerView>(R.id.menu_list)
     menu.layoutManager = LinearLayoutManager(context)
-    menu.adapter = menuAdapter
+    menu.adapter = MenuButtonAdapter()
 }
 
 private const val DRAWER_PREFERENCES = "drawer_preferences"
