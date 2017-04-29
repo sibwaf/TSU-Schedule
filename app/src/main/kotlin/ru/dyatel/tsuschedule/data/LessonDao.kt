@@ -71,9 +71,7 @@ class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, Ev
         select.parseList(lessonParser)
     }
 
-    override fun handleEvent(type: Event) {
-        applyModifiers()
-    }
+    override fun handleEvent(type: Event, payload: Any?) = applyModifiers()
 
 }
 

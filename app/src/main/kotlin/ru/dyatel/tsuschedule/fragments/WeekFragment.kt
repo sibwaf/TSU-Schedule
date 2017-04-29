@@ -52,7 +52,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
         return view
     }
 
-    override fun handleEvent(type: Event) = refresh()
+    override fun handleEvent(type: Event, payload: Any?) = refresh()
 
     private fun refresh() {
         doAsync {

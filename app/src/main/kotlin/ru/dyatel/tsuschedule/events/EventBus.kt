@@ -14,6 +14,6 @@ object EventBus {
 
     fun unsubscribe(listener: EventListener) = listeners.values.forEach { it.remove(listener) }
 
-    fun broadcast(event: Event) = listeners[event]?.forEach { it.handleEvent(event) }
+    fun broadcast(event: Event, payload: Any? = null) = listeners[event]?.forEach { it.handleEvent(event, payload) }
 
 }
