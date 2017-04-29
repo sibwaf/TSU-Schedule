@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = "1.1.2"
+    ext.kotlinVersion = "1.1.2-2"
 
     repositories {
         jcenter()
@@ -12,7 +12,7 @@ buildscript {
 
 ext {
     androidSupportVersion = "25.3.1"
-    ankoVersion = "0.9.1"
+    ankoVersion = "0.9.1a"
     jsoupVersion = "1.10.2"
     date4jVersion = "1.5.1"
     acraVersion = "4.9.2"
