@@ -46,7 +46,7 @@ class LessonFetchTask(
         } catch (e: Exception) {
             failureTextRes = R.string.unknown_failure
             e.printStackTrace()
-            if (!BuildConfig.DISABLE_ACRA) ACRA.getErrorReporter().handleSilentException(e)
+            if (!BuildConfig.DEBUG) ACRA.getErrorReporter().handleSilentException(e)
         }
 
         if (failureTextRes != null) eventBus.broadcast(Event.DATA_UPDATE_FAILED)

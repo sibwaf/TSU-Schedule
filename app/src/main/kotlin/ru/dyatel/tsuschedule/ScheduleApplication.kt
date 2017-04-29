@@ -16,7 +16,7 @@ class ScheduleApplication : Application() {
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
-        if (!BuildConfig.DISABLE_ACRA) ACRA.init(this)
+        if (!BuildConfig.DEBUG) ACRA.init(this)
     }
 
     override fun onCreate() {
