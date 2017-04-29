@@ -35,11 +35,7 @@ import android.R as AR
 
 private const val drawerGravity = Gravity.LEFT
 
-class NavigationDrawerHandler(
-        private val activity: Activity,
-        private val layout: DrawerLayout,
-        eventBus: EventBus
-) {
+class NavigationDrawerHandler(private val activity: Activity, private val layout: DrawerLayout) {
 
     private val toggle: ActionBarDrawerToggle
 
@@ -71,7 +67,7 @@ class NavigationDrawerHandler(
                 setSubgroup(newSubgroup, activity)
 
                 // TODO: use DATA_MODIFIER_SET_CHANGED
-                if (oldSubgroup != newSubgroup) eventBus.broadcast(Event.DATA_UPDATED)
+                if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_UPDATED)
 
                 super.onDrawerClosed(drawerView)
             }

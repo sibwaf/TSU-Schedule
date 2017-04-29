@@ -17,11 +17,10 @@ import ru.dyatel.tsuschedule.parsing.Parity
 private const val TABLE_UNFILTERED = "lessons"
 private const val TABLE_FILTERED = "filtered"
 
-class LessonDao(private val eventBus: EventBus,
-                private val databaseManager: DatabaseManager) : DatabasePart, EventListener {
+class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, EventListener {
 
     init {
-        eventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED)
+        EventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED)
     }
 
     override fun createTables(db: SQLiteDatabase) {
@@ -60,7 +59,7 @@ class LessonDao(private val eventBus: EventBus,
             }
         }
 
-        eventBus.broadcast(Event.DATA_UPDATED)
+        EventBus.broadcast(Event.DATA_UPDATED)
     }
 
     fun request(subgroup: Int): List<Lesson> = with(databaseManager.readableDatabase) {

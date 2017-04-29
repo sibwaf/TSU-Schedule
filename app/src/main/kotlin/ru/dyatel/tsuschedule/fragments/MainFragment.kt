@@ -26,21 +26,16 @@ class MainFragment : Fragment(), EventListener {
     private lateinit var weekAdapter: WeekFragmentPagerAdapter
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
-    private lateinit var eventBus: EventBus
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         weekAdapter = WeekFragmentPagerAdapter(childFragmentManager)
 
-        val application = activity.application as ScheduleApplication
-        eventBus = application.eventBus
-
-        eventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
+        EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
     }
 
     override fun onDestroy() {
-        eventBus.unsubscribe(this)
+        EventBus.unsubscribe(this)
         super.onDestroy()
     }
 
@@ -58,7 +53,7 @@ class MainFragment : Fragment(), EventListener {
 
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
-        swipeRefresh.setOnRefreshListener { LessonFetchTask(context, eventBus, lessonDao).execute() }
+        swipeRefresh.setOnRefreshListener { LessonFetchTask(context, lessonDao).execute() }
         swipeRefresh.setOnChildScrollUpCallback { _, _ ->
             val week = weekAdapter.getFragment(pager.currentItem)
             week.view?.canScrollVertically(-1) ?: false

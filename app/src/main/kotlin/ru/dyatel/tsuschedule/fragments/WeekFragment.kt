@@ -23,7 +23,6 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
     private lateinit var weekdays: WeekdayListAdapter
 
-    private lateinit var eventBus: EventBus
     private lateinit var lessonDao: LessonDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,17 +30,15 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
         weekdays = WeekdayListAdapter(activity)
 
-        val application = activity.application as ScheduleApplication
-        eventBus = application.eventBus
-        lessonDao = application.databaseManager.lessonDao
+        lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
 
-        eventBus.subscribe(this, Event.DATA_UPDATED)
+        EventBus.subscribe(this, Event.DATA_UPDATED)
 
         refresh()
     }
 
     override fun onDestroy() {
-        eventBus.unsubscribe(this)
+        EventBus.unsubscribe(this)
         super.onDestroy()
     }
 
