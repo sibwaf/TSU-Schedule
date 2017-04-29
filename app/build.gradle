@@ -16,8 +16,6 @@ android {
         versionName "0.7.1"
 
         buildConfigField "String", "ACRA_BACKEND", properties.getProperty("ACRA_BACKEND")
-
-        buildConfigField "boolean", "DISABLE_ACRA", "false"
     }
 
     signingConfigs {
@@ -30,9 +28,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            buildConfigField "boolean", "DISABLE_ACRA", "true"
-        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
