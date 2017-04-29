@@ -62,6 +62,6 @@ class MainFragment : Fragment(), EventListener {
         return root
     }
 
-    override fun handleEvent(type: Event) = activity.runOnUiThread { swipeRefresh.isRefreshing = false }
+    override fun handleEvent(type: Event, payload: Any?) = activity.runOnUiThread { swipeRefresh.isRefreshing = false }
 
 }
