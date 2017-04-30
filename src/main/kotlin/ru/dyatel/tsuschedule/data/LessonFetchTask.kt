@@ -29,7 +29,7 @@ class LessonFetchTask(private val context: Context, private val data: LessonDao)
         }
 
         val parser = Parser()
-        parser.setTimeout(preferences.connectionTimeout)
+        parser.setTimeout(preferences.connectionTimeout * 1000)
 
         try {
             data.update(parser.getLessons(group))
