@@ -1,12 +1,13 @@
 package ru.dyatel.tsuschedule.fragments
 
+import android.app.Fragment
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
@@ -46,7 +47,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
         val view = inflater.inflate(R.layout.week_fragment, container, false)
 
         val weekdayList = view.find<RecyclerView>(R.id.weekday_list)
-        weekdayList.layoutManager = LinearLayoutManager(context)
+        weekdayList.layoutManager = LinearLayoutManager(ctx)
         weekdayList.adapter = weekdays
 
         return view
@@ -56,7 +57,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
     private fun refresh() {
         doAsync {
-            val lessons = lessonDao.request(getSubgroup(context))
+            val lessons = lessonDao.request(getSubgroup(ctx))
                     .filter { it.parity == parity || it.parity == Parity.BOTH }
                     .toCollection(ArrayList())
             weekdays.updateData(lessons)

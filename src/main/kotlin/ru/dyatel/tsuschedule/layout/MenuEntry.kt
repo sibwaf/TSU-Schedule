@@ -1,6 +1,6 @@
 package ru.dyatel.tsuschedule.layout
 
-import android.support.v4.app.Fragment
+import android.app.Fragment
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.fragments.SettingsFragment
 

@@ -1,13 +1,14 @@
 package ru.dyatel.tsuschedule.fragments
 
+import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import org.jetbrains.anko.ctx
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
@@ -26,7 +27,7 @@ class MainFragment : Fragment(), EventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        weekAdapter = WeekFragmentPagerAdapter(childFragmentManager, context)
+        weekAdapter = WeekFragmentPagerAdapter(childFragmentManager, ctx)
 
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
     }
@@ -48,7 +49,7 @@ class MainFragment : Fragment(), EventListener {
 
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
-        swipeRefresh.setOnRefreshListener { LessonFetchTask(context, lessonDao).execute() }
+        swipeRefresh.setOnRefreshListener { LessonFetchTask(ctx, lessonDao).execute() }
         swipeRefresh.setOnChildScrollUpCallback { _, _ ->
             val week = weekAdapter.getFragment(pager.currentItem)
             week.view?.canScrollVertically(-1) ?: false

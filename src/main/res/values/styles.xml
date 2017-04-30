@@ -4,8 +4,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar</item>
 
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
-
         <item name="colorControlNormal">@color/title_color</item>
         <item name="titleTextColor">@color/title_color</item>
 

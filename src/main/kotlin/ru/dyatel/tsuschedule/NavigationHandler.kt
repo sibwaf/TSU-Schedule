@@ -1,6 +1,6 @@
 package ru.dyatel.tsuschedule
 
-import android.support.v4.app.FragmentManager
+import android.app.FragmentManager
 import android.view.MenuItem
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
