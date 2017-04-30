@@ -22,8 +22,8 @@ class NavigationHandler(
     }
 
     fun onBackPressed(): Boolean {
-        if (drawerHandler.isDrawerOpened()) {
-            drawerHandler.closeDrawer()
+        if (drawerHandler.opened) {
+            drawerHandler.close()
             return true
         }
         if (fragmentManager.backStackEntryCount > 0) {
