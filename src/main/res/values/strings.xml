@@ -19,7 +19,7 @@
     <string name="parsing_failure">Ошибка при обработке полученных данных</string>
 
     <string name="preference_timeout_title">Таймаут подключения</string>
-    <string name="preference_timeout_description">В миллисекундах, 0 для отключения</string>
+    <string name="preference_timeout_description">В секундах, от 1 до 30</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
