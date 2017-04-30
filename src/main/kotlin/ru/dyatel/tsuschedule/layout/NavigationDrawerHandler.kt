@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
-import hirondelle.date4j.DateTime
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.getGroup
@@ -26,9 +25,8 @@ import ru.dyatel.tsuschedule.data.setGroup
 import ru.dyatel.tsuschedule.data.setSubgroup
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-import ru.dyatel.tsuschedule.parsing.DateUtil
 import ru.dyatel.tsuschedule.parsing.Parity
-import java.util.TimeZone
+import ru.dyatel.tsuschedule.parsing.currentWeekParity
 import android.R as AR
 
 private const val DRAWER_GRAVITY = Gravity.LEFT
@@ -99,7 +97,7 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
 
     val oddWeekText = layout.find<TextView>(R.id.odd_week)
     val evenWeekText = layout.find<TextView>(R.id.even_week)
-    if (DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())) == Parity.ODD) {
+    if (currentWeekParity == Parity.ODD) {
         highlightView(oddWeekText, evenWeekText)
     } else {
         highlightView(evenWeekText, oddWeekText)

@@ -8,7 +8,6 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import hirondelle.date4j.DateTime
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
@@ -17,8 +16,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter
-import ru.dyatel.tsuschedule.parsing.DateUtil
-import java.util.TimeZone
+import ru.dyatel.tsuschedule.parsing.currentWeekParity
 
 class MainFragment : Fragment(), EventListener {
 
@@ -43,7 +41,7 @@ class MainFragment : Fragment(), EventListener {
 
         val pager = root.find<ViewPager>(R.id.pager)
         pager.adapter = weekAdapter
-        pager.currentItem = DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())).index
+        pager.currentItem = currentWeekParity.index
 
         val tabLayout = root.find<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(pager)
