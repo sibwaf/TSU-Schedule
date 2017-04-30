@@ -11,12 +11,14 @@
 
     <string name="hint_group_index">Индекс группы</string>
 
-    <string name="unknown_failure">Неизвестная ошибка</string>
-    <string name="no_group_index">Введите индекс группы</string>
-    <string name="wrong_group_index">Некорректный индекс группы</string>
-    <string name="connection_timeout">Таймаут подключения, попробуйте ещё раз</string>
-    <string name="load_failure">Ошибка при загрузке данных, попробуйте ещё раз</string>
-    <string name="parsing_failure">Ошибка при обработке полученных данных</string>
+    <string name="failure_unknown">Неизвестная ошибка</string>
+    <string name="failure_missing_group_index">Введите индекс группы</string>
+    <string name="failure_wrong_group_index">Некорректный индекс группы</string>
+    <string name="failure_connection_timeout">Таймаут подключения, попробуйте ещё раз</string>
+    <string name="failure_unsuccessful_request">Ошибка при загрузке данных, проверьте подключение к сети и попробуйте
+        ещё раз
+    </string>
+    <string name="failure_parsing_failed">Ошибка при обработке полученных данных</string>
 
     <string name="preference_timeout_title">Таймаут подключения</string>
     <string name="preference_timeout_description">В секундах, от 1 до 30</string>

@@ -12,7 +12,7 @@ import org.jetbrains.anko.ctx
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
-import ru.dyatel.tsuschedule.data.LessonFetchTask
+import ru.dyatel.tsuschedule.data.asyncLessonFetch
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
@@ -49,7 +49,7 @@ class MainFragment : Fragment(), EventListener {
 
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
-        swipeRefresh.setOnRefreshListener { LessonFetchTask(ctx, lessonDao).execute() }
+        swipeRefresh.setOnRefreshListener { asyncLessonFetch(ctx, lessonDao) }
         swipeRefresh.setOnChildScrollUpCallback { _, _ ->
             val week = weekAdapter.getFragment(pager.currentItem)
             week.view?.canScrollVertically(-1) ?: false
