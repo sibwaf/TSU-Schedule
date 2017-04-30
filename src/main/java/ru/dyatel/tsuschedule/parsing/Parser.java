@@ -40,7 +40,7 @@ public class Parser {
 		Document response = connection.data("group", group).get();
 		Element result = response.getElementById("results");
 
-		if (result.childNodeSize() == 0) throw new BadGroupException();
+		if (result.childNodeSize() <= 1) throw new BadGroupException();
 
 		Set<Lesson> lessons = new HashSet<>();
 
