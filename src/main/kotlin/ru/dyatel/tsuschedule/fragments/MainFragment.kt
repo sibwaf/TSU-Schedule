@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import hirondelle.date4j.DateTime
 import org.jetbrains.anko.find
-import ru.dyatel.tsuschedule.ParityReference
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
 import ru.dyatel.tsuschedule.data.LessonFetchTask
@@ -29,7 +28,7 @@ class MainFragment : Fragment(), EventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        weekAdapter = WeekFragmentPagerAdapter(childFragmentManager)
+        weekAdapter = WeekFragmentPagerAdapter(childFragmentManager, context)
 
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
     }
@@ -44,9 +43,7 @@ class MainFragment : Fragment(), EventListener {
 
         val pager = root.find<ViewPager>(R.id.pager)
         pager.adapter = weekAdapter
-        pager.currentItem = ParityReference.getIndexFromParity(
-                DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault()))
-        )
+        pager.currentItem = DateUtil.getWeekParity(DateTime.now(TimeZone.getDefault())).index
 
         val tabLayout = root.find<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(pager)

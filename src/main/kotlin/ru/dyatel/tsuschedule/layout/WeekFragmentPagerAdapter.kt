@@ -1,21 +1,22 @@
 package ru.dyatel.tsuschedule.layout
 
+import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.util.SparseArray
 import android.view.ViewGroup
-import ru.dyatel.tsuschedule.ParityReference
 import ru.dyatel.tsuschedule.fragments.WeekFragment
+import ru.dyatel.tsuschedule.parsing.indexToParity
 
-class WeekFragmentPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+class WeekFragmentPagerAdapter(fm: FragmentManager, private val context: Context) : FragmentPagerAdapter(fm) {
 
     private val registry = SparseArray<WeekFragment>(2)
 
     override fun getCount() = 2
 
     override fun getItem(position: Int): Fragment {
-        val fragment = WeekFragment(ParityReference.getParityFromIndex(position))
+        val fragment = WeekFragment(indexToParity(position))
         registry.put(position, fragment)
         return fragment
     }
@@ -25,7 +26,7 @@ class WeekFragmentPagerAdapter(fragmentManager: FragmentManager) : FragmentPager
         super.destroyItem(container, position, `object`)
     }
 
-    override fun getPageTitle(position: Int) = ParityReference.getStringFromIndex(position).toUpperCase()
+    override fun getPageTitle(position: Int) = indexToParity(position).toText(context)
 
     fun getFragment(position: Int): WeekFragment = registry[position]
 
