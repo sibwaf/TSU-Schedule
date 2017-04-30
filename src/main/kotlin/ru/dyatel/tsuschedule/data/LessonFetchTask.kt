@@ -8,10 +8,10 @@ import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-import ru.dyatel.tsuschedule.getConnectionTimeout
 import ru.dyatel.tsuschedule.parsing.BadGroupException
 import ru.dyatel.tsuschedule.parsing.Parser
 import ru.dyatel.tsuschedule.parsing.ParsingException
+import ru.dyatel.tsuschedule.schedulePreferences
 import java.io.IOException
 import java.net.SocketTimeoutException
 
@@ -20,14 +20,16 @@ class LessonFetchTask(private val context: Context, private val data: LessonDao)
     private var failureTextRes: Int? = null
 
     override fun doInBackground(vararg params: Void?): Void? {
-        val group = getGroup(context)
+        val preferences = context.schedulePreferences
+
+        val group = preferences.group
         if (group.isNullOrBlank()) {
             failureTextRes = R.string.no_group_index
             return null
         }
 
         val parser = Parser()
-        parser.setTimeout(getConnectionTimeout(context))
+        parser.setTimeout(preferences.connectionTimeout)
 
         try {
             data.update(parser.getLessons(group))

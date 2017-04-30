@@ -19,14 +19,11 @@ import android.widget.Spinner
 import android.widget.TextView
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.getGroup
-import ru.dyatel.tsuschedule.data.getSubgroup
-import ru.dyatel.tsuschedule.data.setGroup
-import ru.dyatel.tsuschedule.data.setSubgroup
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.parsing.Parity
 import ru.dyatel.tsuschedule.parsing.currentWeekParity
+import ru.dyatel.tsuschedule.schedulePreferences
 import android.R as AR
 
 private const val DRAWER_GRAVITY = Gravity.LEFT
@@ -52,15 +49,17 @@ class NavigationDrawerHandler(private val activity: Activity, private val layout
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close
         ) {
             override fun onDrawerClosed(drawerView: View?) {
+                val preferences = activity.schedulePreferences
+
                 val groupIndexEdit = layout.find<EditText>(R.id.group_index)
                 val subgroupSpinner = layout.find<Spinner>(R.id.subgroup)
 
-                val oldSubgroup = getSubgroup(activity)
+                val oldSubgroup = preferences.subgroup
                 val newSubgroup = subgroupSpinner.selectedItemPosition
 
                 // Save new group and subgroup
-                setGroup(groupIndexEdit.text.toString(), activity)
-                setSubgroup(newSubgroup, activity)
+                preferences.group = groupIndexEdit.text.toString()
+                preferences.subgroup = newSubgroup
 
                 // TODO: use DATA_MODIFIER_SET_CHANGED
                 if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_UPDATED)
@@ -71,7 +70,11 @@ class NavigationDrawerHandler(private val activity: Activity, private val layout
         layout.addDrawerListener(toggle)
 
         // Open the drawer if app is launched for the first time
-        openDrawerForTheFirstTime(activity, this)
+        val preferences = activity.schedulePreferences
+        if (!preferences.drawerIsLearned) {
+            openDrawer()
+            preferences.drawerIsLearned = true
+        }
     }
 
     fun onConfigurationChanged(config: Configuration) = toggle.onConfigurationChanged(config)
@@ -95,6 +98,8 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
         disabled.setTextColor(ContextCompat.getColor(context, R.color.disabled_week))
     }
 
+    val preferences = context.schedulePreferences
+
     val oddWeekText = layout.find<TextView>(R.id.odd_week)
     val evenWeekText = layout.find<TextView>(R.id.even_week)
     if (currentWeekParity == Parity.ODD) {
@@ -103,29 +108,15 @@ private fun manageLayout(layout: DrawerLayout, context: Context) {
         highlightView(evenWeekText, oddWeekText)
     }
 
-    layout.find<EditText>(R.id.group_index).setText(getGroup(context))
+    layout.find<EditText>(R.id.group_index).setText(preferences.group)
 
     val spinnerAdapter = ArrayAdapter.createFromResource(context, R.array.subgroups, AR.layout.simple_spinner_item)
     spinnerAdapter.setDropDownViewResource(AR.layout.simple_spinner_dropdown_item)
     val subgroupSpinner = layout.find<Spinner>(R.id.subgroup)
     subgroupSpinner.adapter = spinnerAdapter
-    subgroupSpinner.setSelection(getSubgroup(context))
+    subgroupSpinner.setSelection(preferences.subgroup)
 
     val menu = layout.find<RecyclerView>(R.id.menu_list)
     menu.layoutManager = LinearLayoutManager(context)
     menu.adapter = MenuButtonAdapter()
-}
-
-private const val DRAWER_PREFERENCES = "drawer_preferences"
-private const val DRAWER_LEARNED_KEY = "drawer_learned"
-private fun openDrawerForTheFirstTime(context: Context, drawerHandler: NavigationDrawerHandler) {
-    val preferences = context.getSharedPreferences(DRAWER_PREFERENCES, Context.MODE_PRIVATE)
-
-    val alreadySeen = preferences.getBoolean(DRAWER_LEARNED_KEY, false)
-    if (!alreadySeen) {
-        drawerHandler.openDrawer()
-        preferences.edit()
-                .putBoolean(DRAWER_LEARNED_KEY, true)
-                .apply()
-    }
 }

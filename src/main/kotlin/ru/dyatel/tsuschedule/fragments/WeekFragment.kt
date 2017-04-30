@@ -13,12 +13,12 @@ import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
 import ru.dyatel.tsuschedule.data.LessonDao
-import ru.dyatel.tsuschedule.data.getSubgroup
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.layout.WeekdayListAdapter
 import ru.dyatel.tsuschedule.parsing.Parity
+import ru.dyatel.tsuschedule.schedulePreferences
 
 class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
@@ -57,7 +57,7 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
 
     private fun refresh() {
         doAsync {
-            val lessons = lessonDao.request(getSubgroup(ctx))
+            val lessons = lessonDao.request(ctx.schedulePreferences.subgroup)
                     .filter { it.parity == parity || it.parity == Parity.BOTH }
                     .toCollection(ArrayList())
             weekdays.updateData(lessons)
