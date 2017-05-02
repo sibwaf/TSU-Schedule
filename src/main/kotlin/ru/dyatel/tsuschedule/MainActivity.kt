@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -13,6 +14,8 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.find
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.fragments.MainFragment
 import ru.dyatel.tsuschedule.parsing.currentWeekParity
 
@@ -64,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 .withStickyHeader(drawerHeader)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
+                .withOnDrawerListener(drawerListener)
                 .build()
 
         navigationHandler = NavigationHandler(fragmentManager, drawer, supportActionBar)
@@ -75,6 +79,28 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (!navigationHandler.onBackPressed()) super.onBackPressed()
+    }
+
+    private val drawerListener = object : Drawer.OnDrawerListener {
+
+        override fun onDrawerSlide(drawerView: View?, slideOffset: Float) = Unit
+
+        override fun onDrawerClosed(drawerView: View?) {
+            groupEditor.clearFocus()
+
+            val preferences = ctx.schedulePreferences
+
+            preferences.group = groupEditor.text.toString()
+
+            val oldSubgroup = preferences.subgroup
+            val newSubgroup = subgroupChooser.selectedItemPosition
+            preferences.subgroup = newSubgroup
+
+            if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_UPDATED)
+        }
+
+        override fun onDrawerOpened(drawerView: View?) = Unit
+
     }
 
 }
