@@ -67,6 +67,7 @@ repositories {
 
 ext {
     androidSupportVersion = "25.3.1"
+    drawerVersion = "5.9.0"
     ankoVersion = "0.9.1a"
     jsoupVersion = "1.10.2"
     date4jVersion = "1.5.1"
@@ -84,6 +85,8 @@ dependencies {
     compile "com.android.support:support-v13:$androidSupportVersion"
 
     compile "com.android.support:design:$androidSupportVersion"
+
+    compile "com.mikepenz:materialdrawer:$drawerVersion"
 
     compile "org.jetbrains.anko:anko-common:$ankoVersion"
     compile "org.jetbrains.anko:anko-sqlite:$ankoVersion"
