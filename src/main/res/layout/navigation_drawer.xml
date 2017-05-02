@@ -1,80 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/background_material_light"
-    android:clickable="true"
-    android:layout_width="@dimen/navigation_drawer_width"
-    android:layout_height="match_parent"
-    android:layout_gravity="left">
-
-    <!-- ______________________________ -->
-    <!-- Current parity indicator start -->
-
-    <TextView
-        android:id="@+id/odd_week"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/current_parity_margin"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/odd_week"
-        style="@style/TextAppearance.AppCompat.Medium"/>
-
-    <TextView
-        android:id="@+id/even_week"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/current_parity_margin"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/even_week"
-        style="@style/TextAppearance.AppCompat.Medium"/>
-
-    <!-- Current parity indicator end -->
-    <!-- ____________________________ -->
-
-    <View
-        style="@style/Divider"
-        android:id="@+id/navigation_drawer_parity_divider"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/even_week"/>
-
-    <!-- _____________________________ -->
-    <!-- Group/subgroup selector start -->
-
-    <EditText
-        android:id="@+id/group_index"
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/navigation_drawer_parity_divider"
-        android:layout_toLeftOf="@+id/subgroup"
-        android:hint="@string/hint_group_index"
-        android:inputType="text|textNoSuggestions"
-        android:singleLine="true"/>
+        android:paddingTop="5dp"
+        android:paddingBottom="7dp"
+        android:orientation="vertical">
 
-    <Spinner
-        android:id="@id/subgroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/group_index"
-        android:layout_alignBottom="@id/group_index"/>
+    <TextView
+            android:id="@+id/parity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/navigation_drawer_padding_side"
+            android:layout_marginRight="@dimen/navigation_drawer_padding_side"
+            android:layout_marginBottom="5dp"
+            style="@style/WeekParityTheme"/>
 
-    <!-- Group/subgroup selector end -->
-    <!-- _____________________________ -->
+    <View style="@style/Shadow"/>
 
-    <!-- ______________ -->
-    <!-- App menu start -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/navigation_drawer_padding_side"
+            android:paddingRight="@dimen/navigation_drawer_padding_side"
+            android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/menu_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"/>
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
-    <!-- App menu end -->
-    <!-- ____________ -->
+            <android.support.design.widget.TextInputEditText
+                    android:id="@+id/group_index"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:imeOptions="actionDone"
+                    android:hint="@string/hint_group_index"/>
 
-</RelativeLayout>
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+                android:id="@+id/subgroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>
