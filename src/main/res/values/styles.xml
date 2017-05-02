@@ -2,10 +2,13 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="actionBarStyle">@style/Widget.AppCompat.ActionBar</item>
+        <item name="titleTextColor">@color/text_title_color</item>
 
-        <item name="colorControlNormal">@color/title_color</item>
-        <item name="titleTextColor">@color/title_color</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColorPrimary">@color/text_primary_color</item>
+        <item name="android:textColorSecondary">@color/text_secondary_color</item>
+
+        <item name="colorControlNormal">@color/primary_color</item>
 
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
