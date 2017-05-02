@@ -12,7 +12,7 @@ import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
 import java.util.ArrayList
 
-private val normalWeekdayOrder = arrayOf(
+private val NORMAL_WEEKDAY_ORDER = arrayOf(
         "понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"
 )
 
@@ -50,7 +50,7 @@ class WeekdayListAdapter(private val activity: Activity) : RecyclerView.Adapter<
     fun updateData(lessons: List<Lesson>) {
         weekdays.clear()
 
-        normalWeekdayOrder.forEach { weekday ->
+        NORMAL_WEEKDAY_ORDER.forEach { weekday ->
             val weekdayLessons = lessons.filter { it.weekday.toLowerCase() == weekday }
                     .toCollection(ArrayList<Lesson>())
             if (weekdayLessons.size > 0) weekdays += weekday to weekdayLessons
