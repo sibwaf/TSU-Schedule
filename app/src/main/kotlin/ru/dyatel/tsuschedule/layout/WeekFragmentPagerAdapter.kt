@@ -16,7 +16,7 @@ class WeekFragmentPagerAdapter(fm: FragmentManager, private val context: Context
     override fun getCount() = 2
 
     override fun getItem(position: Int): Fragment {
-        val fragment = WeekFragment(indexToParity(position))
+        val fragment = WeekFragment.getInstance(indexToParity(position))
         registry.put(position, fragment)
         return fragment
     }

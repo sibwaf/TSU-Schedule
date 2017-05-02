@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.withArguments
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
 import ru.dyatel.tsuschedule.data.LessonDao
@@ -20,21 +21,28 @@ import ru.dyatel.tsuschedule.layout.WeekdayListAdapter
 import ru.dyatel.tsuschedule.parsing.Parity
 import ru.dyatel.tsuschedule.schedulePreferences
 
-class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
+private const val PARITY_ARGUMENT = "parity"
+
+class WeekFragment : Fragment(), EventListener {
+
+    companion object {
+        fun getInstance(parity: Parity) = WeekFragment().withArguments(PARITY_ARGUMENT to parity.toString())
+    }
+
+    private lateinit var parity: Parity
 
     private lateinit var weekdays: WeekdayListAdapter
-
     private lateinit var lessonDao: LessonDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        weekdays = WeekdayListAdapter(activity)
+        parity = Parity.valueOf(arguments.getString(PARITY_ARGUMENT))
 
+        weekdays = WeekdayListAdapter(activity)
         lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
 
         EventBus.subscribe(this, Event.DATA_UPDATED)
-
         refresh()
     }
 
@@ -46,9 +54,10 @@ class WeekFragment(private val parity: Parity) : Fragment(), EventListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.week_fragment, container, false)
 
-        val weekdayList = view.find<RecyclerView>(R.id.weekday_list)
-        weekdayList.layoutManager = LinearLayoutManager(ctx)
-        weekdayList.adapter = weekdays
+        with(view.find<RecyclerView>(R.id.weekday_list)) {
+            layoutManager = LinearLayoutManager(ctx)
+            adapter = weekdays
+        }
 
         return view
     }
