@@ -1,7 +1,5 @@
 <resources>
 
-    <dimen name="navigation_drawer_width">240dp</dimen>
-
-    <dimen name="current_parity_margin">6dp</dimen>
+    <dimen name="navigation_drawer_padding_side">5dp</dimen>
 
 </resources>
