@@ -99,7 +99,9 @@ class MainActivity : AppCompatActivity() {
             if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_UPDATED)
         }
 
-        override fun onDrawerOpened(drawerView: View?) = Unit
+        override fun onDrawerOpened(drawerView: View?) {
+            parityIndicator.text = currentWeekParity.toText(ctx)
+        }
 
     }
 
