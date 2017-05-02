@@ -1,8 +1,10 @@
 package ru.dyatel.tsuschedule
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
@@ -36,7 +38,17 @@ class MainActivity : AppCompatActivity() {
         val drawerHeader = layoutInflater.inflate(R.layout.navigation_drawer, null, false)
 
         parityIndicator = drawerHeader.find<TextView>(R.id.parity).apply { text = currentWeekParity.toText(ctx) }
-        groupEditor = drawerHeader.find<EditText>(R.id.group_index).apply { setText(preferences.group) }
+        groupEditor = drawerHeader.find<EditText>(R.id.group_index).apply {
+            setText(preferences.group)
+
+            setOnEditorActionListener { view, _, _ -> view.clearFocus(); true }
+            setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) return@setOnFocusChangeListener
+
+                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+        }
         subgroupChooser = drawerHeader.find<Spinner>(R.id.subgroup).apply {
             adapter = ArrayAdapter
                     .createFromResource(ctx, R.array.subgroups, android.R.layout.simple_spinner_item).apply {
