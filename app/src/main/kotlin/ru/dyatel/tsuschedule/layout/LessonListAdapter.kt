@@ -40,14 +40,17 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
             Lesson.Type.LABORATORY -> R.color.laboratory_color
             Lesson.Type.UNKNOWN -> R.color.unknown_color
         }
-        holder.color.setBackgroundResource(markerColor)
-        holder.time.text = lesson.time
-        holder.auditory.text = lesson.auditory
-        holder.discipline.text = lesson.discipline
-        holder.teacher.text = lesson.teacher
 
-        holder.auditory.visibility = if (lesson.auditory.isNullOrEmpty()) View.GONE else View.VISIBLE
-        holder.teacher.visibility = if (lesson.teacher.isNullOrEmpty()) View.GONE else View.VISIBLE
+        with(holder) {
+            color.setBackgroundResource(markerColor)
+            time.text = lesson.time
+            auditory.text = lesson.auditory
+            discipline.text = lesson.discipline
+            teacher.text = lesson.teacher
+
+            auditory.visibility = if (lesson.auditory.isNullOrEmpty()) View.GONE else View.VISIBLE
+            teacher.visibility = if (lesson.teacher.isNullOrEmpty()) View.GONE else View.VISIBLE
+        }
     }
 
     override fun getItemCount(): Int = lessons.size
