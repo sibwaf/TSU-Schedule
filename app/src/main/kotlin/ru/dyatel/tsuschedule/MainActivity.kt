@@ -10,8 +10,10 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.events.Event
@@ -60,6 +62,12 @@ class MainActivity : AppCompatActivity() {
             setSelection(preferences.subgroup)
         }
 
+        val settingsButton = PrimaryDrawerItem()
+                .withIdentifier(FRAGMENT_SETTINGS)
+                .withIcon(GoogleMaterial.Icon.gmd_settings)
+                .withName(R.string.fragment_settings)
+                .withSelectable(false)
+
         drawer = DrawerBuilder()
                 .withActivity(this)
                 .withRootView(R.id.drawer_layout)
@@ -67,10 +75,15 @@ class MainActivity : AppCompatActivity() {
                 .withStickyHeader(drawerHeader)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
+                .addDrawerItems(settingsButton)
+                .withSelectedItem(-1)
+                .withOnDrawerItemClickListener(navigationListener)
                 .withOnDrawerListener(drawerListener)
+                .withOnDrawerNavigationListener { navigationHandler.onBackPressed() }
                 .build()
 
         navigationHandler = NavigationHandler(fragmentManager, drawer, supportActionBar)
+        fragmentManager.addOnBackStackChangedListener(navigationHandler)
 
         fragmentManager.beginTransaction()
                 .replace(R.id.content_fragment, MainFragment())
@@ -79,6 +92,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (!navigationHandler.onBackPressed()) super.onBackPressed()
+    }
+
+    private val navigationListener = Drawer.OnDrawerItemClickListener { _, _, item ->
+        EventBus.broadcast(Event.NAVIGATE_TO, item.identifier)
+        true
     }
 
     private val drawerListener = object : Drawer.OnDrawerListener {
