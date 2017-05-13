@@ -1,14 +1,16 @@
 package ru.dyatel.tsuschedule.data
 
 import android.content.Context
+import android.util.Log
+import org.acra.ACRA
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
+import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.parsing.BadGroupException
-import ru.dyatel.tsuschedule.parsing.Lesson
 import ru.dyatel.tsuschedule.parsing.Parser
 import ru.dyatel.tsuschedule.parsing.ParsingException
 import ru.dyatel.tsuschedule.schedulePreferences
@@ -25,29 +27,29 @@ fun asyncLessonFetch(context: Context, data: LessonDao) = with(context) {
     }
 
     doAsync {
-        var failureTextRes: Int? = null
-
         val parser = Parser()
         parser.setTimeout(preferences.connectionTimeout * 1000)
 
-        var lessons: Set<Lesson>? = null
         try {
-            lessons = parser.getLessons(group)
+            data.update(parser.getLessons(group))
         } catch (e: Exception) {
-            failureTextRes = when (e) {
+            EventBus.broadcast(Event.DATA_UPDATE_FAILED)
+            val failureTextRes = when (e) {
                 is BadGroupException -> R.string.failure_wrong_group_index
-                is ParsingException -> R.string.failure_parsing_failed
+                is ParsingException -> {
+                    if (BuildConfig.DEBUG) Log.e("LessonFetcher", "Failed to parse the response", e)
+                    else ACRA.getErrorReporter().handleSilentException(e)
+                    R.string.failure_parsing_failed
+                }
                 is SocketTimeoutException -> R.string.failure_connection_timeout
                 is IOException -> R.string.failure_unsuccessful_request
-                else -> throw e
+                else -> {
+                    uiThread { throw e }
+                    return@doAsync
+                }
             }
-        }
 
-        if (lessons != null) data.update(lessons)
-        else EventBus.broadcast(Event.DATA_UPDATE_FAILED)
-
-        uiThread {
-            longToast(failureTextRes ?: return@uiThread)
+            uiThread { longToast(failureTextRes) }
         }
     }
 }
