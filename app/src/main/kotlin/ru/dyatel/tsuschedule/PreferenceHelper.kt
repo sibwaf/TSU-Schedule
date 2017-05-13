@@ -21,10 +21,6 @@ class SchedulePreferences(private val context: Context) {
         get() = dataPreferences.getInt(PREFERENCES_SUBGROUP, 0)
         set(value) = dataPreferences.editAndApply { putInt(PREFERENCES_SUBGROUP, value) }
 
-    var drawerIsLearned: Boolean
-        get() = dataPreferences.getBoolean(PREFERENCES_DRAWER_LEARNED, false)
-        set(value) = dataPreferences.editAndApply { putBoolean(PREFERENCES_DRAWER_LEARNED, value) }
-
     val connectionTimeout: Int
         get() {
             val preference = context.getString(R.string.preference_timeout)

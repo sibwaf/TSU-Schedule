@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                 .withOnDrawerItemClickListener(navigationListener)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { navigationHandler.onBackPressed() }
+                .withShowDrawerOnFirstLaunch(true)
                 .build()
 
         navigationHandler = NavigationHandler(fragmentManager, drawer, supportActionBar)
