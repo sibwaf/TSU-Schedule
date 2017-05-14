@@ -50,10 +50,6 @@ class MainFragment : Fragment(), EventListener {
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
         swipeRefresh.setOnRefreshListener { asyncLessonFetch(ctx, lessonDao) }
-        swipeRefresh.setOnChildScrollUpCallback { _, _ ->
-            val week = weekAdapter.getFragment(pager.currentItem)
-            week.view?.canScrollVertically(-1) ?: false
-        }
 
         return root
     }
