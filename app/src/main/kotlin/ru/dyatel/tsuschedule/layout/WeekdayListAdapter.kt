@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.layout
 
 import android.app.Activity
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -26,6 +27,7 @@ class WeekdayListAdapter(private val activity: Activity) : RecyclerView.Adapter<
         val adapter = LessonListAdapter(activity)
 
         init {
+            ViewCompat.setNestedScrollingEnabled(lessonList, false)
             lessonList.layoutManager = LinearLayoutManager(activity)
             lessonList.adapter = adapter
         }
