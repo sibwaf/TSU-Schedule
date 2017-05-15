@@ -24,6 +24,8 @@ class MainFragment : Fragment(), EventListener {
     private lateinit var weekAdapter: WeekFragmentPagerAdapter
     private lateinit var swipeRefresh: SwipeRefreshLayout
 
+    private var blockSwipeRefresh = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,6 +45,7 @@ class MainFragment : Fragment(), EventListener {
         val pager = root.find<ViewPager>(R.id.pager)
         pager.adapter = weekAdapter
         pager.currentItem = currentWeekParity.index
+        pager.addOnPageChangeListener(pagerScrollListener)
 
         val tabLayout = root.find<TabLayout>(R.id.tab_layout)
         tabLayout.setupWithViewPager(pager)
@@ -50,10 +53,23 @@ class MainFragment : Fragment(), EventListener {
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh)
         swipeRefresh.setOnRefreshListener { asyncLessonFetch(ctx, lessonDao) }
+        swipeRefresh.setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
 
         return root
     }
 
     override fun handleEvent(type: Event, payload: Any?) = activity.runOnUiThread { swipeRefresh.isRefreshing = false }
+
+    private val pagerScrollListener = object : ViewPager.OnPageChangeListener {
+
+        override fun onPageScrollStateChanged(state: Int) {
+            blockSwipeRefresh = state != ViewPager.SCROLL_STATE_IDLE
+        }
+
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) = Unit
+
+        override fun onPageSelected(position: Int) = Unit
+
+    }
 
 }
