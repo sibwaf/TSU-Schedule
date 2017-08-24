@@ -1,11 +1,10 @@
 package ru.dyatel.tsuschedule.parsing
 
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.empty
-import org.hamcrest.Matchers.greaterThanOrEqualTo
-import org.hamcrest.Matchers.not
 import org.junit.Test
 import java.util.HashSet
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class ParserTest {
 
@@ -17,33 +16,31 @@ class ParserTest {
 
     private fun check(group: String) {
         val lessons = parser.getLessons(group)
-        assertThat("lessons", lessons, not(empty()))
+        assertFalse(lessons.isEmpty(), "No lessons were received")
 
         val weekdays = lessons
                 .map { it.weekday }
                 .distinct()
                 .toCollection(HashSet())
 
-        assertThat("weekday count", weekdays.size, greaterThanOrEqualTo(3))
+        assertTrue(weekdays.size >= 3, "Got too few weekdays")
     }
 
-    @Test(expected = BadGroupException::class)
-    fun testNoGroup() = check("")
+    @Test fun testNoGroup() {
+        assertFailsWith<BadGroupException> { check("") }
+    }
 
-    @Test(expected = BadGroupException::class)
-    fun testBadGroup() = check("221")
+    @Test fun testBadGroup() {
+        assertFailsWith<BadGroupException> { check("221") }
+    }
 
     @Test fun test221251() = check("221251")
 
     @Test fun test230751() = check("230751")
 
-    @Test fun test930169() = check("930169")
-
     @Test fun test720541() = check("720541-ПБ")
 
     @Test fun test320842() = check("320842")
-
-    @Test fun test820431() = check("820431")
 
     @Test fun test132361() = check("132361")
 
