@@ -2,8 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
 
     Properties properties = new Properties()
     properties.load(rootProject.file("local.properties").newDataInputStream())
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "ru.dyatel.tsuschedule"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 5
         versionName "0.7.1"
 
@@ -51,20 +51,12 @@ android {
 
 repositories {
     jcenter()
+    maven { url "https://maven.google.com" }
 }
 
 ext {
-    androidSupportVersion = "25.3.1"
-    drawerVersion = "5.9.0"
-    iconicsVersion = "2.8.4"
-    materialIconsVersion = "3.0.1.0.original"
-    ankoVersion = "0.9.1a"
-    jsoupVersion = "1.10.2"
-    date4jVersion = "1.5.1"
-    acraVersion = "4.9.2"
-
-    junitVersion = "4.12"
-    hamcrestVersion = "1.3"
+    androidSupportVersion = "26.0.1"
+    ankoVersion = "0.10.1"
 }
 
 dependencies {
@@ -74,22 +66,21 @@ dependencies {
     compile "com.android.support:cardview-v7:$androidSupportVersion"
     compile "com.android.support:appcompat-v7:$androidSupportVersion"
     compile "com.android.support:support-v13:$androidSupportVersion"
-
     compile "com.android.support:design:$androidSupportVersion"
 
-    compile "com.mikepenz:materialdrawer:$drawerVersion"
-    compile "com.mikepenz:iconics-core:$iconicsVersion@aar"
-    compile "com.mikepenz:google-material-typeface:$materialIconsVersion@aar"
+    compile("com.mikepenz:materialdrawer:5.9.5@aar") { transitive = true }
+    compile "com.mikepenz:iconics-core:2.9.1@aar"
+    compile "com.mikepenz:google-material-typeface:3.0.1.1.original@aar"
 
     compile "org.jetbrains.anko:anko-common:$ankoVersion"
     compile "org.jetbrains.anko:anko-sqlite:$ankoVersion"
 
-    compile "org.jsoup:jsoup:$jsoupVersion"
+    compile "org.jsoup:jsoup:1.10.3"
 
-    compile "com.darwinsys:hirondelle-date4j:$date4jVersion"
+    compile "com.darwinsys:hirondelle-date4j:1.5.1"
 
-    compile "ch.acra:acra:$acraVersion"
+    compile "ch.acra:acra:4.9.2"
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
+    testCompile "junit:junit:4.12"
+    testCompile "org.hamcrest:hamcrest-library:1.3"
 }

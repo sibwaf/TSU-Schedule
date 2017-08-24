@@ -6,7 +6,6 @@ import org.jetbrains.anko.db.AUTOINCREMENT
 import org.jetbrains.anko.db.INTEGER
 import org.jetbrains.anko.db.PRIMARY_KEY
 import org.jetbrains.anko.db.TEXT
-import org.jetbrains.anko.db.plus
 
 object LessonTable : BaseColumns {
 
