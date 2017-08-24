@@ -21,7 +21,8 @@ fun asyncLessonFetch(context: Context, data: LessonDao) = with(context) {
     val preferences = schedulePreferences
 
     val group = preferences.group
-    if (group.isNullOrBlank()) {
+    if (group.isBlank()) {
+        EventBus.broadcast(Event.DATA_UPDATE_FAILED)
         longToast(R.string.failure_missing_group_index)
         return@with
     }
