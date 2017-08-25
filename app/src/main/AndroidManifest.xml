@@ -24,6 +24,8 @@
 
         </activity>
 
+        <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}"/>
+
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import android.util.Log
-import org.acra.ACRA
+import com.crashlytics.android.Crashlytics
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
@@ -39,7 +39,7 @@ fun asyncLessonFetch(context: Context, data: LessonDao) = with(context) {
                 is BadGroupException -> R.string.failure_wrong_group_index
                 is ParsingException -> {
                     if (BuildConfig.DEBUG) Log.e("LessonFetcher", "Failed to parse the response", e)
-                    else ACRA.getErrorReporter().handleSilentException(e)
+                    else Crashlytics.logException(e)
                     R.string.failure_parsing_failed
                 }
                 is SocketTimeoutException -> R.string.failure_connection_timeout

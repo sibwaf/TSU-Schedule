@@ -1,4 +1,5 @@
 # JSoup
 -keeppackagenames org.jsoup.nodes
 
--keepattributes EnclosingMethod
+-keepattributes *Annotation*
+-keepattributes SourceFile,LineNumberTable

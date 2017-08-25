@@ -1,5 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
+apply plugin: "io.fabric"
 
 android {
     compileSdkVersion 26
@@ -15,7 +16,7 @@ android {
         versionCode 5
         versionName "0.7.1"
 
-        buildConfigField "String", "ACRA_BACKEND", properties.getProperty("ACRA_BACKEND")
+        manifestPlaceholders = [ fabricKey: properties.getProperty("fabric.key") ]
     }
 
     signingConfigs {
@@ -52,6 +53,7 @@ android {
 repositories {
     jcenter()
     maven { url "https://maven.google.com" }
+    maven { url "https://maven.fabric.io/public" }
 }
 
 ext {
@@ -79,7 +81,7 @@ dependencies {
 
     compile "com.darwinsys:hirondelle-date4j:1.5.1"
 
-    compile "ch.acra:acra:4.9.2"
+    compile("com.crashlytics.sdk.android:crashlytics:2.6.8@aar") { transitive = true }
 
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
