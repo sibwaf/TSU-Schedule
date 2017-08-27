@@ -2,47 +2,87 @@ package ru.dyatel.tsuschedule.layout
 
 import android.app.Activity
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import org.jetbrains.anko.alignParentLeft
+import org.jetbrains.anko.alignParentRight
+import org.jetbrains.anko.backgroundResource
+import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
+import org.jetbrains.anko.leftOf
+import org.jetbrains.anko.linearLayout
+import org.jetbrains.anko.margin
+import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.relativeLayout
+import org.jetbrains.anko.textView
+import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
 import java.util.ArrayList
 
 class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<LessonListAdapter.Holder>() {
 
+    private companion object {
+        val typeViewId = View.generateViewId()
+        val timeViewId = View.generateViewId()
+        val auditoryViewId = View.generateViewId()
+        val disciplineViewId = View.generateViewId()
+        val teacherViewId = View.generateViewId()
+    }
+
     class Holder(v: View) : RecyclerView.ViewHolder(v) {
-
-        val color: View = v.find<View>(R.id.color)
-
-        val time = v.find<TextView>(R.id.time)
-        val auditory = v.find<TextView>(R.id.auditory)
-        val discipline = v.find<TextView>(R.id.discipline)
-        val teacher = v.find<TextView>(R.id.teacher)
-
+        val type = v.find<View>(typeViewId)
+        val time = v.find<TextView>(timeViewId)
+        val auditory = v.find<TextView>(auditoryViewId)
+        val discipline = v.find<TextView>(disciplineViewId)
+        val teacher = v.find<TextView>(teacherViewId)
     }
 
     private val lessons = ArrayList<Lesson>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.lesson, parent, false)
+        val view = parent.context.linearLayout {
+            lparams {
+                orientation = LinearLayout.HORIZONTAL
+                width = matchParent
+                margin = dip(1)
+            }
+
+            view { id = typeViewId }.lparams {
+                width = dip(4)
+                height = matchParent
+                rightMargin = dip(4)
+            }
+
+            verticalLayout {
+                relativeLayout {
+                    textView { id = timeViewId }.lparams {
+                        leftOf(auditoryViewId)
+                        alignParentLeft()
+                    }
+                    textView { id = auditoryViewId }.lparams { alignParentRight() }
+                }.lparams { width = matchParent }
+
+                textView { id = disciplineViewId }
+                textView { id = teacherViewId }
+            }.lparams { width = matchParent }
+        }
+
         return Holder(view)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val lesson = lessons[position]
-
-        val markerColor = when (lesson.type) {
-            Lesson.Type.PRACTICE -> R.color.practice_color
-            Lesson.Type.LECTURE -> R.color.lecture_color
-            Lesson.Type.LABORATORY -> R.color.laboratory_color
-            Lesson.Type.UNKNOWN -> R.color.unknown_color
-        }
-
         with(holder) {
-            color.setBackgroundResource(markerColor)
+            type.backgroundResource = when (lesson.type) {
+                Lesson.Type.PRACTICE -> R.color.practice_color
+                Lesson.Type.LECTURE -> R.color.lecture_color
+                Lesson.Type.LABORATORY -> R.color.laboratory_color
+                Lesson.Type.UNKNOWN -> R.color.unknown_color
+            }
             time.text = lesson.time
             auditory.text = lesson.auditory
             discipline.text = lesson.discipline
