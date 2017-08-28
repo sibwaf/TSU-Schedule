@@ -18,7 +18,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.layout.WeekdayListAdapter
-import ru.dyatel.tsuschedule.parsing.Parity
+import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.schedulePreferences
 
 private const val PARITY_ARGUMENT = "parity"

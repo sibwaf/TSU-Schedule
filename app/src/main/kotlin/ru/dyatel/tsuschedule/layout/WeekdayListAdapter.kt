@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import org.jetbrains.anko.find
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.parsing.Lesson
+import ru.dyatel.tsuschedule.data.Lesson
 import java.util.ArrayList
 
 private val NORMAL_WEEKDAY_ORDER = arrayOf(

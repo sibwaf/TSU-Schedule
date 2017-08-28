@@ -17,7 +17,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.layout.WeekFragmentPagerAdapter
-import ru.dyatel.tsuschedule.parsing.currentWeekParity
+import ru.dyatel.tsuschedule.data.currentWeekParity
 
 class MainFragment : Fragment(), EventListener {
 
