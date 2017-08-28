@@ -1,6 +1,9 @@
 package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.Jsoup
+import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.data.LessonType
+import ru.dyatel.tsuschedule.data.Parity
 import java.util.HashSet
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty

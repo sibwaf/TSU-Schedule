@@ -5,7 +5,7 @@ import android.app.FragmentManager
 import android.content.Context
 import android.support.v13.app.FragmentPagerAdapter
 import ru.dyatel.tsuschedule.fragments.WeekFragment
-import ru.dyatel.tsuschedule.parsing.indexToParity
+import ru.dyatel.tsuschedule.data.indexToParity
 
 class WeekFragmentPagerAdapter(fm: FragmentManager, private val context: Context) : FragmentPagerAdapter(fm) {
 

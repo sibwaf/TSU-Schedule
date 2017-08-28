@@ -20,8 +20,8 @@ import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.parsing.Lesson
-import ru.dyatel.tsuschedule.parsing.LessonType
+import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.data.LessonType
 import java.util.ArrayList
 
 class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<LessonListAdapter.Holder>() {

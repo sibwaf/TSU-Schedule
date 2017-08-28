@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.parsing
+package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import hirondelle.date4j.DateTime
