@@ -88,8 +88,8 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
             discipline.text = lesson.discipline
             teacher.text = lesson.teacher
 
-            auditory.visibility = if (lesson.auditory.isNullOrEmpty()) View.GONE else View.VISIBLE
-            teacher.visibility = if (lesson.teacher.isNullOrEmpty()) View.GONE else View.VISIBLE
+            auditory.visibility = if (lesson.auditory == null) View.GONE else View.VISIBLE
+            teacher.visibility = if (lesson.teacher == null) View.GONE else View.VISIBLE
         }
     }
 
