@@ -7,15 +7,14 @@ data class Lesson(
         val time: String,
 
         val discipline: String,
-        val auditory: String,
-        val teacher: String,
+        val auditory: String?,
+        val teacher: String?,
 
         val type: LessonType,
-        val subgroup: Int
+        val subgroup: Int?
 ) : Comparable<Lesson> {
 
-    override fun compareTo(other: Lesson): Int =
-            time.compareTo(other.time)
+    override fun compareTo(other: Lesson) = time.compareTo(other.time)
 
 }
 

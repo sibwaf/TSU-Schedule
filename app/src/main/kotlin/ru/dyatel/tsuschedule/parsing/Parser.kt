@@ -2,6 +2,8 @@ package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.Jsoup
 import java.util.HashSet
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 class Parser {
 
@@ -39,12 +41,8 @@ class Parser {
                     builder.parseTime(timeText)
 
                     builder.parseDescription(it.getElementsByClass("disc").requireSingle().text())
-                    it.getElementsByClass("aud").takeIf { it.isNotEmpty() }?.let {
-                        builder.parseAuditory(it.requireSingle().text())
-                    }
-                    it.getElementsByClass("teac").takeIf { it.isNotEmpty() }?.let {
-                        builder.parseTeacher(it.requireSingle().text())
-                    }
+                    builder.parseAuditory(it.getElementsByClass("aud").requireSingleOrNull()?.text())
+                    builder.parseTeacher(it.getElementsByClass("teac").requireSingleOrNull()?.text())
 
                     lessons += builder.build()
                 }
@@ -53,6 +51,11 @@ class Parser {
     }
 
     private fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
+
+    private fun <T> Collection<T>.requireSingleOrNull(): T? {
+        if (isEmpty()) return null
+        return singleOrNull() ?: throw ParsingException()
+    }
 
 }
 
@@ -74,17 +77,17 @@ private class LessonBuilder {
         val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
     }
 
-    private var parity: Parity? = null
+    private lateinit var parity: Parity
 
-    private var weekday: String? = null
-    private var time: String? = null
+    private lateinit var weekday: String
+    private lateinit var time: String
 
-    private var discipline: String? = null
-    private var auditory = ""
-    private var teacher = ""
+    private lateinit var discipline: String
+    private var auditory by NullableLateinit<String>()
+    private var teacher by NullableLateinit<String>()
 
-    private var type: LessonType? = null
-    private var subgroup: Int = 0
+    private lateinit var type: LessonType
+    private var subgroup by NullableLateinit<Int>()
 
     fun parseParity(text: String) {
         parity = when (text.trim()) {
@@ -105,10 +108,14 @@ private class LessonBuilder {
 
     fun parseDescription(text: String) {
         text.replace(BLANK_PARENTHESES_PATTERN, "").let {
-            SUBGROUP_PATTERN.find(it)?.let { match ->
+            val match = SUBGROUP_PATTERN.find(it)
+            if (match != null) {
                 subgroup = match.groupValues[1].toInt()
                 it.removeRange(match.range)
-            } ?: it
+            } else {
+                subgroup = null
+                it
+            }
         }.let {
             TYPE_PATTERN.find(it)?.let { match ->
                 type = TYPE_MAPPING[match.groupValues[1]]!!
@@ -117,14 +124,31 @@ private class LessonBuilder {
         }.trim().removeSuffix(",").trim().let { discipline = it }
     }
 
-    fun parseAuditory(text: String) {
-        auditory = text.trim()
+    fun parseAuditory(text: String?) {
+        auditory = text?.trim()?.takeUnless { it.isEmpty() }
     }
 
-    fun parseTeacher(text: String) {
-        teacher = text.trim()
+    fun parseTeacher(text: String?) {
+        teacher = text?.trim()?.takeUnless { it.isEmpty() }
     }
 
-    fun build() = Lesson(parity!!, weekday!!, time!!, discipline!!, auditory, teacher, type!!, subgroup)
+    fun build() = Lesson(parity, weekday, time, discipline, auditory, teacher, type, subgroup)
+
+}
+
+private class NullableLateinit<T> : ReadWriteProperty<Any, T?> {
+
+    private var initialized = false
+    private var value: T? = null
+
+    override fun getValue(thisRef: Any, property: KProperty<*>): T? {
+        if (initialized) return value
+        throw IllegalStateException("Property ${property.name} must be initialized before usage")
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
+        this.value = value
+        initialized = true
+    }
 
 }

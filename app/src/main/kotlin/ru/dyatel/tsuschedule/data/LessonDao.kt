@@ -96,7 +96,7 @@ class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, Ev
         readableDatabase.select(TABLE_FILTERED).apply {
             orderBy(Columns.TIME)
             if (subgroup != 0)
-                whereSimple("${Columns.SUBGROUP}=0 OR ${Columns.SUBGROUP}=?", subgroup.toString())
+                whereSimple("${Columns.SUBGROUP} IS NULL OR ${Columns.SUBGROUP}=?", subgroup.toString())
         }.parseList(lessonParser)
 
     override fun handleEvent(type: Event, payload: Any?) = applyModifiers()
@@ -124,10 +124,10 @@ private val lessonParser = object : MapRowParser<Lesson> {
                 columns[Columns.WEEKDAY] as String,
                 columns[Columns.TIME] as String,
                 columns[Columns.DISCIPLINE] as String,
-                columns[Columns.AUDITORY] as String,
-                columns[Columns.TEACHER] as String,
+                columns[Columns.AUDITORY] as String?,
+                columns[Columns.TEACHER] as String?,
                 LessonType.valueOf(columns[Columns.TYPE] as String),
-                (columns[Columns.SUBGROUP] as Long).toInt()
+                (columns[Columns.SUBGROUP] as Long?)?.toInt()
         )
     }
 
