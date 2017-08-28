@@ -21,6 +21,7 @@ import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.parsing.Lesson
+import ru.dyatel.tsuschedule.parsing.LessonType
 import java.util.ArrayList
 
 class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<LessonListAdapter.Holder>() {
@@ -78,10 +79,9 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
         val lesson = lessons[position]
         with(holder) {
             type.backgroundResource = when (lesson.type) {
-                Lesson.Type.PRACTICE -> R.color.practice_color
-                Lesson.Type.LECTURE -> R.color.lecture_color
-                Lesson.Type.LABORATORY -> R.color.laboratory_color
-                Lesson.Type.UNKNOWN -> R.color.unknown_color
+                LessonType.PRACTICE -> R.color.practice_color
+                LessonType.LECTURE -> R.color.lecture_color
+                LessonType.LABORATORY -> R.color.laboratory_color
             }
             time.text = lesson.time
             auditory.text = lesson.auditory

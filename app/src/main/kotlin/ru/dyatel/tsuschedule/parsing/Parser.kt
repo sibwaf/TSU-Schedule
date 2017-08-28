@@ -66,10 +66,10 @@ private class LessonBuilder {
         val SUBGROUP_PATTERN = Regex("\\((\\d) ?п/?гр?\\)")
 
         val TYPE_MAPPING = mapOf(
-                "Пр" to Lesson.Type.PRACTICE,
-                "Практ" to Lesson.Type.PRACTICE,
-                "Л" to Lesson.Type.LECTURE,
-                "Лаб" to Lesson.Type.LABORATORY
+                "Пр" to LessonType.PRACTICE,
+                "Практ" to LessonType.PRACTICE,
+                "Л" to LessonType.LECTURE,
+                "Лаб" to LessonType.LABORATORY
         )
         val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
     }
@@ -83,7 +83,7 @@ private class LessonBuilder {
     private var auditory = ""
     private var teacher = ""
 
-    private var type: Lesson.Type? = null
+    private var type: LessonType? = null
     private var subgroup: Int = 0
 
     fun parseParity(text: String) {

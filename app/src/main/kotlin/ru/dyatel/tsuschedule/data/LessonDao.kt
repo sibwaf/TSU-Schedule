@@ -14,6 +14,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.parsing.Lesson
+import ru.dyatel.tsuschedule.parsing.LessonType
 import ru.dyatel.tsuschedule.parsing.Parity
 
 private const val TABLE_UNFILTERED = "lessons"
@@ -125,7 +126,7 @@ private val lessonParser = object : MapRowParser<Lesson> {
                 columns[Columns.DISCIPLINE] as String,
                 columns[Columns.AUDITORY] as String,
                 columns[Columns.TEACHER] as String,
-                Lesson.Type.valueOf(columns[Columns.TYPE] as String),
+                LessonType.valueOf(columns[Columns.TYPE] as String),
                 (columns[Columns.SUBGROUP] as Long).toInt()
         )
     }
