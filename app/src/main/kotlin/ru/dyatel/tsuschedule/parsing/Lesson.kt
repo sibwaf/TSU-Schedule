@@ -10,15 +10,15 @@ data class Lesson(
         val auditory: String,
         val teacher: String,
 
-        val type: Type,
+        val type: LessonType,
         val subgroup: Int
 ) : Comparable<Lesson> {
-
-    enum class Type {
-        PRACTICE, LECTURE, LABORATORY, UNKNOWN
-    }
 
     override fun compareTo(other: Lesson): Int =
             time.compareTo(other.time)
 
+}
+
+enum class LessonType {
+    PRACTICE, LECTURE, LABORATORY
 }
