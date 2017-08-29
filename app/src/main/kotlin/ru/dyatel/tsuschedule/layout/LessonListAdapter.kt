@@ -1,6 +1,5 @@
 package ru.dyatel.tsuschedule.layout
 
-import android.app.Activity
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,7 @@ import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import java.util.ArrayList
 
-class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<LessonListAdapter.Holder>() {
+class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
 
     private companion object {
         val typeViewId = View.generateViewId()
@@ -96,10 +95,11 @@ class LessonListAdapter(private val activity: Activity) : RecyclerView.Adapter<L
     override fun getItemCount(): Int = lessons.size
 
     fun updateData(lessons: List<Lesson>) {
-        this.lessons.clear()
-        this.lessons.addAll(lessons)
-
-        activity.runOnUiThread { notifyDataSetChanged() }
+        with(this.lessons) {
+            clear()
+            addAll(lessons)
+        }
+        notifyDataSetChanged()
     }
 
 }
