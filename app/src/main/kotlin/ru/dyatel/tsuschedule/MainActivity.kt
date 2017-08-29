@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule
 
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -16,10 +17,10 @@ import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.find
+import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.fragments.MainFragment
-import ru.dyatel.tsuschedule.data.currentWeekParity
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,11 +39,15 @@ class MainActivity : AppCompatActivity() {
         val preferences = schedulePreferences
 
         val toolbar = find<Toolbar>(R.id.toolbar)
+        ViewCompat.setElevation(toolbar, resources.getDimension(R.dimen.elevation))
         setSupportActionBar(toolbar)
 
         val drawerHeader = layoutInflater.inflate(R.layout.navigation_drawer, null, false)
 
-        parityIndicator = drawerHeader.find<TextView>(R.id.parity).apply { text = currentWeekParity.toText(ctx) }
+        parityIndicator = drawerHeader.find<TextView>(R.id.parity).apply {
+            ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
+            text = currentWeekParity.toText(ctx)
+        }
         groupEditor = drawerHeader.find<EditText>(R.id.group_index).apply {
             setText(preferences.group)
 
