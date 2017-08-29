@@ -9,15 +9,14 @@
 
     <TextView
             android:id="@+id/parity"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/navigation_drawer_padding_side"
-            android:layout_marginRight="@dimen/navigation_drawer_padding_side"
-            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:paddingLeft="@dimen/navigation_drawer_padding_side"
+            android:paddingRight="@dimen/navigation_drawer_padding_side"
+            android:paddingBottom="@dimen/navigation_drawer_padding_side"
+            android:layout_marginBottom="4dp"
             style="@style/WeekParityTheme"/>
-
-    <View style="@style/Shadow"/>
 
     <LinearLayout
             android:layout_width="match_parent"

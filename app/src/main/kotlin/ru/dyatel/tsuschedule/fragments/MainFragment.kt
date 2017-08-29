@@ -3,6 +3,7 @@ package ru.dyatel.tsuschedule.fragments
 import android.app.Fragment
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
@@ -60,6 +61,7 @@ class MainFragment : Fragment(), EventListener {
         }
 
         val tabLayout = root.find<TabLayout>(R.id.tab_layout)
+        ViewCompat.setElevation(tabLayout, resources.getDimension(R.dimen.elevation))
         tabLayout.setupWithViewPager(pager)
 
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
