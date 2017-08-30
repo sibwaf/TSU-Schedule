@@ -3,8 +3,6 @@ package ru.dyatel.tsuschedule.fragments
 import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
-import android.util.Log
-import com.crashlytics.android.Crashlytics
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
@@ -14,16 +12,14 @@ import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.UpdateFileProvider
-import ru.dyatel.tsuschedule.UpdateParsingException
 import ru.dyatel.tsuschedule.Updater
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import ru.dyatel.tsuschedule.utilities.setMessage
-import java.io.IOException
-import java.net.SocketTimeoutException
 import java.net.URL
 
 class SettingsFragment : PreferenceFragment(), EventListener {
@@ -71,7 +67,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
     }
 
     private fun checkUpdates() = doAsync {
-        val failure = try {
+        try {
             val release = updater.getLatestRelease()
 
             if (release == null || !release.isNewerThanInstalled()) {
@@ -81,22 +77,9 @@ class SettingsFragment : PreferenceFragment(), EventListener {
                 uiThread { longToast(R.string.update_found) }
                 ctx.schedulePreferences.lastRelease = release.url
             }
-
-            null
-        } catch (e: UpdateParsingException) {
-            if (BuildConfig.DEBUG) Log.e("Updater", "Failed to parse the response", e)
-            else Crashlytics.logException(e)
-            R.string.failure_parsing_failed
-        } catch (e: SocketTimeoutException) {
-            R.string.failure_connection_timeout
-        } catch (e: IOException) {
-            R.string.failure_unsuccessful_request
         } catch (e: Exception) {
-            uiThread { throw e }
-            return@doAsync
+            uiThread { e.handle { longToast(it) } }
         }
-
-        failure?.let { uiThread { longToast(failure) } }
     }
 
     private fun installUpdate() {
@@ -123,7 +106,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
 
                 uiThread { setMessage(R.string.update_downloading) }
 
-                val failure = try {
+                try {
                     val file = UpdateFileProvider.getUpdateDirectory(ctx).resolve("update.apk")
                     URL(preferences.lastRelease).download(file, preferences.connectionTimeout * 1000) { value ->
                         uiThread {
@@ -134,22 +117,11 @@ class SettingsFragment : PreferenceFragment(), EventListener {
                     }
                     updater.installUpdate(file, ctx)
                     preferences.lastRelease = null
-
-                    null
-                } catch (e: SocketTimeoutException) {
-                    R.string.failure_connection_timeout
-                } catch (e: IOException) {
-                    R.string.failure_unsuccessful_request
-                } catch (e: InterruptedException) {
-                    R.string.update_cancelled
                 } catch (e: Exception) {
-                    uiThread { throw e }
-                    return@doAsync
+                    uiThread { e.handle { longToast(it) } }
                 } finally {
                     uiThread { dismiss() }
                 }
-
-                failure?.let { uiThread { longToast(failure) } }
             }
 
             setOnCancelListener { downloader.cancel(true) }

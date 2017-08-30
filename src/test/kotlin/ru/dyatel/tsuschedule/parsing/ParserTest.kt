@@ -1,6 +1,8 @@
 package ru.dyatel.tsuschedule.parsing
 
 import org.junit.Test
+import ru.dyatel.tsuschedule.BadGroupException
+import ru.dyatel.tsuschedule.Parser
 import java.util.HashSet
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
