@@ -66,7 +66,7 @@ class MainFragment : Fragment(), EventListener {
 
         val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
         swipeRefresh = root.find(R.id.swipe_refresh)
-        swipeRefresh.setOnRefreshListener { asyncLessonFetch(ctx, lessonDao) }
+        swipeRefresh.setOnRefreshListener { ctx.asyncLessonFetch(lessonDao) }
         swipeRefresh.setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
 
         return root

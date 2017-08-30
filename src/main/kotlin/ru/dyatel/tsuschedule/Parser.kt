@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.parsing
+package ru.dyatel.tsuschedule
 
 import org.jsoup.Jsoup
 import ru.dyatel.tsuschedule.data.Lesson
@@ -20,6 +20,8 @@ class Parser {
     }
 
     fun getLessons(group: String): Set<Lesson> {
+        if (group.isBlank()) throw BadGroupException()
+
         val response = connection.data("group", group).get()
         val result = response.getElementById("results")
 

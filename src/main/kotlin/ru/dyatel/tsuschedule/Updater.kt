@@ -82,28 +82,28 @@ class Updater {
         val obj = JSONObject(response.body())
 
         val rawVersion = obj["tag_name"] as? String
-                ?: throw UpdateParsingException("Tag is not a string")
+                ?: throw ParsingException("Tag is not a string")
         val version = VERSION_PATTERN.matchEntire(rawVersion)?.groupValues?.get(1)
-                ?: throw UpdateParsingException("Version tag is malformed: <$rawVersion>")
+                ?: throw ParsingException("Version tag is malformed: <$rawVersion>")
 
         val links = mutableListOf<String>()
 
         val assets = obj["assets"] as? JSONArray
-                ?: throw UpdateParsingException("Asset list is not an array")
+                ?: throw ParsingException("Asset list is not an array")
         for (i in 0 until assets.length()) {
             val asset = assets[i] as? JSONObject
-                    ?: throw UpdateParsingException("Asset is not an object")
+                    ?: throw ParsingException("Asset is not an object")
 
             val link = asset["browser_download_url"] as? String
-                    ?: throw UpdateParsingException("Link is not a string")
+                    ?: throw ParsingException("Link is not a string")
             val mime = asset["content_type"] as? String
-                    ?: throw UpdateParsingException("Content type is not a string")
+                    ?: throw ParsingException("Content type is not a string")
 
             if (mime == MIME_APK) links += link
         }
 
-        if (links.isEmpty()) throw UpdateParsingException("Didn't find an .apk in assets")
-        val url = links.singleOrNull() ?: throw UpdateParsingException("Too many .apk files in assets")
+        if (links.isEmpty()) throw ParsingException("Didn't find an .apk in assets")
+        val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
 
         return Release(version, url)
     }
@@ -114,15 +114,6 @@ class Updater {
                 .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
         context.startActivity(intent)
     }
-
-}
-
-class UpdateParsingException : RuntimeException {
-
-    constructor() : super()
-    constructor(message: String) : super(message)
-    constructor(message: String, cause: Throwable) : super(message, cause)
-    constructor(cause: Throwable) : super(cause)
 
 }
 
