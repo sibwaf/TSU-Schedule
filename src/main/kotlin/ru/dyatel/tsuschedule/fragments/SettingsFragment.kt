@@ -9,12 +9,16 @@ import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.UpdateFileProvider
 import ru.dyatel.tsuschedule.UpdateParsingException
 import ru.dyatel.tsuschedule.Updater
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import ru.dyatel.tsuschedule.utilities.setMessage
@@ -22,7 +26,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.URL
 
-class SettingsFragment : PreferenceFragment() {
+class SettingsFragment : PreferenceFragment(), EventListener {
 
     private lateinit var updateButton: Preference
     private var updateButtonCheckingMode = true
@@ -42,12 +46,20 @@ class SettingsFragment : PreferenceFragment() {
                 true
             }
         }
-        syncUpdateButton()
+        syncUpdateButton(ctx.schedulePreferences.lastRelease)
+
+        EventBus.subscribe(this, Event.PREFERENCES_LATEST_VERSION_CHANGED)
     }
 
-    // TODO: do this based on event
-    private fun syncUpdateButton() {
-        updateButtonCheckingMode = ctx.schedulePreferences.lastRelease == null
+    override fun onDestroy() {
+        EventBus.unsubscribe(this)
+        super.onDestroy()
+    }
+
+    override fun handleEvent(type: Event, payload: Any?) = runOnUiThread { syncUpdateButton(payload as String?) }
+
+    private fun syncUpdateButton(lastRelease: String?) {
+        updateButtonCheckingMode = lastRelease == null
         if (updateButtonCheckingMode)
             updateButton.setTitle(R.string.preference_update_check_title)
         else
@@ -66,7 +78,6 @@ class SettingsFragment : PreferenceFragment() {
                 uiThread { longToast(R.string.update_found) }
                 ctx.schedulePreferences.lastRelease = release.url
             }
-            uiThread { syncUpdateButton() }
 
             null
         } catch (e: UpdateParsingException) {
@@ -98,7 +109,6 @@ class SettingsFragment : PreferenceFragment() {
                         preferences.lastRelease = null
                         uiThread {
                             longToast(R.string.update_not_found)
-                            syncUpdateButton()
                             dismiss()
                         }
                         return@doAsync

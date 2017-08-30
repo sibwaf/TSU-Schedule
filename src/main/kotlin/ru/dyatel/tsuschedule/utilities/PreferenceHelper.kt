@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import ru.dyatel.tsuschedule.R
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.events.EventBus
 
 private const val DATA_PREFERENCES = "data_preferences"
 
@@ -38,7 +40,10 @@ class SchedulePreferences(private val context: Context) {
 
     var lastRelease: String?
         get() = preferences.getString(PREFERENCES_LAST_RELEASE, null)
-        set(value) = preferences.editAndApply { putString(PREFERENCES_LAST_RELEASE, value) }
+        set(value) {
+            preferences.editAndApply { putString(PREFERENCES_LAST_RELEASE, value) }
+            EventBus.broadcast(Event.PREFERENCES_LATEST_VERSION_CHANGED, value)
+        }
 
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(context)
