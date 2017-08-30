@@ -12,17 +12,20 @@ import android.view.ViewGroup
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
+import org.jetbrains.anko.uiThread
+import ru.dyatel.tsuschedule.Parser
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ScheduleApplication
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.Parity
-import ru.dyatel.tsuschedule.data.asyncLessonFetch
 import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
@@ -60,14 +63,32 @@ class MainFragment : Fragment(), EventListener {
             addOnPageChangeListener(pagerScrollListener)
         }
 
-        val tabLayout = root.find<TabLayout>(R.id.tab_layout)
-        ViewCompat.setElevation(tabLayout, resources.getDimension(R.dimen.elevation))
-        tabLayout.setupWithViewPager(pager)
+        root.find<TabLayout>(R.id.tab_layout).apply {
+            ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
+            setupWithViewPager(pager)
+        }
 
-        val lessonDao = (activity.application as ScheduleApplication).databaseManager.lessonDao
-        swipeRefresh = root.find(R.id.swipe_refresh)
-        swipeRefresh.setOnRefreshListener { ctx.asyncLessonFetch(lessonDao) }
-        swipeRefresh.setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
+        swipeRefresh = root.find<SwipeRefreshLayout>(R.id.swipe_refresh).apply {
+            setOnRefreshListener {
+                doAsync {
+                    val preferences = ctx.schedulePreferences
+
+                    val parser = Parser()
+                    parser.setTimeout(preferences.connectionTimeout * 1000)
+
+                    try {
+                        val data = parser.getLessons(preferences.group)
+                        lessons.update(data)
+                    } catch (e: Exception) {
+                        EventBus.broadcast(Event.DATA_UPDATE_FAILED)
+                        uiThread {
+                            e.handle { longToast(it) }
+                        }
+                    }
+                }
+            }
+            setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
+        }
 
         return root
     }
