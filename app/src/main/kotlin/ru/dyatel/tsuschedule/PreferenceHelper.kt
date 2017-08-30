@@ -11,8 +11,6 @@ private const val PREFERENCES_SUBGROUP = "subgroup"
 
 private const val PREFERENCES_LAST_RELEASE = "last_release"
 
-private const val PREFERENCES_DRAWER_LEARNED = "drawer_learned"
-
 class SchedulePreferences(private val context: Context) {
 
     var group: String
