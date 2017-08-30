@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
         xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="ru.dyatel.tsuschedule">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
 
     <application
             android:name=".ScheduleApplication"
@@ -23,6 +25,13 @@
             </intent-filter>
 
         </activity>
+
+        <provider
+                android:name=".UpdateFileProvider"
+                android:authorities="${applicationId}"
+                android:exported="true"
+                android:grantUriPermissions="true"
+                tools:ignore="ExportedContentProvider"/>
 
         <meta-data android:name="io.fabric.ApiKey" android:value="${fabricKey}"/>
 

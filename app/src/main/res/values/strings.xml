@@ -18,8 +18,22 @@
     </string>
     <string name="failure_parsing_failed">Ошибка при обработке полученных данных</string>
 
+    <string name="update_not_found">Обновлений не найдено</string>
+    <string name="update_found">Найдено обновление</string>
+    <string name="update_finding_latest">Поиск более новой версии</string>
+    <string name="update_downloading">Скачивание обновления</string>
+    <string name="update_cancelled">Обновление отменено</string>
+
     <string name="preference_timeout_title">Таймаут подключения</string>
     <string name="preference_timeout_description">В секундах, от 1 до 30</string>
+
+    <string name="preference_category_updates">Обновление приложения</string>
+
+    <string name="preference_update_check_auto_title">Автоматически проверять обновления</string>
+    <string name="preference_update_check_auto_description">Раз в неделю</string>
+
+    <string name="preference_update_check_title">Проверить обновления</string>
+    <string name="preference_update_title">Установить обновление</string>
 
     <string-array name="subgroups">
         <item>Обе подгруппы</item>
