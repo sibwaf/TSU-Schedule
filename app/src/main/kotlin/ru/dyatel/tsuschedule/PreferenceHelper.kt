@@ -9,6 +9,8 @@ private const val DATA_PREFERENCES = "data_preferences"
 private const val PREFERENCES_GROUP = "group"
 private const val PREFERENCES_SUBGROUP = "subgroup"
 
+private const val PREFERENCES_LAST_RELEASE = "last_release"
+
 private const val PREFERENCES_DRAWER_LEARNED = "drawer_learned"
 
 class SchedulePreferences(private val context: Context) {
@@ -27,6 +29,17 @@ class SchedulePreferences(private val context: Context) {
             val fallback = context.getString(R.string.preference_timeout_default)
             return preferences.getString(preference, fallback).toInt()
         }
+
+    val updateAutoCheck: Boolean
+        get() {
+            val preference = context.getString(R.string.preference_update_check_auto)
+            val fallback = context.getString(R.string.preference_update_check_auto)
+            return preferences.getString(preference, fallback).toBoolean()
+        }
+
+    var lastRelease: String?
+        get() = preferences.getString(PREFERENCES_LAST_RELEASE, null)
+        set(value) = preferences.editAndApply { putString(PREFERENCES_LAST_RELEASE, value) }
 
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(context)
