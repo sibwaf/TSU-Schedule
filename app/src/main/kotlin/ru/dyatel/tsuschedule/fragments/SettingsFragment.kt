@@ -15,9 +15,9 @@ import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.UpdateFileProvider
 import ru.dyatel.tsuschedule.UpdateParsingException
 import ru.dyatel.tsuschedule.Updater
-import ru.dyatel.tsuschedule.download
-import ru.dyatel.tsuschedule.schedulePreferences
-import ru.dyatel.tsuschedule.setMessage
+import ru.dyatel.tsuschedule.utilities.download
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
+import ru.dyatel.tsuschedule.utilities.setMessage
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.URL

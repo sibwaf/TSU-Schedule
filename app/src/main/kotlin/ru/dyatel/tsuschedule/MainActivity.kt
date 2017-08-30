@@ -21,6 +21,7 @@ import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.fragments.MainFragment
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class MainActivity : AppCompatActivity() {
 

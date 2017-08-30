@@ -13,7 +13,7 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.parsing.BadGroupException
 import ru.dyatel.tsuschedule.parsing.Parser
 import ru.dyatel.tsuschedule.parsing.ParsingException
-import ru.dyatel.tsuschedule.schedulePreferences
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.IOException
 import java.net.SocketTimeoutException
 
