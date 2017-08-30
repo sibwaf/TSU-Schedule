@@ -25,7 +25,7 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
-import ru.dyatel.tsuschedule.schedulePreferences
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class MainFragment : Fragment(), EventListener {
 

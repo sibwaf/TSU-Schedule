@@ -4,9 +4,8 @@ import org.jsoup.Jsoup
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.Parity
+import ru.dyatel.tsuschedule.utilities.NullableLateinit
 import java.util.HashSet
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 class Parser {
 
@@ -136,22 +135,5 @@ private class LessonBuilder {
     }
 
     fun build() = Lesson(parity, weekday, time, discipline, auditory, teacher, type, subgroup)
-
-}
-
-private class NullableLateinit<T> : ReadWriteProperty<Any, T?> {
-
-    private var initialized = false
-    private var value: T? = null
-
-    override fun getValue(thisRef: Any, property: KProperty<*>): T? {
-        if (initialized) return value
-        throw IllegalStateException("Property ${property.name} must be initialized before usage")
-    }
-
-    override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
-        this.value = value
-        initialized = true
-    }
 
 }

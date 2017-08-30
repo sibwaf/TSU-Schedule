@@ -1,6 +1,5 @@
-package ru.dyatel.tsuschedule
+package ru.dyatel.tsuschedule.utilities
 
-import android.app.AlertDialog
 import java.io.File
 import java.net.URL
 
@@ -28,5 +27,3 @@ fun URL.download(destination: File, timeout: Int, onProgressUpdate: (Int) -> Uni
         }
     }
 }
-
-fun AlertDialog.setMessage(id: Int) = setMessage(context.getString(id))

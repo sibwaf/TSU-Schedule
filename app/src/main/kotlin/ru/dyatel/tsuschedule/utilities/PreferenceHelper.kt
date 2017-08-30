@@ -1,8 +1,9 @@
-package ru.dyatel.tsuschedule
+package ru.dyatel.tsuschedule.utilities
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import ru.dyatel.tsuschedule.R
 
 private const val DATA_PREFERENCES = "data_preferences"
 
