@@ -9,4 +9,6 @@
 
     <string name="preference_update">update</string>
 
+    <string name="preference_version">version</string>
+
 </resources>

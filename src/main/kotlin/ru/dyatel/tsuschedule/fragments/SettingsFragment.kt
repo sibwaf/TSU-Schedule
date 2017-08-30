@@ -48,6 +48,9 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         }
         syncUpdateButton(ctx.schedulePreferences.lastRelease)
 
+        preferenceScreen.findPreference(getString(R.string.preference_version))
+                .summary = BuildConfig.VERSION_NAME
+
         EventBus.subscribe(this, Event.PREFERENCES_LATEST_VERSION_CHANGED)
     }
 

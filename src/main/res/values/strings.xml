@@ -35,6 +35,8 @@
     <string name="preference_update_check_title">Проверить обновления</string>
     <string name="preference_update_title">Установить обновление</string>
 
+    <string name="preference_version_title">Текущая версия</string>
+
     <string-array name="subgroups">
         <item>Обе подгруппы</item>
         <item>1-ая подгруппа</item>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
             android:key="@string/preference_timeout"
@@ -9,8 +8,7 @@
             android:defaultValue="@string/preference_timeout_default"
             android:inputType="number"/>
 
-    <PreferenceCategory
-            android:title="@string/preference_category_updates">
+    <PreferenceCategory android:title="@string/preference_category_updates">
 
         <CheckBoxPreference
                 android:key="@string/preference_update_check_auto"
@@ -19,6 +17,10 @@
                 android:defaultValue="@string/preference_update_check_auto_default"/>
 
         <Preference android:key="@string/preference_update"/>
+
+        <Preference
+                android:key="@string/preference_version"
+                android:title="@string/preference_version_title"/>
 
     </PreferenceCategory>
 
