@@ -24,13 +24,16 @@
     <string name="update_downloading">Скачивание обновления</string>
     <string name="update_cancelled">Обновление отменено</string>
 
+    <string name="notification_update_found_title">Доступно обновление до версии %s</string>
+    <string name="notification_update_found_description">Нажмите, чтобы обновить.</string>
+
     <string name="preference_timeout_title">Таймаут подключения</string>
     <string name="preference_timeout_description">В секундах, от 1 до 30</string>
 
     <string name="preference_category_updates">Обновление приложения</string>
 
-    <string name="preference_update_check_auto_title">Автоматически проверять обновления</string>
-    <string name="preference_update_check_auto_description">Раз в неделю</string>
+    <string name="preference_update_auto_title">Проверять обновления</string>
+    <string name="preference_update_auto_description">При запуске приложения, раз в 3 дня</string>
 
     <string name="preference_update_check_title">Проверить обновления</string>
     <string name="preference_update_title">Установить обновление</string>
