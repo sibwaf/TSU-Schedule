@@ -117,8 +117,6 @@ class Updater {
 
 }
 
-private const val CONTENT_UPDATE = "update"
-
 class UpdateFileProvider : ContentProvider() {
 
     companion object {
@@ -135,7 +133,6 @@ class UpdateFileProvider : ContentProvider() {
             return Uri.Builder()
                     .scheme("content")
                     .authority(BuildConfig.APPLICATION_ID)
-                    .appendPath(CONTENT_UPDATE)
                     .appendPath(relative.path)
                     .build()
         }
@@ -150,15 +147,8 @@ class UpdateFileProvider : ContentProvider() {
         if (mode != "r")
             throw FileNotFoundException("Can't open $uri in <$mode> mode: file is read-only")
 
-        val path = uri.path
-
-        val updatePath = path.removePrefix("/$CONTENT_UPDATE/")
-        if (path != updatePath) {
-            val file = getUpdateDirectory(context).resolve(updatePath)
-            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
-        }
-
-        throw FileNotFoundException("Unknown path")
+        val file = getUpdateDirectory(context).resolve(uri.path)
+        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
     }
 
     override fun insert(uri: Uri?, values: ContentValues?): Uri {
