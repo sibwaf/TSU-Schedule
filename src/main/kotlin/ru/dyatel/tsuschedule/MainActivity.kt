@@ -1,9 +1,12 @@
 package ru.dyatel.tsuschedule
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.NotificationCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -15,13 +18,20 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import hirondelle.date4j.DateTime
 import org.jetbrains.anko.ctx
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.notificationManager
 import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-import ru.dyatel.tsuschedule.fragments.MainFragment
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
+import java.util.TimeZone
+
+private const val NOTIFICATION_UPDATE = 1
+
+private const val INTENT_FROM_NOTIFICATION = "from_notification"
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +42,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var subgroupChooser: Spinner
 
     private lateinit var navigationHandler: NavigationHandler
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleUpdateNotification(intent)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,9 +107,56 @@ class MainActivity : AppCompatActivity() {
         navigationHandler = NavigationHandler(fragmentManager, drawer, supportActionBar)
         fragmentManager.addOnBackStackChangedListener(navigationHandler)
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_fragment, MainFragment())
-                .commit()
+        EventBus.broadcast(Event.NAVIGATE_TO, FRAGMENT_MAIN)
+
+        if (!handleUpdateNotification(intent)) doAsync { checkUpdates() }
+    }
+
+    private fun handleUpdateNotification(intent: Intent): Boolean {
+        val result = intent.getBooleanExtra(INTENT_FROM_NOTIFICATION, false)
+        if (result) {
+            notificationManager.cancel(NOTIFICATION_UPDATE)
+            EventBus.broadcast(Event.NAVIGATE_TO, FRAGMENT_SETTINGS)
+        }
+        return result
+    }
+
+    private fun checkUpdates() {
+        val preferences = ctx.schedulePreferences
+
+        if (!preferences.autoupdate) return
+
+        val now = DateTime.now(TimeZone.getDefault())
+        val shouldCheck = preferences.lastAutoupdate?.plusDays(3)?.lt(now) ?: true
+        if (!shouldCheck) return
+
+        try {
+            val release = Updater().getLatestRelease()
+
+            val old = preferences.lastRelease
+            val new = release?.takeIf { it.isNewerThanInstalled() }?.url
+
+            preferences.lastRelease = new
+            preferences.lastAutoupdate = now
+
+            if (new != null && old != new) {
+                val intent = Intent(ctx, MainActivity::class.java)
+                intent.putExtra(INTENT_FROM_NOTIFICATION, true)
+                val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+                val title = getString(R.string.notification_update_found_title, release.version)
+
+                val notification = NotificationCompat.Builder(ctx)
+                        .setSmallIcon(R.drawable.notification)
+                        .setContentTitle(title)
+                        .setContentText(getString(R.string.notification_update_found_description))
+                        .setContentIntent(pending)
+                        .build()
+
+                notificationManager.notify(NOTIFICATION_UPDATE, notification)
+            }
+        } catch (e: Exception) {
+        }
     }
 
     override fun onBackPressed() {

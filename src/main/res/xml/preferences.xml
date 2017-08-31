@@ -11,10 +11,10 @@
     <PreferenceCategory android:title="@string/preference_category_updates">
 
         <CheckBoxPreference
-                android:key="@string/preference_update_check_auto"
-                android:title="@string/preference_update_check_auto_title"
-                android:summary="@string/preference_update_check_auto_description"
-                android:defaultValue="@string/preference_update_check_auto_default"/>
+                android:key="@string/preference_update_auto"
+                android:title="@string/preference_update_auto_title"
+                android:summary="@string/preference_update_auto_description"
+                android:defaultValue="@string/preference_update_auto_default"/>
 
         <Preference android:key="@string/preference_update"/>
 

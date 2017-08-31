@@ -3,14 +3,18 @@ package ru.dyatel.tsuschedule.utilities
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import hirondelle.date4j.DateTime
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import java.util.TimeZone
 
 private const val DATA_PREFERENCES = "data_preferences"
 
 private const val PREFERENCES_GROUP = "group"
 private const val PREFERENCES_SUBGROUP = "subgroup"
+
+private const val PREFERENCES_LAST_AUTO_UPDATE = "last_auto_update"
 
 private const val PREFERENCES_LAST_RELEASE = "last_release"
 
@@ -31,11 +35,23 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getString(preference, fallback).toInt()
         }
 
-    val updateAutoCheck: Boolean
+    val autoupdate: Boolean
         get() {
-            val preference = context.getString(R.string.preference_update_check_auto)
-            val fallback = context.getString(R.string.preference_update_check_auto)
+            val preference = context.getString(R.string.preference_update_auto)
+            val fallback = context.getString(R.string.preference_update_auto)
             return preferences.getString(preference, fallback).toBoolean()
+        }
+
+    var lastAutoupdate: DateTime?
+        get() {
+            val timestamp = preferences.getLong(PREFERENCES_LAST_AUTO_UPDATE, -1)
+
+            if (timestamp == -1L) return null
+            return DateTime.forInstant(timestamp, TimeZone.getDefault())
+        }
+        set(value) {
+            val timestamp = value?.getMilliseconds(TimeZone.getDefault()) ?: -1
+            preferences.editAndApply { putLong(PREFERENCES_LAST_AUTO_UPDATE, timestamp) }
         }
 
     var lastRelease: String?

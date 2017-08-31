@@ -4,8 +4,8 @@
     <string name="preference_timeout">connection_timeout</string>
     <string name="preference_timeout_default">10</string>
 
-    <string name="preference_update_check_auto">check_updates</string>
-    <string name="preference_update_check_auto_default">true</string>
+    <string name="preference_update_auto">check_updates</string>
+    <string name="preference_update_auto_default">true</string>
 
     <string name="preference_update">update</string>
 
