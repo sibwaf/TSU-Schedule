@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule
 
+import android.app.Fragment
 import android.app.FragmentManager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBar
@@ -7,11 +8,19 @@ import com.mikepenz.materialdrawer.Drawer
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.fragments.MainFragment
 import ru.dyatel.tsuschedule.fragments.SettingsFragment
 
-const val FRAGMENT_SETTINGS = 0L
+private typealias FragmentIdentifier = Long
+private typealias FragmentProvider = () -> Fragment
 
-private val FRAGMENTS = mapOf(FRAGMENT_SETTINGS to { SettingsFragment() })
+const val FRAGMENT_MAIN: FragmentIdentifier = 0L
+const val FRAGMENT_SETTINGS: FragmentIdentifier = 1L
+
+private val FRAGMENTS = mapOf<Long, FragmentProvider>(
+        FRAGMENT_MAIN to { MainFragment() },
+        FRAGMENT_SETTINGS to { SettingsFragment() }
+)
 
 class NavigationHandler(
         private val fragmentManager: FragmentManager,
@@ -24,7 +33,7 @@ class NavigationHandler(
     }
 
     override fun onBackStackChanged() {
-        val needDrawer = fragmentManager.backStackEntryCount == 0
+        val needDrawer = fragmentManager.backStackEntryCount == 1
 
         if (needDrawer) actionBar?.setDisplayHomeAsUpEnabled(false)
         drawer.actionBarDrawerToggle.isDrawerIndicatorEnabled = needDrawer
@@ -39,7 +48,7 @@ class NavigationHandler(
             drawer.closeDrawer()
             return true
         }
-        if (fragmentManager.backStackEntryCount > 0) {
+        if (fragmentManager.backStackEntryCount > 1) {
             fragmentManager.popBackStack()
             return true
         }
@@ -48,7 +57,7 @@ class NavigationHandler(
 
     override fun handleEvent(type: Event, payload: Any?) {
         payload ?: throw IllegalArgumentException("Can't navigate to fragment with null identifier")
-        if (payload !is Long) throw IllegalArgumentException("Fragment identifier must be of type Long")
+        if (payload !is FragmentIdentifier) throw IllegalArgumentException("Wrong fragment identifier type")
 
         val fragmentProvider = FRAGMENTS[payload] ?:
                 throw IllegalArgumentException("There are no fragments with identifier $payload")
