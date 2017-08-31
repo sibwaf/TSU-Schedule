@@ -38,8 +38,8 @@ class SchedulePreferences(private val context: Context) {
     val autoupdate: Boolean
         get() {
             val preference = context.getString(R.string.preference_update_auto)
-            val fallback = context.getString(R.string.preference_update_auto)
-            return preferences.getString(preference, fallback).toBoolean()
+            val fallback = context.getString(R.string.preference_update_auto).toBoolean()
+            return preferences.getBoolean(preference, fallback)
         }
 
     var lastAutoupdate: DateTime?
