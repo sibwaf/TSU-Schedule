@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 
 private const val DB_FILE = "data.db"
-private const val DB_VERSION = 3
+private const val DB_VERSION = 4
 
 class DatabaseManager(context: Context) :
         ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
