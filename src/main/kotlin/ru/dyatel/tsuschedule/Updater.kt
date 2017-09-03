@@ -147,7 +147,8 @@ class UpdateFileProvider : ContentProvider() {
         if (mode != "r")
             throw FileNotFoundException("Can't open $uri in <$mode> mode: file is read-only")
 
-        val file = getUpdateDirectory(context).resolve(uri.path)
+        val path = uri.path.removePrefix("/")
+        val file = getUpdateDirectory(context).resolve(path)
         return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
     }
 
