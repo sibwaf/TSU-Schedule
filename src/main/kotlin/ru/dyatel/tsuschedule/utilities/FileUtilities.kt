@@ -9,11 +9,11 @@ fun URL.download(destination: File, timeout: Int, onProgressUpdate: (Int) -> Uni
         readTimeout = timeout
     }
 
-    val length = connection.contentLength
-    var downloaded = 0
     connection.getInputStream().buffered().use { input ->
         destination.outputStream().buffered().use { output ->
             val buffer = ByteArray(8192)
+            val length = connection.contentLength
+            var downloaded = 0
             var count: Int
             do {
                 count = input.read(buffer)
@@ -21,8 +21,10 @@ fun URL.download(destination: File, timeout: Int, onProgressUpdate: (Int) -> Uni
 
                 output.write(buffer, 0, count)
 
-                downloaded += count
-                onProgressUpdate(downloaded * 100 / length)
+                if (length > 0) {
+                    downloaded += count
+                    onProgressUpdate(downloaded * 100 / length)
+                }
             } while (true)
         }
     }
