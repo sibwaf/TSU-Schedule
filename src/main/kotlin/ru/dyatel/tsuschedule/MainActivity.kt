@@ -1,11 +1,10 @@
 package ru.dyatel.tsuschedule
 
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.NotificationCompat
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -18,22 +17,26 @@ import com.mikepenz.google_material_typeface_library.GoogleMaterial
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.wealthfront.magellan.Navigator
+import com.wealthfront.magellan.support.SingleActivity
+import com.wealthfront.magellan.transitions.NoAnimationTransition
 import hirondelle.date4j.DateTime
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.inputMethodManager
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.notificationManager
 import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.screens.PreferenceScreen
+import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
 
-private const val NOTIFICATION_UPDATE = 1
-
-private const val INTENT_FROM_NOTIFICATION = "from_notification"
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : SingleActivity(), EventListener {
 
     private lateinit var drawer: Drawer
 
@@ -41,7 +44,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var groupEditor: EditText
     private lateinit var subgroupChooser: Spinner
 
-    private lateinit var navigationHandler: NavigationHandler
+    override fun createNavigator() = Navigator.withRoot(ScheduleScreen())
+            .transition(NoAnimationTransition())
+            .build()!!
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -71,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) return@setOnFocusChangeListener
 
-                val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = view.context.inputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
             }
         }
@@ -84,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val settingsButton = PrimaryDrawerItem()
-                .withIdentifier(FRAGMENT_SETTINGS)
+                .withIdentifier(NAVIGATION_PREFERENCES)
                 .withIcon(GoogleMaterial.Icon.gmd_settings)
                 .withName(R.string.fragment_settings)
                 .withSelectable(false)
@@ -98,25 +103,22 @@ class MainActivity : AppCompatActivity() {
                 .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(settingsButton)
                 .withSelectedItem(-1)
-                .withOnDrawerItemClickListener(navigationListener)
+                .withOnDrawerItemClickListener { _, _, item -> navigateTo(item.identifier); true }
                 .withOnDrawerListener(drawerListener)
-                .withOnDrawerNavigationListener { navigationHandler.onBackPressed() }
+                .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withShowDrawerOnFirstLaunch(true)
                 .build()
 
-        navigationHandler = NavigationHandler(fragmentManager, drawer, supportActionBar)
-        fragmentManager.addOnBackStackChangedListener(navigationHandler)
-
-        EventBus.broadcast(Event.NAVIGATE_TO, FRAGMENT_MAIN)
+        EventBus.subscribe(this, Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER)
 
         if (!handleUpdateNotification(intent)) doAsync { checkUpdates() }
     }
 
     private fun handleUpdateNotification(intent: Intent): Boolean {
-        val result = intent.getBooleanExtra(INTENT_FROM_NOTIFICATION, false)
+        val result = intent.getStringExtra(INTENT_TYPE) == INTENT_TYPE_UPDATE
         if (result) {
             notificationManager.cancel(NOTIFICATION_UPDATE)
-            EventBus.broadcast(Event.NAVIGATE_TO, FRAGMENT_SETTINGS)
+            navigateTo(NAVIGATION_PREFERENCES)
         }
         return result
     }
@@ -140,8 +142,7 @@ class MainActivity : AppCompatActivity() {
             preferences.lastAutoupdate = now
 
             if (new != null && old != new) {
-                val intent = Intent(ctx, MainActivity::class.java)
-                intent.putExtra(INTENT_FROM_NOTIFICATION, true)
+                val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
                 val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
                 val title = getString(R.string.notification_update_found_title, release.version)
@@ -159,13 +160,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (!navigationHandler.onBackPressed()) super.onBackPressed()
+    private fun navigateTo(id: Long) {
+        drawer.closeDrawer()
+
+        if (id == NAVIGATION_PREFERENCES) {
+            getNavigator().goTo(PreferenceScreen())
+            return
+        }
     }
 
-    private val navigationListener = Drawer.OnDrawerItemClickListener { _, _, item ->
-        EventBus.broadcast(Event.NAVIGATE_TO, item.identifier)
-        true
+    override fun handleEvent(type: Event, payload: Any?) {
+        val toggle = drawer.actionBarDrawerToggle
+        val layout = drawer.drawerLayout
+        val actionBar = supportActionBar
+
+        when (type) {
+            Event.DISABLE_NAVIGATION_DRAWER -> {
+                toggle.isDrawerIndicatorEnabled = false
+                actionBar?.setDisplayHomeAsUpEnabled(true)
+                layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            }
+            Event.ENABLE_NAVIGATION_DRAWER -> {
+                actionBar?.setDisplayHomeAsUpEnabled(false)
+                toggle.isDrawerIndicatorEnabled = true
+                layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            }
+        }
     }
 
     private val drawerListener = object : Drawer.OnDrawerListener {

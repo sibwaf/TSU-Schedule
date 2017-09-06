@@ -84,6 +84,10 @@ dependencies {
     compile "com.android.support:support-v13:$androidSupportVersion"
     compile "com.android.support:design:$androidSupportVersion"
 
+    def magellanVersion = "1.0.0"
+    compile "com.wealthfront:magellan:$magellanVersion"
+    compile "com.wealthfront:magellan-support:$magellanVersion"
+
     compile("com.mikepenz:materialdrawer:5.9.4@aar") { transitive = true }
     compile "com.mikepenz:iconics-core:2.8.9@aar"
     compile "com.mikepenz:google-material-typeface:3.0.1.1.original@aar"
