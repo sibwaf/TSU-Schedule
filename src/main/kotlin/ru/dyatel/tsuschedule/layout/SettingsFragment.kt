@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.fragments
+package ru.dyatel.tsuschedule.layout
 
 import android.os.Bundle
 import android.preference.Preference
@@ -7,9 +7,11 @@ import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BuildConfig
+import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.UpdateFileProvider
 import ru.dyatel.tsuschedule.Updater
@@ -38,6 +40,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
 
         updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
+                activity.notificationManager.cancel(NOTIFICATION_UPDATE)
                 if (updateButtonCheckingMode) checkUpdates() else installUpdate()
                 true
             }
