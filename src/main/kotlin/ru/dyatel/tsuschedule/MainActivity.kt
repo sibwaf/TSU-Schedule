@@ -133,7 +133,7 @@ class MainActivity : SingleActivity(), EventListener {
         if (!shouldCheck) return
 
         try {
-            val release = Updater().getLatestRelease()
+            val release = Updater().apply { setTimeout(preferences.connectionTimeout * 1000) }.getLatestRelease()
 
             val old = preferences.lastRelease
             val new = release?.takeIf { it.isNewerThanInstalled() }?.url
