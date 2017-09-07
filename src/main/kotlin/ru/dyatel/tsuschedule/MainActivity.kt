@@ -133,15 +133,17 @@ class MainActivity : SingleActivity(), EventListener {
         if (!shouldCheck) return
 
         try {
-            val release = Updater().apply { setTimeout(preferences.connectionTimeout * 1000) }.getLatestRelease()
+            val lastKnown = preferences.lastRelease
 
-            val old = preferences.lastRelease
-            val new = release?.takeIf { it.isNewerThanInstalled() }?.url
+            val release = Updater().apply { setTimeout(preferences.connectionTimeout * 1000) }
+                    .getLatestRelease()
+                    ?.takeIf { it.isNewerThanInstalled() }
+                    ?.apply { preferences.lastRelease = url }
+                    ?.takeIf { it.url != lastKnown }
 
-            preferences.lastRelease = new
             preferences.lastAutoupdate = now
 
-            if (new != null && old != new) {
+            if (release != null) {
                 val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
                 val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
@@ -157,6 +159,7 @@ class MainActivity : SingleActivity(), EventListener {
                 notificationManager.notify(NOTIFICATION_UPDATE, notification)
             }
         } catch (e: Exception) {
+            (e as? ParsingException)?.handle()
         }
     }
 
