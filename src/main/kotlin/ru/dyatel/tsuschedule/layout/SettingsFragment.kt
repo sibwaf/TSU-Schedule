@@ -41,6 +41,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
+                updater.setTimeout(ctx.schedulePreferences.connectionTimeout * 1000)
                 if (updateButtonCheckingMode) checkUpdates() else installUpdate()
                 true
             }
