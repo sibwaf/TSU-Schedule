@@ -19,6 +19,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.utilities.NumberPreferenceValidator
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import ru.dyatel.tsuschedule.utilities.setMessage
@@ -130,26 +131,6 @@ class SettingsFragment : PreferenceFragment(), EventListener {
 
             setOnCancelListener { downloader.cancel(true) }
         }
-    }
-
-}
-
-private class NumberPreferenceValidator(
-        val acceptEmptyInput: Boolean = false,
-        val constraint: IntRange? = null
-) : Preference.OnPreferenceChangeListener {
-
-    override fun onPreferenceChange(preference: Preference?, newValue: Any): Boolean {
-        if (!acceptEmptyInput && newValue == "") return false
-        val number: Int
-        try {
-            if (acceptEmptyInput && newValue == "") number = 0
-            else number = (newValue as String).toInt()
-        } catch (e: NumberFormatException) {
-            return false
-        }
-
-        return constraint == null || number in constraint
     }
 
 }
