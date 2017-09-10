@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule
+package ru.dyatel.tsuschedule.updater
 
 import org.junit.Test
 
