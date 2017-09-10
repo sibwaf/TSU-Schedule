@@ -33,6 +33,7 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
+import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
 

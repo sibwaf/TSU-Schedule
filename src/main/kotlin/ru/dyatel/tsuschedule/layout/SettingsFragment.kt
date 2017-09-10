@@ -13,12 +13,12 @@ import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.UpdateFileProvider
-import ru.dyatel.tsuschedule.Updater
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.updater.UpdateFileProvider
+import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.NumberPreferenceValidator
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
@@ -123,7 +123,8 @@ class SettingsFragment : PreferenceFragment(), EventListener {
                     updater.installUpdate(file, ctx)
                     preferences.lastRelease = null
                 } catch (e: Exception) {
-                    uiThread { e.handle { longToast(it) } }
+                    if (e !is InterruptedException)
+                        uiThread { e.handle { longToast(it) } }
                 } finally {
                     uiThread { dismiss() }
                 }
