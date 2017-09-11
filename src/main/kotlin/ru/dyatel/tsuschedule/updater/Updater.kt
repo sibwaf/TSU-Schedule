@@ -13,6 +13,7 @@ import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.File
+import java.io.InterruptedIOException
 import java.net.URL
 
 class Updater(private val context: Context) {
@@ -46,7 +47,7 @@ class Updater(private val context: Context) {
                         else showMessage(R.string.update_found)
                     }
                 } catch (e: Exception) {
-                    if (e !is InterruptedException)
+                    if (e !is InterruptedException && e !is InterruptedIOException)
                         uiThread { e.handle { showMessage(it) } }
                 } finally {
                     uiThread { dismiss() }
@@ -78,7 +79,7 @@ class Updater(private val context: Context) {
                         installUpdate(file)
                         preferences.lastRelease = null
                     } catch (e: Exception) {
-                        if (e !is InterruptedException)
+                        if (e !is InterruptedException && e !is InterruptedIOException)
                             uiThread { e.handle { context.longToast(it) } }
                     } finally {
                         uiThread { dismiss() }
