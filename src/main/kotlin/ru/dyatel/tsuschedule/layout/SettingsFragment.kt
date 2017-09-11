@@ -4,37 +4,31 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import org.jetbrains.anko.ctx
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
-import ru.dyatel.tsuschedule.handle
-import ru.dyatel.tsuschedule.updater.UpdateFileProvider
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.NumberPreferenceValidator
-import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
-import ru.dyatel.tsuschedule.utilities.setMessage
-import java.net.URL
 
 class SettingsFragment : PreferenceFragment(), EventListener {
 
     private lateinit var updateButton: Preference
     private var updateButtonCheckingMode = true
 
-    private val updater = Updater()
+    private lateinit var updater: Updater
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addPreferencesFromResource(R.xml.preferences)
+
+        updater = Updater(ctx)
 
         preferenceScreen.findPreference(getString(R.string.preference_timeout))
                 .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..30)
@@ -42,8 +36,8 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
-                updater.setTimeout(ctx.schedulePreferences.connectionTimeout * 1000)
-                if (updateButtonCheckingMode) checkUpdates() else installUpdate()
+                if (updateButtonCheckingMode) updater.checkDialog { longToast(it) }
+                else updater.installDialog()
                 true
             }
         }
@@ -69,69 +63,6 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         else
             updateButton.setTitle(R.string.preference_update_title)
 
-    }
-
-    private fun checkUpdates() = doAsync {
-        try {
-            val release = updater.getLatestRelease()
-
-            if (release == null || !release.isNewerThanInstalled()) {
-                uiThread { longToast(R.string.update_not_found) }
-                ctx.schedulePreferences.lastRelease = null
-            } else {
-                uiThread { longToast(R.string.update_found) }
-                ctx.schedulePreferences.lastRelease = release.url
-            }
-        } catch (e: Exception) {
-            uiThread { e.handle { longToast(it) } }
-        }
-    }
-
-    private fun installUpdate() {
-        indeterminateProgressDialog(R.string.update_finding_latest) {
-            setProgressNumberFormat(null)
-
-            val preferences = ctx.schedulePreferences
-
-            val downloader = doAsync {
-                try {
-                    val release = updater.getLatestRelease()
-                    if (release == null || !release.isNewerThanInstalled()) {
-                        preferences.lastRelease = null
-                        uiThread {
-                            longToast(R.string.update_not_found)
-                            dismiss()
-                        }
-                        return@doAsync
-                    } else {
-                        preferences.lastRelease = release.url
-                    }
-                } catch (e: Exception) {
-                }
-
-                uiThread { setMessage(R.string.update_downloading) }
-
-                try {
-                    val file = UpdateFileProvider.getUpdateDirectory(ctx).resolve("update.apk")
-                    URL(preferences.lastRelease).download(file, preferences.connectionTimeout * 1000) { value ->
-                        uiThread {
-                            isIndeterminate = false
-                            max = 100
-                            progress = value
-                        }
-                    }
-                    updater.installUpdate(file, ctx)
-                    preferences.lastRelease = null
-                } catch (e: Exception) {
-                    if (e !is InterruptedException)
-                        uiThread { e.handle { longToast(it) } }
-                } finally {
-                    uiThread { dismiss() }
-                }
-            }
-
-            setOnCancelListener { downloader.cancel(true) }
-        }
     }
 
 }
