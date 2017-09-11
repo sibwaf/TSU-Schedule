@@ -136,19 +136,11 @@ class MainActivity : SingleActivity(), EventListener {
         try {
             val lastKnown = preferences.lastRelease
 
-            val release = Updater().apply { setTimeout(preferences.connectionTimeout * 1000) }
-                    .getLatestRelease()
-                    ?.takeIf { it.isNewerThanInstalled() }
-                    ?.apply { preferences.lastRelease = url }
-                    ?.takeIf { it.url != lastKnown }
-
-            preferences.lastAutoupdate = now
-
-            if (release != null) {
+            Updater(ctx).fetchUpdateLink()?.takeIf { it.url != lastKnown }?.run {
                 val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
                 val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
-                val title = getString(R.string.notification_update_found_title, release.version)
+                val title = getString(R.string.notification_update_found_title, version)
 
                 val notification = NotificationCompat.Builder(ctx)
                         .setSmallIcon(R.drawable.notification)
@@ -159,6 +151,8 @@ class MainActivity : SingleActivity(), EventListener {
 
                 notificationManager.notify(NOTIFICATION_UPDATE, notification)
             }
+
+            preferences.lastAutoupdate = now
         } catch (e: Exception) {
             (e as? ParsingException)?.handle()
         }
