@@ -38,19 +38,19 @@ class UpdaterApi {
         }
 
         for (releaseJson in releases) {
-            val release = try {
+            val token = try {
                 parseRelease(releaseJson as JSONObject)
             } catch (e: Exception) {
                 (e as? ParsingException ?: ParsingException(e)).handle()
                 continue
             }
-            if (!release.isPrerelease || allowPrerelease) return release
+            if (!token.prerelease || allowPrerelease) return token.release
         }
 
         return null
     }
 
-    private fun parseRelease(json: JSONObject): Release {
+    private fun parseRelease(json: JSONObject): ReleaseToken {
         val links = json.find<JSONArray>("assets").iterator().asSequence()
                 .map { it as JSONObject }
                 .filter { it.find<String>("content_type") == MIME_APK }
@@ -60,7 +60,11 @@ class UpdaterApi {
         if (links.isEmpty()) throw ParsingException("No .apk files in assets")
 
         val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
-        return Release(json.find("tag_name"), url)
+        val release =  Release(json.find("tag_name"), url)
+
+        return ReleaseToken(release, json.find("prerelease"))
     }
 
 }
+
+private class ReleaseToken(val release: Release, val prerelease: Boolean)

@@ -5,14 +5,11 @@ import ru.dyatel.tsuschedule.BuildConfig
 data class Release(val version: String, val url: String) : Comparable<Release> {
 
     companion object {
-        private val VERSION_PATTERN = Regex("^v?((?:\\d+)(?:\\.\\d+)*)(?:-prerelease(\\d+))?\$")
+        private val VERSION_PATTERN = Regex("^v?((?:\\d+)(?:\\.\\d+)*)$")
         val CURRENT = Release(BuildConfig.VERSION_NAME, "")
     }
 
     private val components: List<Int>
-    private val prerelease: Int?
-
-    val isPrerelease: Boolean
 
     init {
         val match = VERSION_PATTERN.matchEntire(version)
@@ -22,9 +19,6 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
                 .map { it.toInt() }
                 .dropLastWhile { it == 0 }
                 .toList()
-
-        prerelease = match.groupValues[2].takeIf { it.isNotEmpty() }?.toInt()
-        isPrerelease = prerelease != null
     }
 
     override fun compareTo(other: Release): Int {
@@ -37,16 +31,6 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
 
         if (components.size > other.components.size) return 1
         if (components.size < other.components.size) return -1
-
-        if (prerelease == null && other.prerelease == null) return 0
-        if (prerelease == null && other.prerelease != null) return 1
-        if (prerelease != null && other.prerelease == null) return -1
-
-        prerelease!!
-        other.prerelease!!
-
-        if (prerelease > other.prerelease) return 1
-        if (prerelease < other.prerelease) return -1
         return 0
     }
 
