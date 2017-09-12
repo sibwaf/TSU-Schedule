@@ -15,7 +15,6 @@ private const val PREFERENCES_GROUP = "group"
 private const val PREFERENCES_SUBGROUP = "subgroup"
 
 private const val PREFERENCES_LAST_AUTO_UPDATE = "last_auto_update"
-
 private const val PREFERENCES_LAST_RELEASE = "last_release"
 
 class SchedulePreferences(private val context: Context) {
@@ -39,6 +38,13 @@ class SchedulePreferences(private val context: Context) {
         get() {
             val preference = context.getString(R.string.preference_update_auto)
             val fallback = context.getString(R.string.preference_update_auto).toBoolean()
+            return preferences.getBoolean(preference, fallback)
+        }
+
+    val allowPrerelease: Boolean
+        get() {
+            val preference = context.getString(R.string.preference_update_allow_prerelease)
+            val fallback = context.getString(R.string.preference_update_allow_prerelease_default).toBoolean()
             return preferences.getBoolean(preference, fallback)
         }
 

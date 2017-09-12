@@ -34,9 +34,12 @@
 
     <string name="preference_update_auto_title">Проверять обновления</string>
     <string name="preference_update_auto_description">При запуске приложения, раз в 3 дня</string>
-
+    <string name="preference_update_allow_prerelease_title">Получать тестовые версии</string>
+    <string name="preference_update_allow_prerelease_description">Тестовые версии - самые свежие,
+        но могут быть нестабильными
+    </string>
     <string name="preference_update_check_title">Проверить обновления</string>
-    <string name="preference_update_title">Установить обновление</string>
+    <string name="preference_update_install_title">Установить обновление</string>
 
     <string name="preference_version_title">Текущая версия</string>
 

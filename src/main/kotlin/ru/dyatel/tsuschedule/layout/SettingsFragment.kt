@@ -61,7 +61,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         if (updateButtonCheckingMode)
             updateButton.setTitle(R.string.preference_update_check_title)
         else
-            updateButton.setTitle(R.string.preference_update_title)
+            updateButton.setTitle(R.string.preference_update_install_title)
 
     }
 
