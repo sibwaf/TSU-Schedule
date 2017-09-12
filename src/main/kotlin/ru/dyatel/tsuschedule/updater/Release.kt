@@ -10,7 +10,9 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
     }
 
     private val components: List<Int>
-    private val alpha: Int?
+    private val prerelease: Int?
+
+    val isPrerelease: Boolean
 
     init {
         val match = VERSION_PATTERN.matchEntire(version)
@@ -21,7 +23,8 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
                 .dropLastWhile { it == 0 }
                 .toList()
 
-        alpha = match.groupValues[2].takeIf { it.isNotEmpty() }?.toInt()
+        prerelease = match.groupValues[2].takeIf { it.isNotEmpty() }?.toInt()
+        isPrerelease = prerelease != null
     }
 
     override fun compareTo(other: Release): Int {
@@ -32,18 +35,18 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
             if (components[i] < other.components[i]) return -1
         }
 
-        if (components.size > other.components.size)  return 1
-        if (components.size < other.components.size)  return -1
+        if (components.size > other.components.size) return 1
+        if (components.size < other.components.size) return -1
 
-        if (alpha == null && other.alpha == null) return 0
-        if (alpha == null && other.alpha != null) return 1
-        if (alpha != null && other.alpha == null) return -1
+        if (prerelease == null && other.prerelease == null) return 0
+        if (prerelease == null && other.prerelease != null) return 1
+        if (prerelease != null && other.prerelease == null) return -1
 
-        alpha!!
-        other.alpha!!
+        prerelease!!
+        other.prerelease!!
 
-        if (alpha > other.alpha) return 1
-        if (alpha < other.alpha) return -1
+        if (prerelease > other.prerelease) return 1
+        if (prerelease < other.prerelease) return -1
         return 0
     }
 
