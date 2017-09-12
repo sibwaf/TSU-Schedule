@@ -9,4 +9,4 @@ const val INTENT_TYPE_UPDATE = "update"
 
 const val MIME_APK = "application/vnd.android.package-archive"
 
-val VERSION_PATTERN = Regex("^v?((?:\\d+)(?:\\.\\d+)*)(?:-alpha(\\d+))?\$")
+val VERSION_PATTERN = Regex("^v?((?:\\d+)(?:\\.\\d+)*)(?:-prerelease(\\d+))?\$")
