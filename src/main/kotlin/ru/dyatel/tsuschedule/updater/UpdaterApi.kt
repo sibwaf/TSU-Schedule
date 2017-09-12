@@ -8,6 +8,7 @@ import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.VERSION_PATTERN
 import ru.dyatel.tsuschedule.utilities.find
+import ru.dyatel.tsuschedule.utilities.iterator
 import java.net.HttpURLConnection
 
 class UpdaterApi {
@@ -40,8 +41,8 @@ class UpdaterApi {
             val links = mutableListOf<String>()
 
             val assets = obj.find<JSONArray>("assets")
-            for (i in 0 until assets.length()) {
-                val asset = assets[i] as JSONObject
+            for (asset in assets) {
+                asset as JSONObject
 
                 val link = asset.find<String>("browser_download_url")
                 val mime = asset.find<String>("content_type")
