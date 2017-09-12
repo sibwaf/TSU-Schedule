@@ -16,6 +16,12 @@
                 android:summary="@string/preference_update_auto_description"
                 android:defaultValue="@string/preference_update_auto_default"/>
 
+        <CheckBoxPreference
+                android:key="@string/preference_update_allow_prerelease"
+                android:title="@string/preference_update_allow_prerelease_title"
+                android:summary="@string/preference_update_allow_prerelease_description"
+                android:defaultValue="@string/preference_update_allow_prerelease_default"/>
+
         <Preference android:key="@string/preference_update"/>
 
         <Preference

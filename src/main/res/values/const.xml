@@ -6,7 +6,8 @@
 
     <string name="preference_update_auto">check_updates</string>
     <string name="preference_update_auto_default">true</string>
-
+    <string name="preference_update_allow_prerelease">allow_prerelease</string>
+    <string name="preference_update_allow_prerelease_default">false</string>
     <string name="preference_update">update</string>
 
     <string name="preference_version">version</string>

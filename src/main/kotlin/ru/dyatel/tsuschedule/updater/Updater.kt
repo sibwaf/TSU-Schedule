@@ -25,7 +25,8 @@ class Updater(private val context: Context) {
     fun fetchUpdateLink(): Release? {
         api.setTimeout(preferences.connectionTimeout * 1000)
 
-        val release = api.getLatestRelease()?.takeIf { Release.CURRENT < it }
+        val release = api.getLatestRelease(preferences.allowPrerelease)
+                ?.takeIf { Release.CURRENT < it }
         preferences.lastRelease = release?.url
         return release
     }
