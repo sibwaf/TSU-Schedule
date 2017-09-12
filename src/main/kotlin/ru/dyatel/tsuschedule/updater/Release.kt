@@ -1,11 +1,11 @@
 package ru.dyatel.tsuschedule.updater
 
 import ru.dyatel.tsuschedule.BuildConfig
-import ru.dyatel.tsuschedule.VERSION_PATTERN
 
 data class Release(val version: String, val url: String) : Comparable<Release> {
 
     companion object {
+        private val VERSION_PATTERN = Regex("^v?((?:\\d+)(?:\\.\\d+)*)(?:-prerelease(\\d+))?\$")
         val CURRENT = Release(BuildConfig.VERSION_NAME, "")
     }
 
