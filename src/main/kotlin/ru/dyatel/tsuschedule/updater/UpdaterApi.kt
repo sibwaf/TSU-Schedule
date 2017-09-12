@@ -6,6 +6,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.ParsingException
+import ru.dyatel.tsuschedule.VERSION_PATTERN
 import ru.dyatel.tsuschedule.utilities.find
 import java.net.HttpURLConnection
 
@@ -14,8 +15,6 @@ class UpdaterApi {
     private companion object {
         const val REPOSITORY = "dya-tel/TSU-Schedule"
         const val URL = "https://api.github.com/repos/$REPOSITORY/releases/latest"
-
-        val VERSION_PATTERN = Regex("^v((?:\\d+)(?:\\.\\d+)*)$")
     }
 
     private val connection = Jsoup.connect(URL)
