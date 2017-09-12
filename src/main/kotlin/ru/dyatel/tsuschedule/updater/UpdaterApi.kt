@@ -6,6 +6,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.ParsingException
+import ru.dyatel.tsuschedule.utilities.find
 import java.net.HttpURLConnection
 
 class UpdaterApi {
@@ -32,23 +33,18 @@ class UpdaterApi {
 
         val obj = JSONObject(response.body())
 
-        val rawVersion = obj["tag_name"] as? String
-                ?: throw ParsingException("Tag is not a string")
+        val rawVersion = obj.find<String>("tag_name")
         val version = VERSION_PATTERN.matchEntire(rawVersion)?.groupValues?.get(1)
                 ?: throw ParsingException("Version tag is malformed: <$rawVersion>")
 
         val links = mutableListOf<String>()
 
-        val assets = obj["assets"] as? JSONArray
-                ?: throw ParsingException("Asset list is not an array")
+        val assets = obj.find<JSONArray>("assets")
         for (i in 0 until assets.length()) {
-            val asset = assets[i] as? JSONObject
-                    ?: throw ParsingException("Asset is not an object")
+            val asset = assets[i] as JSONObject
 
-            val link = asset["browser_download_url"] as? String
-                    ?: throw ParsingException("Link is not a string")
-            val mime = asset["content_type"] as? String
-                    ?: throw ParsingException("Content type is not a string")
+            val link = asset.find<String>("browser_download_url")
+            val mime = asset.find<String>("content_type")
 
             if (mime == MIME_APK) links += link
         }
