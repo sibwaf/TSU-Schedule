@@ -26,11 +26,15 @@ class BadGroupException : IllegalArgumentException {
 
 }
 
+fun Exception.log() {
+    if (BuildConfig.DEBUG) Log.e("ExceptionHandler", "Caught an exception:", this)
+    else Crashlytics.logException(this)
+}
+
 fun Exception.handle(showMessage: (Int) -> Unit = {}) {
     val message = when (this) {
         is ParsingException -> {
-            if (BuildConfig.DEBUG) Log.e("ExceptionHandler", "Caught a ParsingException", this)
-            else Crashlytics.logException(this)
+            log()
             R.string.failure_parsing_failed
         }
         is BadGroupException -> R.string.failure_wrong_group_index

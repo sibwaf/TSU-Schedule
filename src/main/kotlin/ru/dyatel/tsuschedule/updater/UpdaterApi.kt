@@ -6,7 +6,7 @@ import org.jsoup.Connection
 import org.jsoup.Jsoup
 import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.ParsingException
-import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.log
 import ru.dyatel.tsuschedule.utilities.find
 import ru.dyatel.tsuschedule.utilities.iterator
 import java.net.HttpURLConnection
@@ -41,7 +41,7 @@ class UpdaterApi {
             val token = try {
                 parseRelease(releaseJson as JSONObject)
             } catch (e: Exception) {
-                (e as? ParsingException ?: ParsingException(e)).handle()
+                e.log()
                 continue
             }
             if (!token.prerelease || allowPrerelease) return token.release
