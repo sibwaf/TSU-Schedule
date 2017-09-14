@@ -7,13 +7,16 @@ import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.NotificationCompat
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
-import com.mikepenz.google_material_typeface_library.GoogleMaterial
+import com.mikepenz.community_material_typeface_library.CommunityMaterial
+import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
@@ -31,6 +34,7 @@ import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
@@ -91,8 +95,8 @@ class MainActivity : SingleActivity(), EventListener {
 
         val settingsButton = PrimaryDrawerItem()
                 .withIdentifier(NAVIGATION_PREFERENCES)
-                .withIcon(GoogleMaterial.Icon.gmd_settings)
-                .withName(R.string.fragment_settings)
+                .withIcon(CommunityMaterial.Icon.cmd_settings)
+                .withName(R.string.screen_settings)
                 .withSelectable(false)
 
         drawer = DrawerBuilder()
@@ -113,6 +117,22 @@ class MainActivity : SingleActivity(), EventListener {
         EventBus.subscribe(this, Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER)
 
         if (!handleUpdateNotification(intent)) doAsync { checkUpdates() }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        menu.findItem(R.id.filters).icon = IconicsDrawable(ctx).actionBar()
+                .icon(CommunityMaterial.Icon.cmd_filter)
+                .colorRes(R.color.text_title_color)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.filters -> getNavigator().goTo(FilterScreen())
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     private fun handleUpdateNotification(intent: Intent): Boolean {

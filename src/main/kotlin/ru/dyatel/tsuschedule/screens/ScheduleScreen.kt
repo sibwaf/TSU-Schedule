@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.SwipeRefreshLayout
+import android.view.Menu
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.doAsync
@@ -137,4 +138,9 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
 
         context.runOnUiThread { view.isRefreshing = false }
     }
+
+    override fun onUpdateMenu(menu: Menu) {
+        menu.findItem(R.id.filters).isVisible = true
+    }
+
 }
