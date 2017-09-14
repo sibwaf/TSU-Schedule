@@ -125,10 +125,6 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
             val even = mutableListOf<Lesson>()
             lessons.request(context.schedulePreferences.subgroup).forEach {
                 when (it.parity) {
-                    Parity.BOTH -> {
-                        odd += it
-                        even += it
-                    }
                     Parity.ODD -> odd += it
                     Parity.EVEN -> even += it
                 }
