@@ -7,13 +7,9 @@ import java.util.TimeZone
 
 enum class Parity(private val textResource: Int) {
 
-    ODD(R.string.odd_week), EVEN(R.string.even_week), BOTH(0);
+    ODD(R.string.odd_week), EVEN(R.string.even_week);
 
-    fun toText(context: Context): String {
-        if (this == BOTH)
-            throw IllegalArgumentException("Can't get text resource for Parity.BOTH!")
-        return context.getString(textResource)
-    }
+    fun toText(context: Context) = context.getString(textResource)!!
 
 }
 
