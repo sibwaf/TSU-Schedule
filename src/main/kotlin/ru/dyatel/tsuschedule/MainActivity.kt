@@ -221,7 +221,7 @@ class MainActivity : SingleActivity(), EventListener {
             val newSubgroup = subgroupChooser.selectedItemPosition
             preferences.subgroup = newSubgroup
 
-            if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_UPDATED)
+            if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
         }
 
         override fun onDrawerOpened(drawerView: View?) {

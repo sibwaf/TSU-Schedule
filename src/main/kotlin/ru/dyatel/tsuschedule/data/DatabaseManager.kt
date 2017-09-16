@@ -11,8 +11,9 @@ class DatabaseManager(context: Context) :
         ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val lessonDao = LessonDao(this)
+    val filterDao = FilterDao(this, context)
 
-    private val parts = setOf(lessonDao)
+    private val parts = setOf(lessonDao, filterDao)
 
     override fun onCreate(db: SQLiteDatabase) {
         parts.forEach { it.createTables(db) }
