@@ -15,11 +15,11 @@ import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.Parser
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.ScheduleApplication
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.data.currentWeekParity
+import ru.dyatel.tsuschedule.data.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
@@ -92,7 +92,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
     override fun onShow(context: Context?) {
         super.onShow(context)
 
-        lessons = (activity.application as ScheduleApplication).databaseManager.lessonDao
+        lessons = activity.database.lessonDao
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         doAsync { handleEvent(Event.DATA_UPDATED, null) }
     }

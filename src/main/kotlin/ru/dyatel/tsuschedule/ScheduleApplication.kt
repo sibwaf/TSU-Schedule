@@ -8,7 +8,7 @@ import ru.dyatel.tsuschedule.data.DatabaseManager
 
 class ScheduleApplication : Application() {
 
-    val databaseManager = DatabaseManager(this)
+    val database = DatabaseManager(this)
 
     override fun onCreate() {
         super.onCreate()
