@@ -80,7 +80,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
 
 class ScheduleScreen : Screen<ScheduleView>(), EventListener {
 
-    private val context: Context
+    private val context: Context?
         get() = activity
 
     private val weeks = WeekDataContainer()
@@ -103,6 +103,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
     }
 
     fun updateData() = doAsync {
+        val context = context ?: return@doAsync
         val preferences = context.schedulePreferences
 
         val parser = Parser()
@@ -113,13 +114,13 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
             lessons.update(data)
         } catch (e: Exception) {
             EventBus.broadcast(Event.DATA_UPDATE_FAILED)
-            uiThread {
-                e.handle { context.longToast(it) }
-            }
+            uiThread { e.handle { context.longToast(it) } }
         }
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
+        val context = context!!
+
         if (type == Event.DATA_UPDATED) {
             val odd = mutableListOf<Lesson>()
             val even = mutableListOf<Lesson>()
