@@ -1,9 +1,6 @@
 package ru.dyatel.tsuschedule.utilities
 
-import android.app.AlertDialog
 import android.preference.Preference
-
-fun AlertDialog.setMessage(id: Int) = setMessage(context.getString(id))
 
 class NumberPreferenceValidator(
         private val acceptEmptyInput: Boolean = false,
