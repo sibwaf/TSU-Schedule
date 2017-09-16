@@ -15,16 +15,12 @@ class PreferenceView(context: Context) : BaseScreenView<PreferenceScreen>(contex
 
     private val fragment = SettingsFragment()
 
-    private val container = context.frameLayout {
+    private val container = frameLayout {
         id = View.generateViewId()
         lparams {
             width = matchParent
             height = matchParent
         }
-    }
-
-    init {
-        addView(container)
     }
 
     fun attachFragment(fragmentManager: FragmentManager) {
