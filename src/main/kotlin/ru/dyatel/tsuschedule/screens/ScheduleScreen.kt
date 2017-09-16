@@ -124,7 +124,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         if (type == Event.DATA_UPDATED) {
             val odd = mutableListOf<Lesson>()
             val even = mutableListOf<Lesson>()
-            lessons.request(context.schedulePreferences.subgroup).forEach {
+            lessons.getLessons().forEach {
                 when (it.parity) {
                     Parity.ODD -> odd += it
                     Parity.EVEN -> even += it
