@@ -1,8 +1,10 @@
 package ru.dyatel.tsuschedule.data
 
+import android.app.Activity
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
+import ru.dyatel.tsuschedule.ScheduleApplication
 
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 4
@@ -24,3 +26,6 @@ class DatabaseManager(context: Context) :
     }
 
 }
+
+val Activity.database
+    get() = (application as ScheduleApplication).database
