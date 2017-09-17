@@ -94,7 +94,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
 
         lessons = activity.database.lessonDao
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
-        doAsync { handleEvent(Event.DATA_UPDATED, null) }
+        handleEvent(Event.DATA_UPDATED, null)
     }
 
     override fun onHide(context: Context?) {
@@ -130,7 +130,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
                     Parity.EVEN -> even += it
                 }
             }
-            context.runOnUiThread { weeks.updateData(odd, even) } // TODO: do not update data on UI thread
+            context.runOnUiThread { weeks.updateData(odd, even) }
         }
 
         context.runOnUiThread { view.isRefreshing = false }
