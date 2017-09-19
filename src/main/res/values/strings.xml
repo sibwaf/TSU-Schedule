@@ -10,6 +10,8 @@
 
     <string name="hint_group_index">Индекс группы</string>
 
+    <string name="filter_subgroup">Фильтровать по подгруппе</string>
+
     <string name="failure_unknown">Неизвестная ошибка</string>
     <string name="failure_missing_group_index">Введите индекс группы</string>
     <string name="failure_wrong_group_index">Некорректный индекс группы</string>
@@ -45,7 +47,6 @@
     <string name="preference_version_title">Текущая версия</string>
 
     <string-array name="subgroups">
-        <item>Обе подгруппы</item>
         <item>1-ая подгруппа</item>
         <item>2-ая подгруппа</item>
     </string-array>

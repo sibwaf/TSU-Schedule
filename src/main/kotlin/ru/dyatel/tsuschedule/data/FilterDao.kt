@@ -2,6 +2,8 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import ru.dyatel.tsuschedule.events.Event
+import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class FilterDao(private val databaseManager: DatabaseManager, private val context: Context) : DatabasePart {
@@ -12,18 +14,34 @@ class FilterDao(private val databaseManager: DatabaseManager, private val contex
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
     }
 
-    fun getFilters(): List<Filter> = emptyList()
+    fun updateFilters(filters: List<Filter>, predefinedFilters: List<PredefinedFilter>) {
+        // TODO: remove old filters
 
-    fun getSubgroupFilter() = object : ConsumingFilter() {
-        override fun apply(lesson: Lesson): Lesson? {
-            if (lesson.subgroup == null) return lesson
+        filters.forEach { persist(it) }
 
-            val subgroup = context.schedulePreferences.subgroup
-            if (subgroup == 0) return lesson
-            if (lesson.subgroup == subgroup) return lesson
+        val preferences = context.schedulePreferences
 
-            return null
+        for (filter in predefinedFilters) {
+            if (filter !is SubgroupFilter) throw TODO("Not implemented")
+
+            preferences.subgroupFilterEnabled = filter.enabled
+            preferences.subgroup = filter.subgroup
         }
+
+        EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
+    }
+
+    private fun persist(filter: Filter) {
+        throw TODO("Not implemented")
+    }
+
+    fun getFilters() = emptyList<Filter>()
+
+    fun getPredefinedFilters(): List<PredefinedFilter> {
+        val preferences = context.schedulePreferences
+
+        val subgroupFilter = SubgroupFilter(preferences.subgroupFilterEnabled, preferences.subgroup)
+        return listOf(subgroupFilter)
     }
 
 }
