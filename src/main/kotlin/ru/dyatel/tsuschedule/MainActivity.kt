@@ -11,9 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Spinner
 import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
@@ -47,7 +45,6 @@ class MainActivity : SingleActivity(), EventListener {
 
     private lateinit var parityIndicator: TextView
     private lateinit var groupEditor: EditText
-    private lateinit var subgroupChooser: Spinner
 
     override fun createNavigator() = Navigator.withRoot(ScheduleScreen())
             .transition(NoAnimationTransition())
@@ -84,13 +81,6 @@ class MainActivity : SingleActivity(), EventListener {
                 val imm = view.context.inputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
             }
-        }
-        subgroupChooser = drawerHeader.find<Spinner>(R.id.subgroup).apply {
-            adapter = ArrayAdapter
-                    .createFromResource(ctx, R.array.subgroups, android.R.layout.simple_spinner_item).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            }
-            setSelection(preferences.subgroup)
         }
 
         val settingsButton = PrimaryDrawerItem()
@@ -212,16 +202,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         override fun onDrawerClosed(drawerView: View?) {
             groupEditor.clearFocus()
-
-            val preferences = ctx.schedulePreferences
-
-            preferences.group = groupEditor.text.toString()
-
-            val oldSubgroup = preferences.subgroup
-            val newSubgroup = subgroupChooser.selectedItemPosition
-            preferences.subgroup = newSubgroup
-
-            if (oldSubgroup != newSubgroup) EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
+            ctx.schedulePreferences.group = groupEditor.text.toString()
         }
 
         override fun onDrawerOpened(drawerView: View?) {

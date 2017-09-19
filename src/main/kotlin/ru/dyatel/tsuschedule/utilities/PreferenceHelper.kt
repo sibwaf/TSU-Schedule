@@ -12,6 +12,7 @@ import java.util.TimeZone
 private const val DATA_PREFERENCES = "data_preferences"
 
 private const val PREFERENCES_GROUP = "group"
+private const val PREFERENCES_SUBGROUP_FILTER_ENABLED = "subgroup_filter_enabled"
 private const val PREFERENCES_SUBGROUP = "subgroup"
 
 private const val PREFERENCES_LAST_AUTO_UPDATE = "last_auto_update"
@@ -22,6 +23,10 @@ class SchedulePreferences(private val context: Context) {
     var group: String
         get() = dataPreferences.getString(PREFERENCES_GROUP, "")
         set(value) = dataPreferences.editAndApply { putString(PREFERENCES_GROUP, value) }
+
+    var subgroupFilterEnabled: Boolean
+        get() = dataPreferences.getBoolean(PREFERENCES_SUBGROUP_FILTER_ENABLED, false)
+        set(value) = dataPreferences.editAndApply { putBoolean(PREFERENCES_SUBGROUP_FILTER_ENABLED, value) }
 
     var subgroup: Int
         get() = dataPreferences.getInt(PREFERENCES_SUBGROUP, 0)

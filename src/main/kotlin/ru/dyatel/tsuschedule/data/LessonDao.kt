@@ -80,20 +80,18 @@ class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, Ev
         writableDatabase.transaction {
             delete(TABLE_FILTERED)
 
-            val filters = databaseManager.filterDao.getFilters()
-            val subgroupFilter = databaseManager.filterDao.getSubgroupFilter()
+            val filters = with(databaseManager.filterDao) { getFilters() + getPredefinedFilters() }
+                    .filter { it.enabled }
 
             select(TABLE_UNFILTERED).parseList(lessonParser)
                     .mapNotNull {
                         var result: Lesson? = it
                         for (filter in filters) {
                             if (result == null) break
-                            if (filter is ConsumingFilter)
-                                result = filter.apply(result)
+                            result = filter.apply(result)
                         }
                         result
                     }
-                    .mapNotNull { subgroupFilter.apply(it) }
                     .map { it.toContentValues() }
                     .forEach { insert(TABLE_FILTERED, null, it) }
         }
