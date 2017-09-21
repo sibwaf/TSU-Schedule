@@ -77,11 +77,11 @@ class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, Ev
     }
 
     private fun applyModifiers() {
+        val filters = with(databaseManager.filterDao) { getFilters() + getPredefinedFilters() }
+                .filter { it.enabled }
+
         writableDatabase.transaction {
             delete(TABLE_FILTERED)
-
-            val filters = with(databaseManager.filterDao) { getFilters() + getPredefinedFilters() }
-                    .filter { it.enabled }
 
             select(TABLE_UNFILTERED).parseList(lessonParser)
                     .mapNotNull {
