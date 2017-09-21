@@ -5,8 +5,9 @@
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 
-    <string name="screen_settings">Настройки</string>
+    <string name="screen_schedule">Расписание</string>
     <string name="screen_filters">Фильтры</string>
+    <string name="screen_settings">Настройки</string>
 
     <string name="hint_group_index">Индекс группы</string>
 

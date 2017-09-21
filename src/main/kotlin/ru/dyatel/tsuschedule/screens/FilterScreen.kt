@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.verticalLayout
+import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.Filter
 import ru.dyatel.tsuschedule.data.PredefinedFilter
 import ru.dyatel.tsuschedule.data.database
@@ -19,7 +20,7 @@ class FilterScreenView(context: Context) : BaseScreenView<FilterScreen>(context)
         with(container) {
             removeAllViews()
 
-            if (filters.any()) throw TODO("Not implemented")
+            if (filters.any()) TODO("Not implemented")
 
             predefinedFilters.map { it.createView(context) }.forEach { addView(it) }
         }
@@ -52,4 +53,5 @@ class FilterScreen : Screen<FilterScreenView>() {
         super.onHide(context)
     }
 
+    override fun getTitle(context: Context) = context.getString(R.string.screen_filters)!!
 }

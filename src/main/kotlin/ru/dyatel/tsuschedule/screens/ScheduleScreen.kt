@@ -102,6 +102,8 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         super.onHide(context)
     }
 
+    override fun getTitle(context: Context) = context.getString(R.string.screen_schedule)!!
+
     fun updateData() = doAsync {
         val context = context ?: return@doAsync
         val preferences = context.schedulePreferences

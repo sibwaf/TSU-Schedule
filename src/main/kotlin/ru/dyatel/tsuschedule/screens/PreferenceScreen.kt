@@ -7,6 +7,7 @@ import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
+import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.layout.SettingsFragment
@@ -45,5 +46,7 @@ class PreferenceScreen : Screen<PreferenceView>() {
         EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
         super.onHide(context)
     }
+
+    override fun getTitle(context: Context) = context.getString(R.string.screen_settings)!!
 
 }
