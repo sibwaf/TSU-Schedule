@@ -93,7 +93,6 @@ class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
 
     fun getPredefinedFilters(): List<PredefinedFilter> = readableDatabase.use { database ->
         val list = database.select(TABLE_FILTERS)
-                .whereSimple("${FilterColumns.TYPE} = ?", FilterType.SUBGROUP.name)
                 .orderBy(FilterColumns.ID)
                 .parseList(FILTER_PARSER)
                 .map { (id, filter) ->
@@ -108,7 +107,8 @@ class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
                 }
                 .toCollection(ArrayList())
 
-        val types = list.map { it::class }
+        val types = list.map { it::class }.distinct()
+        if (CommonPracticeFilter::class !in types) list += CommonPracticeFilter()
         if (SubgroupFilter::class !in types) list += SubgroupFilter()
 
         list
@@ -124,6 +124,7 @@ private val FILTER_PARSER = object : MapRowParser<Pair<Int, Filter>> {
         val enabled = (columns[FilterColumns.ENABLED] as String).toBoolean()
 
         val filter = when (type) {
+            FilterType.COMMON_PRACTICE -> CommonPracticeFilter()
             FilterType.SUBGROUP -> SubgroupFilter()
         }.also { it.enabled = enabled }
 

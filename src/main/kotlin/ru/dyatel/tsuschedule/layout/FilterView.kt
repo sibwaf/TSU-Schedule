@@ -27,7 +27,7 @@ import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.Filter
 import ru.dyatel.tsuschedule.data.SubgroupFilter
 
-abstract class FilterView(context: Context) : CardView(context) {
+open class FilterView(context: Context) : CardView(context) {
 
     private companion object {
         val headerViewId = View.generateViewId()
@@ -78,12 +78,12 @@ abstract class FilterView(context: Context) : CardView(context) {
         bodyContainer = find(bodyViewId)
     }
 
-    protected fun attachFilter(filter: Filter) {
+    fun attachFilter(filter: Filter) {
         switchView.isChecked = filter.enabled
         switchView.setOnCheckedChangeListener { _, checked -> filter.enabled = checked }
     }
 
-    protected fun setHeader(resource: Int) {
+    fun setHeader(resource: Int) {
         headerView.setText(resource)
     }
 
