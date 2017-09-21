@@ -10,6 +10,7 @@
 
     <string name="hint_group_index">Индекс группы</string>
 
+    <string name="filter_common_practice">Объединять подгруппы на практических занятиях</string>
     <string name="filter_subgroup">Фильтровать по подгруппе</string>
 
     <string name="failure_unknown">Неизвестная ошибка</string>
