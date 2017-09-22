@@ -32,17 +32,11 @@ private object LessonColumns {
 
 }
 
-class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, EventListener {
+class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager), EventListener {
 
     init {
         EventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED)
     }
-
-    private val readableDatabase
-        get() = databaseManager.readableDatabase
-
-    private val writableDatabase
-        get() = databaseManager.writableDatabase
 
     override fun createTables(db: SQLiteDatabase) {
         listOf(TABLE_UNFILTERED, TABLE_FILTERED).forEach {
