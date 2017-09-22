@@ -89,8 +89,6 @@ class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager
             db.dropTable(TABLE_FILTERED, true)
             createTables(db)
         }
-
-        applyModifiers()
     }
 
     fun update(lessons: Collection<Lesson>) {
