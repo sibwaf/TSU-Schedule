@@ -42,8 +42,6 @@ class ParserTest {
 
     @Test fun test720541() = check("720541-ПБ")
 
-    @Test fun test320842() = check("320842")
-
     @Test fun test132361() = check("132361")
 
     @Test fun test420851() = check("420851")
