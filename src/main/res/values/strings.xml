@@ -1,0 +1,56 @@
+<resources>
+
+    <string name="app_name">TSU Schedule</string>
+
+    <string name="odd_week">нечётная</string>
+    <string name="even_week">чётная</string>
+
+    <string name="screen_schedule">Расписание</string>
+    <string name="screen_filters">Фильтры</string>
+    <string name="screen_settings">Настройки</string>
+
+    <string name="hint_group_index">Индекс группы</string>
+
+    <string name="filter_common_practice">Объединять подгруппы на практических занятиях</string>
+    <string name="filter_subgroup">Фильтровать по подгруппе</string>
+
+    <string name="failure_unknown">Неизвестная ошибка</string>
+    <string name="failure_missing_group_index">Введите индекс группы</string>
+    <string name="failure_wrong_group_index">Некорректный индекс группы</string>
+    <string name="failure_connection_timeout">Таймаут подключения, попробуйте ещё раз</string>
+    <string name="failure_unsuccessful_request">Ошибка при загрузке данных,
+        проверьте подключение к сети и попробуйте ещё раз
+    </string>
+    <string name="failure_parsing_failed">Ошибка при обработке полученных данных</string>
+
+    <string name="update_not_found">Обновлений не найдено</string>
+    <string name="update_found">Найдено обновление</string>
+    <string name="update_finding_latest">Поиск более новой версии</string>
+    <string name="update_downloading">Скачивание обновления</string>
+    <string name="update_cancelled">Обновление отменено</string>
+
+    <string name="notification_update_found_title">Доступно обновление до версии %s</string>
+    <string name="notification_update_found_description">Нажмите, чтобы обновить.</string>
+
+    <string name="preference_timeout_title">Таймаут подключения</string>
+    <string name="preference_timeout_description">В секундах, от 1 до 30</string>
+
+    <string name="preference_category_updates">Обновление приложения</string>
+
+    <string name="preference_update_auto_title">Проверять обновления</string>
+    <string name="preference_update_auto_description">При запуске приложения, раз в 3 дня</string>
+    <string name="preference_update_allow_prerelease_title">Получать тестовые версии</string>
+    <string name="preference_update_allow_prerelease_description">Тестовые версии - самые свежие,
+        но могут быть нестабильными
+    </string>
+    <string name="preference_update_check_title">Проверить обновления</string>
+    <string name="preference_update_install_title">Установить обновление</string>
+
+    <string name="preference_version_title">Текущая версия</string>
+
+    <string-array name="subgroups">
+        <item>1-ая подгруппа</item>
+        <item>2-ая подгруппа</item>
+    </string-array>
+
+</resources>
