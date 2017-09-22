@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="7dp"
+        android:orientation="vertical">
+
+    <TextView
+            android:id="@+id/parity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="@dimen/navigation_drawer_padding_side"
+            android:paddingRight="@dimen/navigation_drawer_padding_side"
+            android:paddingBottom="@dimen/navigation_drawer_padding_side"
+            android:layout_marginBottom="4dp"
+            style="@style/WeekParityTheme"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/navigation_drawer_padding_side"
+            android:paddingRight="@dimen/navigation_drawer_padding_side"
+            android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+            <android.support.design.widget.TextInputEditText
+                    android:id="@+id/group_index"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:inputType="textVisiblePassword|textNoSuggestions"
+                    android:imeOptions="actionDone"
+                    android:hint="@string/hint_group_index"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

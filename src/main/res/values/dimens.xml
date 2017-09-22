@@ -1,0 +1,6 @@
+<resources>
+
+    <dimen name="navigation_drawer_padding_side">5dp</dimen>
+    <dimen name="elevation">5dp</dimen>
+
+</resources>
