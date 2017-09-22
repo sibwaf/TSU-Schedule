@@ -52,7 +52,7 @@ class SubgroupFilter : PredefinedFilter() {
 
     var subgroup = 1
 
-    companion object {
+    private companion object {
         const val SUBGROUP_KEY = "subgroup"
     }
 
