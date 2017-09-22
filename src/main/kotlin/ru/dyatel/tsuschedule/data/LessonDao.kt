@@ -60,10 +60,13 @@ class LessonDao(private val databaseManager: DatabaseManager) : DatabasePart, Ev
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.dropTable(TABLE_UNFILTERED, true)
-        db.dropTable(TABLE_FILTERED, true)
+        if (oldVersion < 4) {
+            db.dropTable(TABLE_UNFILTERED, true)
+            db.dropTable(TABLE_FILTERED, true)
+            createTables(db)
+        }
 
-        createTables(db)
+        applyModifiers()
     }
 
     fun update(lessons: Collection<Lesson>) {
