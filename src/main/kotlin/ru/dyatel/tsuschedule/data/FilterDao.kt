@@ -14,27 +14,87 @@ import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
-
-private const val TABLE_FILTERS = "filters"
-private const val TABLE_DATA = "filter_data"
-
-private object FilterColumns {
-
-    const val ID = "filter_id"
-    const val TYPE = "type"
-    const val ENABLED = "enabled"
-
-}
-
-private object FilterDataColumns {
-
-    const val ID = FilterColumns.ID
-    const val KEY = "key"
-    const val VALUE = "value"
-
-}
+import kotlin.reflect.KClass
 
 class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
+
+    private object FilterColumns {
+        const val ID = "filter_id"
+        const val TYPE = "type"
+        const val ENABLED = "enabled"
+    }
+
+    private object DataColumns {
+        const val ID = FilterColumns.ID
+        const val KEY = "key"
+        const val VALUE = "value"
+    }
+
+    private companion object {
+
+        const val TABLE_FILTERS = "filters"
+        const val TABLE_DATA = "filter_data"
+
+        val FILTER_PARSER = object : MapRowParser<Pair<Int, Filter>> {
+
+            override fun parseRow(columns: Map<String, Any?>): Pair<Int, Filter> {
+                val id = (columns[FilterColumns.ID] as Long).toInt()
+                val type = columns[FilterColumns.TYPE] as String
+                val enabled = (columns[FilterColumns.ENABLED] as String).toBoolean()
+
+                return id to PredefinedFilters.fromType(type).also { it.enabled = enabled }
+            }
+
+        }
+
+        val DATA_PARSER = object : MapRowParser<Pair<String, String>> {
+
+            override fun parseRow(columns: Map<String, Any?>): Pair<String, String> {
+                val key = columns[DataColumns.KEY] as String
+                val value = columns[DataColumns.VALUE] as String
+                return key to value
+            }
+
+        }
+
+    }
+
+    private object PredefinedFilters {
+
+        private val classes = mutableListOf<KClass<out PredefinedFilter>>()
+        private val types = mutableListOf<String>()
+
+        init {
+            add(CommonPracticeFilter::class, "common_practice")
+            add(SubgroupFilter::class, "subgroup")
+        }
+
+        private fun add(c: KClass<out PredefinedFilter>, type: String) {
+            classes += c
+            types += type
+        }
+
+        fun toType(filter: PredefinedFilter): String {
+            val index = classes.indexOf(filter::class).takeIf { it >= 0 }
+                    ?: throw RuntimeException("Unknown filter type: $filter")
+            return types[index]
+        }
+
+        fun fromType(type: String): PredefinedFilter {
+            val index = types.indexOf(type).takeIf { it >= 0 }
+                    ?: throw RuntimeException("Unknown filter type: $type")
+            return classes[index].java.newInstance()
+        }
+
+        fun ensurePresenceAndOrder(filters: List<PredefinedFilter>): List<PredefinedFilter> {
+            val presentClasses = filters.map { it::class }
+            return classes.map {
+                val index = presentClasses.indexOf(it)
+                if (index == -1) it.java.newInstance() else filters[index]
+            }
+        }
+
+    }
 
     private val readableDatabase
         get() = databaseManager.readableDatabase
@@ -45,14 +105,12 @@ class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
         db.createTable(TABLE_FILTERS, true,
                 FilterColumns.ID to INTEGER + PRIMARY_KEY,
                 FilterColumns.TYPE to TEXT,
-                FilterColumns.ENABLED to TEXT
-        )
+                FilterColumns.ENABLED to TEXT)
         db.createTable(TABLE_DATA, true,
-                FilterDataColumns.ID to INTEGER,
-                FilterDataColumns.KEY to TEXT,
-                FilterDataColumns.VALUE to TEXT,
-                FOREIGN_KEY(FilterDataColumns.ID, TABLE_FILTERS, FilterColumns.ID)
-        )
+                DataColumns.ID to INTEGER,
+                DataColumns.KEY to TEXT,
+                DataColumns.VALUE to TEXT,
+                FOREIGN_KEY(DataColumns.ID, TABLE_FILTERS, FilterColumns.ID))
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -61,84 +119,52 @@ class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
         createTables(db)
     }
 
-    fun updateFilters(filters: List<Filter>, predefinedFilters: List<PredefinedFilter>) {
+    fun updateFilters(filters: List<Filter>) {
+        // TODO: validate filter order
+
         writableDatabase.transaction {
             delete(TABLE_DATA)
             delete(TABLE_FILTERS)
 
-            var id = 1
-            if (filters.any()) TODO("Not implemented")
+            filters.forEachIndexed { index, filter ->
+                if (filter !is PredefinedFilter) TODO()
 
-            predefinedFilters.forEach {
+                val type = PredefinedFilters.toType(filter)
+
                 insert(TABLE_FILTERS,
-                        FilterColumns.ID to id,
-                        FilterColumns.TYPE to it.getType().name,
-                        FilterColumns.ENABLED to it.enabled.toString()
-                )
-                it.save().entries.forEach { (key, value) ->
-                    insert(TABLE_DATA,
-                            FilterDataColumns.ID to id,
-                            FilterDataColumns.KEY to key,
-                            FilterDataColumns.VALUE to value
-                    )
-                }
+                        FilterColumns.ID to index,
+                        FilterColumns.TYPE to type,
+                        FilterColumns.ENABLED to filter.enabled.toString())
 
-                id++
+                filter.save().entries.forEach { (key, value) ->
+                    insert(TABLE_DATA,
+                            DataColumns.ID to index,
+                            DataColumns.KEY to key,
+                            DataColumns.VALUE to value)
+                }
             }
         }
+
         EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
     }
 
-    fun getFilters() = emptyList<Filter>()
-
-    fun getPredefinedFilters(): List<PredefinedFilter> = readableDatabase.use { database ->
-        val list = database.select(TABLE_FILTERS)
+    fun getFilters(): List<Filter> = readableDatabase.use { database ->
+        val (normal, predefined) = database.select(TABLE_FILTERS)
                 .orderBy(FilterColumns.ID)
                 .parseList(FILTER_PARSER)
                 .map { (id, filter) ->
-                    filter as PredefinedFilter
+                    if (filter !is PredefinedFilter) TODO()
 
                     val data = database.select(TABLE_DATA)
-                            .whereSimple("${FilterDataColumns.ID} = ?", id.toString())
-                            .parseList(FILTER_DATA_PARSER)
+                            .whereSimple("${DataColumns.ID} = $id")
+                            .parseList(DATA_PARSER)
                             .toMap()
 
                     filter.apply { load(data) }
                 }
-                .toCollection(ArrayList())
+                .partition { it !is PredefinedFilter }
 
-        val types = list.map { it::class }.distinct()
-        if (CommonPracticeFilter::class !in types) list += CommonPracticeFilter()
-        if (SubgroupFilter::class !in types) list += SubgroupFilter()
-
-        list
-    }
-
-}
-
-private val FILTER_PARSER = object : MapRowParser<Pair<Int, Filter>> {
-
-    override fun parseRow(columns: Map<String, Any?>): Pair<Int, Filter> {
-        val id = (columns[FilterColumns.ID] as Long).toInt()
-        val type = FilterType.valueOf(columns[FilterColumns.TYPE] as String)
-        val enabled = (columns[FilterColumns.ENABLED] as String).toBoolean()
-
-        val filter = when (type) {
-            FilterType.COMMON_PRACTICE -> CommonPracticeFilter()
-            FilterType.SUBGROUP -> SubgroupFilter()
-        }.also { it.enabled = enabled }
-
-        return id to filter
-    }
-
-}
-
-private val FILTER_DATA_PARSER = object : MapRowParser<Pair<String, String>> {
-
-    override fun parseRow(columns: Map<String, Any?>): Pair<String, String> {
-        val key = columns[FilterDataColumns.KEY] as String
-        val value = columns[FilterDataColumns.VALUE] as String
-        return key to value
+        normal + PredefinedFilters.ensurePresenceAndOrder(predefined)
     }
 
 }
