@@ -31,8 +31,8 @@ android {
         applicationId "ru.dyatel.tsuschedule"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 5
-        versionName "0.7.1"
+        versionCode 10
+        versionName "1.0.0"
 
         manifestPlaceholders = [ fabricKey: properties.getProperty("fabric.key") ]
     }
