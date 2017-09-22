@@ -5,15 +5,9 @@ import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.layout.FilterView
 import ru.dyatel.tsuschedule.layout.SubgroupFilterView
 
-enum class FilterType {
-    COMMON_PRACTICE, SUBGROUP
-}
-
 abstract class Filter(var enabled: Boolean) {
 
     abstract fun apply(lesson: Lesson): Lesson?
-
-    abstract fun getType(): FilterType
 
 }
 
@@ -28,8 +22,6 @@ abstract class PredefinedFilter : Filter(false) {
 }
 
 class CommonPracticeFilter : PredefinedFilter() {
-
-    override fun getType() = FilterType.COMMON_PRACTICE
 
     override fun createView(context: Context) = FilterView(context).also {
         it.setHeader(R.string.filter_common_practice)
@@ -55,8 +47,6 @@ class SubgroupFilter : PredefinedFilter() {
     private companion object {
         const val SUBGROUP_KEY = "subgroup"
     }
-
-    override fun getType() = FilterType.SUBGROUP
 
     override fun createView(context: Context) = SubgroupFilterView(context).also { it.attachFilter(this) }
 
