@@ -2,9 +2,16 @@ package ru.dyatel.tsuschedule.data
 
 import android.database.sqlite.SQLiteDatabase
 
-interface DatabasePart {
+abstract class DatabasePart(protected val databaseManager: DatabaseManager) {
 
-    fun createTables(db: SQLiteDatabase)
-    fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int)
+    protected val readableDatabase
+        get() = databaseManager.readableDatabase!!
+
+    protected val writableDatabase
+        get() = databaseManager.writableDatabase!!
+
+    abstract fun createTables(db: SQLiteDatabase)
+
+    abstract fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int)
 
 }

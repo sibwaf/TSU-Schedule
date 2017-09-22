@@ -16,7 +16,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import kotlin.reflect.KClass
 
-class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
+class FilterDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 
     private object FilterColumns {
         const val ID = "filter_id"
@@ -95,11 +95,6 @@ class FilterDao(private val databaseManager: DatabaseManager) : DatabasePart {
         }
 
     }
-
-    private val readableDatabase
-        get() = databaseManager.readableDatabase
-    private val writableDatabase
-        get() = databaseManager.writableDatabase
 
     override fun createTables(db: SQLiteDatabase) {
         db.createTable(TABLE_FILTERS, true,
