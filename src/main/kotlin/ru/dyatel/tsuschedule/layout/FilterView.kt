@@ -70,7 +70,7 @@ open class FilterView(context: Context) : CardView(context) {
                     width = matchParent
                     margin = dip(4)
                 }
-            }
+            }.apply { visibility = View.GONE }
         }.let { super.addView(it) }
 
         headerView = find(headerViewId)
@@ -89,6 +89,7 @@ open class FilterView(context: Context) : CardView(context) {
 
     override fun addView(child: View) {
         bodyContainer.addView(child)
+        bodyContainer.visibility = View.VISIBLE
     }
 
 }
