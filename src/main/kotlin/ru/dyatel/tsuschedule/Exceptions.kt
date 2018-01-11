@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package ru.dyatel.tsuschedule
 
 import android.util.Log
@@ -6,8 +8,7 @@ import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.net.SocketTimeoutException
 
-@Suppress("unused")
-class ParsingException : RuntimeException {
+open class ParsingException : RuntimeException {
 
     constructor() : super()
     constructor(message: String) : super(message)
@@ -16,7 +17,15 @@ class ParsingException : RuntimeException {
 
 }
 
-@Suppress("unused")
+class EmptyResultException : ParsingException {
+
+    constructor() : super()
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
+
+}
+
 class BadGroupException : IllegalArgumentException {
 
     constructor() : super()
@@ -33,6 +42,7 @@ fun Exception.log() {
 
 fun Exception.handle(showMessage: (Int) -> Unit = {}) {
     val message = when (this) {
+        is EmptyResultException -> R.string.failure_empty_result
         is ParsingException -> {
             log()
             R.string.failure_parsing_failed
