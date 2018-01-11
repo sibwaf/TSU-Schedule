@@ -36,6 +36,7 @@ import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
+import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
 
@@ -59,6 +60,8 @@ class MainActivity : SingleActivity(), EventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
 
+        createNotificationChannels(ctx)
+
         val preferences = schedulePreferences
 
         val toolbar = find<Toolbar>(R.id.toolbar)
@@ -66,7 +69,6 @@ class MainActivity : SingleActivity(), EventListener {
         setSupportActionBar(toolbar)
 
         val drawerHeader = layoutInflater.inflate(R.layout.navigation_drawer, null, false)
-
         parityIndicator = drawerHeader.find<TextView>(R.id.parity).apply {
             ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
             text = currentWeekParity.toText(ctx)
@@ -152,7 +154,7 @@ class MainActivity : SingleActivity(), EventListener {
 
                 val title = getString(R.string.notification_update_found_title, version)
 
-                val notification = NotificationCompat.Builder(ctx)
+                val notification = NotificationCompat.Builder(ctx, NOTIFICATION_CHANNEL_UPDATES)
                         .setSmallIcon(R.drawable.notification)
                         .setContentTitle(title)
                         .setContentText(getString(R.string.notification_update_found_description))

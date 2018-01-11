@@ -29,6 +29,8 @@
     <string name="update_downloading">Скачивание обновления</string>
     <string name="update_cancelled">Обновление отменено</string>
 
+    <string name="notification_channel_updates_name">Обновления</string>
+
     <string name="notification_update_found_title">Доступно обновление до версии %s</string>
     <string name="notification_update_found_description">Нажмите, чтобы обновить.</string>
 
