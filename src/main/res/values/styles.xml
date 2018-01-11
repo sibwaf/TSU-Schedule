@@ -3,7 +3,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="titleTextColor">@color/text_title_color</item>
 
-        <item name="android:textColor">@color/text_color</item>
         <item name="android:textColorPrimary">@color/text_primary_color</item>
         <item name="android:textColorSecondary">@color/text_secondary_color</item>
 
@@ -16,13 +15,16 @@
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/primary_color</item>
-
         <item name="colorControlNormal">@color/text_title_color</item>
     </style>
 
     <style name="WeekParityTheme" parent="TextAppearance.AppCompat">
         <item name="android:textSize">18sp</item>
         <item name="android:background">@color/material_drawer_background</item>
+    </style>
+
+    <style name="WeekdayTheme">
+        <item name="android:textColor">@color/text_color</item>
     </style>
 
     <style name="Divider">
