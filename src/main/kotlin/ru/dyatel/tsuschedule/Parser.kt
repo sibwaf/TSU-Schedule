@@ -51,6 +51,8 @@ class Parser {
                     lessons += builder.build()
                 }
 
+        if (lessons.size == 0) throw EmptyResultException()
+
         return lessons
     }
 

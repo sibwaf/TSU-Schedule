@@ -22,6 +22,7 @@
         проверьте подключение к сети и попробуйте ещё раз
     </string>
     <string name="failure_parsing_failed">Ошибка при обработке полученных данных</string>
+    <string name="failure_empty_result">Расписание отсутствует на сервере</string>
 
     <string name="update_not_found">Обновлений не найдено</string>
     <string name="update_found">Найдено обновление</string>
