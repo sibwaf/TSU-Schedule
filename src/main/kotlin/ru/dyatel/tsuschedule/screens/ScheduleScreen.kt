@@ -8,9 +8,9 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.Parser
@@ -116,7 +116,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
             lessons.update(data)
         } catch (e: Exception) {
             EventBus.broadcast(Event.DATA_UPDATE_FAILED)
-            uiThread { e.handle { context.longToast(it) } }
+            uiThread { e.handle { longSnackbar(view, it) } }
         }
     }
 
