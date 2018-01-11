@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.preference.Preference
 import android.preference.PreferenceFragment
 import org.jetbrains.anko.ctx
-import org.jetbrains.anko.longToast
+import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.runOnUiThread
 import ru.dyatel.tsuschedule.BuildConfig
@@ -36,8 +36,8 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
-                if (updateButtonCheckingMode) updater.checkDialog { longToast(it) }
-                else updater.installDialog()
+                if (updateButtonCheckingMode) updater.checkDialog { longSnackbar(view, it) }
+                else updater.installDialog { longSnackbar(view, it)}
                 true
             }
         }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.R
@@ -58,12 +57,12 @@ class Updater(private val context: Context) {
             setOnCancelListener { task.cancel(true) }
         }
 
-    fun installDialog() {
+    fun installDialog(showMessage: (Int) -> Unit = {}) {
         checkDialog().setOnDismissListener {
             val preferences = context.schedulePreferences
             val link = preferences.lastRelease
             if (link == null) {
-                context.longToast(R.string.update_not_found)
+                showMessage(R.string.update_not_found)
                 return@setOnDismissListener
             }
 
@@ -81,7 +80,7 @@ class Updater(private val context: Context) {
                         preferences.lastRelease = null
                     } catch (e: Exception) {
                         if (e !is InterruptedException && e !is InterruptedIOException)
-                            uiThread { e.handle { context.longToast(it) } }
+                            uiThread { e.handle { showMessage(it) } }
                     } finally {
                         uiThread { dismiss() }
                     }
