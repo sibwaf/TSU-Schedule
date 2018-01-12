@@ -15,6 +15,7 @@ private const val PREFERENCES_GROUP = "group"
 
 private const val PREFERENCES_LAST_AUTO_UPDATE = "last_auto_update"
 private const val PREFERENCES_LAST_RELEASE = "last_release"
+private const val PREFERENCES_LAST_USED_VERSION = "last_used_version"
 
 class SchedulePreferences(private val context: Context) {
 
@@ -26,7 +27,7 @@ class SchedulePreferences(private val context: Context) {
         get() {
             val preference = context.getString(R.string.preference_timeout)
             val fallback = context.getString(R.string.preference_timeout_default)
-            return preferences.getString(preference, fallback).toInt()
+            return preferences.getString(preference, fallback).toInt() // TODO: WTF?
         }
 
     val autoupdate: Boolean
@@ -61,6 +62,10 @@ class SchedulePreferences(private val context: Context) {
             preferences.editAndApply { putString(PREFERENCES_LAST_RELEASE, value) }
             EventBus.broadcast(Event.PREFERENCES_LATEST_VERSION_CHANGED, value)
         }
+
+    var lastUsedVersion: Int
+        get() = preferences.getInt(PREFERENCES_LAST_USED_VERSION, -1)
+        set(value) = preferences.editAndApply { putInt(PREFERENCES_LAST_USED_VERSION, value) }
 
     private val preferences: SharedPreferences
         get() = PreferenceManager.getDefaultSharedPreferences(context)

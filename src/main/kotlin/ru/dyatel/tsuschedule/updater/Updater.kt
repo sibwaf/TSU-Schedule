@@ -7,6 +7,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.uiThread
+import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.utilities.download
@@ -24,8 +25,7 @@ class Updater(private val context: Context) {
     fun fetchUpdateLink(): Release? {
         api.setTimeout(preferences.connectionTimeout * 1000)
 
-        val release = api.getLatestRelease(preferences.allowPrerelease)
-                ?.takeIf { Release.CURRENT < it }
+        val release = api.getLatestRelease(preferences.allowPrerelease)?.takeIf { Release.CURRENT < it }
         preferences.lastRelease = release?.url
         return release
     }
@@ -37,25 +37,32 @@ class Updater(private val context: Context) {
         context.startActivity(intent)
     }
 
-    fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog =
-        context.indeterminateProgressDialog(R.string.update_finding_latest) {
-            val task = doAsync {
-                try {
-                    val release = fetchUpdateLink()
-                    uiThread {
-                        if (release == null) showMessage(R.string.update_not_found)
-                        else showMessage(R.string.update_found)
-                    }
-                } catch (e: Exception) {
-                    if (e !is InterruptedException && e !is InterruptedIOException)
-                        uiThread { e.handle { showMessage(it) } }
-                } finally {
-                    uiThread { dismiss() }
-                }
-            }
+    fun handleMigration() {
+        if (preferences.lastUsedVersion <= 11) {
 
-            setOnCancelListener { task.cancel(true) }
         }
+        preferences.lastUsedVersion = BuildConfig.VERSION_CODE
+    }
+
+    fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog =
+            context.indeterminateProgressDialog(R.string.update_finding_latest) {
+                val task = doAsync {
+                    try {
+                        val release = fetchUpdateLink()
+                        uiThread {
+                            if (release == null) showMessage(R.string.update_not_found)
+                            else showMessage(R.string.update_found)
+                        }
+                    } catch (e: Exception) {
+                        if (e !is InterruptedException && e !is InterruptedIOException)
+                            uiThread { e.handle { showMessage(it) } }
+                    } finally {
+                        uiThread { dismiss() }
+                    }
+                }
+
+                setOnCancelListener { task.cancel(true) }
+            }
 
     fun installDialog(showMessage: (Int) -> Unit = {}) {
         checkDialog().setOnDismissListener {
