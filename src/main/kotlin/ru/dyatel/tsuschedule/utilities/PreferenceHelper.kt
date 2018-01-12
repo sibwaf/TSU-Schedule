@@ -19,6 +19,11 @@ private const val PREFERENCES_LAST_USED_VERSION = "last_used_version"
 
 class SchedulePreferences(private val context: Context) {
 
+    private val preferences: SharedPreferences
+        get() = PreferenceManager.getDefaultSharedPreferences(context)
+    private val dataPreferences: SharedPreferences
+        get() = context.getSharedPreferences(DATA_PREFERENCES, Context.MODE_PRIVATE)
+
     var group: String
         get() = dataPreferences.getString(PREFERENCES_GROUP, "")
         set(value) = dataPreferences.editAndApply { putString(PREFERENCES_GROUP, value) }
@@ -33,7 +38,7 @@ class SchedulePreferences(private val context: Context) {
     val autoupdate: Boolean
         get() {
             val preference = context.getString(R.string.preference_update_auto)
-            val fallback = context.getString(R.string.preference_update_auto).toBoolean()
+            val fallback = context.getString(R.string.preference_update_auto_default).toBoolean()
             return preferences.getBoolean(preference, fallback)
         }
 
@@ -66,11 +71,6 @@ class SchedulePreferences(private val context: Context) {
     var lastUsedVersion: Int
         get() = preferences.getInt(PREFERENCES_LAST_USED_VERSION, -1)
         set(value) = preferences.editAndApply { putInt(PREFERENCES_LAST_USED_VERSION, value) }
-
-    private val preferences: SharedPreferences
-        get() = PreferenceManager.getDefaultSharedPreferences(context)
-    private val dataPreferences: SharedPreferences
-        get() = context.getSharedPreferences(DATA_PREFERENCES, Context.MODE_PRIVATE)
 
 }
 
