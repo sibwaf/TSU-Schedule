@@ -10,13 +10,11 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
 import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
@@ -25,14 +23,13 @@ import hirondelle.date4j.DateTime
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.inputMethodManager
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.notificationManager
-import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.screens.FilterScreen
+import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
@@ -41,14 +38,15 @@ import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
 
+private const val SCHEDULE_SCREEN_ID_START = 1000
+
 class MainActivity : SingleActivity(), EventListener {
 
     private lateinit var drawer: Drawer
+    //private lateinit var parityIndicator: TextView
 
-    private lateinit var parityIndicator: TextView
-    private lateinit var groupEditor: EditText
-
-    override fun createNavigator() = Navigator.withRoot(ScheduleScreen())
+    override fun createNavigator() = Navigator
+            .withRoot(HomeScreen())
             .transition(NoAnimationTransition())
             .build()!!
 
@@ -72,45 +70,54 @@ class MainActivity : SingleActivity(), EventListener {
         ViewCompat.setElevation(toolbar, resources.getDimension(R.dimen.elevation))
         setSupportActionBar(toolbar)
 
-        val drawerHeader = layoutInflater.inflate(R.layout.navigation_drawer, null, false)
-        parityIndicator = drawerHeader.find<TextView>(R.id.parity).apply {
-            ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
-            text = currentWeekParity.toText(ctx)
-        }
-        groupEditor = drawerHeader.find<EditText>(R.id.group_index).apply {
-            setText(preferences.group)
-
-            setOnEditorActionListener { view, _, _ -> view.clearFocus(); true }
-            setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) return@setOnFocusChangeListener
-
-                val imm = view.context.inputMethodManager
-                imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        // TODO: fix it
+        /*val header = frameLayout {
+            parityIndicator = textView {
+                ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
+                width = matchParent
+                height = wrapContent
+                gravity = CENTER
+                padding = dip(4)
+                text = currentWeekParity.toText(ctx)
             }
-        }
+        }*/
+
+        val addGroupButton = PrimaryDrawerItem()
+                .withIcon(CommunityMaterial.Icon.cmd_plus)
+                .withName(R.string.button_add_group)
+                .withSelectable(false)
+                .withOnDrawerItemClickListener { _, _, _ -> false } // TODO: dialog
+
+        val groupButtons = preferences.groups.mapIndexed { id, group ->
+            PrimaryDrawerItem()
+                    .withIdentifier((id + SCHEDULE_SCREEN_ID_START).toLong())
+                    .withIcon(CommunityMaterial.Icon.cmd_clock)
+                    .withName(group)
+                    .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false }
+        }.toTypedArray()
 
         val settingsButton = PrimaryDrawerItem()
-                .withIdentifier(NAVIGATION_PREFERENCES)
                 .withIcon(CommunityMaterial.Icon.cmd_settings)
                 .withName(R.string.screen_settings)
+                .withOnDrawerItemClickListener { _, _, _ -> getNavigator().goTo(PreferenceScreen()); false }
                 .withSelectable(false)
 
         drawer = DrawerBuilder()
                 .withActivity(this)
                 .withRootView(R.id.drawer_layout)
                 .withToolbar(toolbar)
-                .withStickyHeader(drawerHeader)
+                //.withStickyHeader(header)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
-                .addDrawerItems(settingsButton)
+                .addDrawerItems(addGroupButton, *groupButtons, DividerDrawerItem(), settingsButton)
                 .withSelectedItem(-1)
-                .withOnDrawerItemClickListener { _, _, item -> navigateTo(item.identifier); true }
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withShowDrawerOnFirstLaunch(true)
                 .build()
 
-        EventBus.subscribe(this, Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER)
+        EventBus.subscribe(this,
+                Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
 
         if (!handleUpdateNotification(intent)) doAsync { checkUpdates(preferences, updater) }
     }
@@ -135,7 +142,7 @@ class MainActivity : SingleActivity(), EventListener {
         val result = intent.getStringExtra(INTENT_TYPE) == INTENT_TYPE_UPDATE
         if (result) {
             notificationManager.cancel(NOTIFICATION_UPDATE)
-            navigateTo(NAVIGATION_PREFERENCES)
+            getNavigator().goTo(PreferenceScreen())
         }
         return result
     }
@@ -172,15 +179,6 @@ class MainActivity : SingleActivity(), EventListener {
         }
     }
 
-    private fun navigateTo(id: Long) {
-        drawer.closeDrawer()
-
-        if (id == NAVIGATION_PREFERENCES) {
-            getNavigator().goTo(PreferenceScreen())
-            return
-        }
-    }
-
     override fun handleEvent(type: Event, payload: Any?) {
         val toggle = drawer.actionBarDrawerToggle
         val layout = drawer.drawerLayout
@@ -197,20 +195,23 @@ class MainActivity : SingleActivity(), EventListener {
                 toggle.isDrawerIndicatorEnabled = true
                 layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }
+            Event.NAVIGATION_TO -> {
+                val group = payload as String
+
+                val id = schedulePreferences.groups.indexOf(group) + SCHEDULE_SCREEN_ID_START
+                drawer.setSelection(id.toLong())
+            }
         }
     }
 
     private val drawerListener = object : Drawer.OnDrawerListener {
 
-        override fun onDrawerSlide(drawerView: View?, slideOffset: Float) = Unit
+        override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
 
-        override fun onDrawerClosed(drawerView: View?) {
-            groupEditor.clearFocus()
-            ctx.schedulePreferences.group = groupEditor.text.toString()
-        }
+        override fun onDrawerClosed(drawerView: View) = Unit
 
-        override fun onDrawerOpened(drawerView: View?) {
-            parityIndicator.text = currentWeekParity.toText(ctx)
+        override fun onDrawerOpened(drawerView: View) {
+            //parityIndicator.text = currentWeekParity.toText(ctx)
         }
 
     }

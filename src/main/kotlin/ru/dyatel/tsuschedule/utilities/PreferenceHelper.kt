@@ -46,7 +46,6 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getBoolean(preference, fallback)
         }
 
-    @Deprecated("use group list instead")
     var group: String
         get() = dataPreferences.getString(DATA_GROUP, "")
         set(value) = dataPreferences.editAndApply { putString(DATA_GROUP, value) }
