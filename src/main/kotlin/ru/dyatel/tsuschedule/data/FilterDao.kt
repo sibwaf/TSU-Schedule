@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule.data
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.FOREIGN_KEY
 import org.jetbrains.anko.db.INTEGER
@@ -16,7 +17,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import kotlin.reflect.KClass
 
-class FilterDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
+class FilterDao(private val context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 
     private object FilterColumns {
         const val ID = "filter_id"
@@ -109,9 +110,12 @@ class FilterDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.dropTable(TABLE_DATA, true)
-        db.dropTable(TABLE_FILTERS, true)
-        createTables(db)
+        if (oldVersion < 5) {
+            db.dropTable(TABLE_DATA, true)
+            db.dropTable(TABLE_FILTERS, true)
+            createTables(db)
+            return
+        }
     }
 
     fun updateFilters(filters: List<Filter>) {

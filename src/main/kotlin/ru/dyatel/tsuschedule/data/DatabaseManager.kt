@@ -7,13 +7,13 @@ import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import ru.dyatel.tsuschedule.ScheduleApplication
 
 private const val DB_FILE = "data.db"
-private const val DB_VERSION = 5
+private const val DB_VERSION = 6
 
 class DatabaseManager(context: Context) :
         ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
-    val lessonDao = LessonDao(this)
-    val filterDao = FilterDao(this)
+    val lessonDao = LessonDao(context, this)
+    val filterDao = FilterDao(context, this)
 
     private val parts = setOf(lessonDao, filterDao)
 
