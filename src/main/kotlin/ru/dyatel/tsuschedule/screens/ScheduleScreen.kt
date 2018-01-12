@@ -15,7 +15,6 @@ import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.Parser
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.data.currentWeekParity
@@ -78,7 +77,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
 
 }
 
-class ScheduleScreen : Screen<ScheduleView>(), EventListener {
+class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventListener {
 
     private val context: Context?
         get() = activity
@@ -112,7 +111,6 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         parser.setTimeout(preferences.connectionTimeout * 1000)
 
         try {
-            val group = preferences.group
             val data = parser.getLessons(group)
             lessons.update(group, data)
         } catch (e: Exception) {
@@ -125,14 +123,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         val context = context!!
 
         if (type == Event.DATA_UPDATED) {
-            val odd = mutableListOf<Lesson>()
-            val even = mutableListOf<Lesson>()
-            lessons.getLessons(context.schedulePreferences.group).forEach {
-                when (it.parity) {
-                    Parity.ODD -> odd += it
-                    Parity.EVEN -> even += it
-                }
-            }
+            val (odd, even) = lessons.getLessons(group).partition { it.parity == Parity.ODD }
             context.runOnUiThread { weeks.updateData(odd, even) }
         }
 
