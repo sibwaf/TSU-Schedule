@@ -11,11 +11,11 @@ import java.util.TimeZone
 
 private const val DATA_PREFERENCES = "data_preferences"
 
-private const val PREFERENCES_GROUP = "group"
+private const val DATA_GROUP = "group"
 
-private const val PREFERENCES_LAST_AUTO_UPDATE = "last_auto_update"
-private const val PREFERENCES_LAST_RELEASE = "last_release"
-private const val PREFERENCES_LAST_USED_VERSION = "last_used_version"
+private const val DATA_LAST_AUTO_UPDATE = "last_auto_update"
+private const val DATA_LAST_RELEASE = "last_release"
+private const val DATA_LAST_USED_VERSION = "last_used_version"
 
 class SchedulePreferences(private val context: Context) {
 
@@ -23,10 +23,6 @@ class SchedulePreferences(private val context: Context) {
         get() = PreferenceManager.getDefaultSharedPreferences(context)
     private val dataPreferences: SharedPreferences
         get() = context.getSharedPreferences(DATA_PREFERENCES, Context.MODE_PRIVATE)
-
-    var group: String
-        get() = dataPreferences.getString(PREFERENCES_GROUP, "")
-        set(value) = dataPreferences.editAndApply { putString(PREFERENCES_GROUP, value) }
 
     val connectionTimeout: Int
         get() {
@@ -49,28 +45,32 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getBoolean(preference, fallback)
         }
 
+    var group: String
+        get() = dataPreferences.getString(DATA_GROUP, "")
+        set(value) = dataPreferences.editAndApply { putString(DATA_GROUP, value) }
+
     var lastAutoupdate: DateTime?
         get() {
-            val timestamp = preferences.getLong(PREFERENCES_LAST_AUTO_UPDATE, -1)
+            val timestamp = dataPreferences.getLong(DATA_LAST_AUTO_UPDATE, -1)
 
             if (timestamp == -1L) return null
             return DateTime.forInstant(timestamp, TimeZone.getDefault())
         }
         set(value) {
             val timestamp = value?.getMilliseconds(TimeZone.getDefault()) ?: -1
-            preferences.editAndApply { putLong(PREFERENCES_LAST_AUTO_UPDATE, timestamp) }
+            dataPreferences.editAndApply { putLong(DATA_LAST_AUTO_UPDATE, timestamp) }
         }
 
     var lastRelease: String?
-        get() = preferences.getString(PREFERENCES_LAST_RELEASE, null)
+        get() = dataPreferences.getString(DATA_LAST_RELEASE, null)
         set(value) {
-            preferences.editAndApply { putString(PREFERENCES_LAST_RELEASE, value) }
+            dataPreferences.editAndApply { putString(DATA_LAST_RELEASE, value) }
             EventBus.broadcast(Event.PREFERENCES_LATEST_VERSION_CHANGED, value)
         }
 
     var lastUsedVersion: Int
-        get() = preferences.getInt(PREFERENCES_LAST_USED_VERSION, -1)
-        set(value) = preferences.editAndApply { putInt(PREFERENCES_LAST_USED_VERSION, value) }
+        get() = dataPreferences.getInt(DATA_LAST_USED_VERSION, -1)
+        set(value) = dataPreferences.editAndApply { putInt(DATA_LAST_USED_VERSION, value) }
 
 }
 
