@@ -5,6 +5,7 @@
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 
+    <string name="button_add_group">Добавить группу</string>
     <string name="screen_schedule">Расписание</string>
     <string name="screen_filters">Фильтры</string>
     <string name="screen_settings">Настройки</string>

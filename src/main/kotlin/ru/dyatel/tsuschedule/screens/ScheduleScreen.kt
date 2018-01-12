@@ -91,7 +91,11 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun onShow(context: Context?) {
         super.onShow(context)
 
-        lessons = activity.database.lessonDao
+        with(activity) {
+            lessons = database.lessonDao
+            schedulePreferences.group = group
+        }
+
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         handleEvent(Event.DATA_UPDATED, null)
     }
