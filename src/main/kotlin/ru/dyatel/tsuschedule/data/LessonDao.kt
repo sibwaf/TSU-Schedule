@@ -110,7 +110,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
 
     fun update(group: String, lessons: Collection<Lesson>) {
         writableDatabase.transaction {
-            delete(TABLE_UNFILTERED)
+            remove(group)
             lessons.map { it.toContentValues() }
                     .onEach { it.put(Columns.GROUP, group) }
                     .forEach { insert(TABLE_UNFILTERED, null, it) }
