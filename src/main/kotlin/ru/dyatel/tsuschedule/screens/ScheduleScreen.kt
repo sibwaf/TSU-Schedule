@@ -112,8 +112,9 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         parser.setTimeout(preferences.connectionTimeout * 1000)
 
         try {
-            val data = parser.getLessons(preferences.group)
-            lessons.update(data)
+            val group = preferences.group
+            val data = parser.getLessons(group)
+            lessons.update(group, data)
         } catch (e: Exception) {
             EventBus.broadcast(Event.DATA_UPDATE_FAILED)
             uiThread { e.handle { longSnackbar(view, it) } }
@@ -126,7 +127,7 @@ class ScheduleScreen : Screen<ScheduleView>(), EventListener {
         if (type == Event.DATA_UPDATED) {
             val odd = mutableListOf<Lesson>()
             val even = mutableListOf<Lesson>()
-            lessons.getLessons().forEach {
+            lessons.getLessons(context.schedulePreferences.group).forEach {
                 when (it.parity) {
                     Parity.ODD -> odd += it
                     Parity.EVEN -> even += it

@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.data
 
 import android.content.ContentValues
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.INTEGER
 import org.jetbrains.anko.db.MapRowParser
@@ -13,10 +14,13 @@ import org.jetbrains.anko.db.transaction
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
-class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager), EventListener {
+class LessonDao(private val context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager), EventListener {
 
     private object Columns {
+        const val GROUP = "`group`"
+
         const val PARITY = "parity"
         const val WEEKDAY = "weekday"
         const val TIME = "time"
@@ -71,6 +75,7 @@ class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager
     override fun createTables(db: SQLiteDatabase) {
         listOf(TABLE_UNFILTERED, TABLE_FILTERED).forEach {
             db.createTable(it, true,
+                    Columns.GROUP to TEXT,
                     Columns.PARITY to TEXT,
                     Columns.WEEKDAY to TEXT,
                     Columns.TIME to TEXT,
@@ -88,13 +93,21 @@ class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager
             db.dropTable(TABLE_UNFILTERED, true)
             db.dropTable(TABLE_FILTERED, true)
             createTables(db)
+            return
+        }
+        if (oldVersion < 6) {
+            val group = context.schedulePreferences.group
+            val type = TEXT.render()
+            for (table in arrayOf(TABLE_UNFILTERED, TABLE_FILTERED))
+                db.execSQL("ALTER TABLE $table ADD COLUMN ${Columns.GROUP} $type DEFAULT '$group'")
         }
     }
 
-    fun update(lessons: Collection<Lesson>) {
+    fun update(group: String, lessons: Collection<Lesson>) {
         writableDatabase.transaction {
             delete(TABLE_UNFILTERED)
             lessons.map { it.toContentValues() }
+                    .onEach { it.put(Columns.GROUP, group) }
                     .forEach { insert(TABLE_UNFILTERED, null, it) }
         }
 
@@ -123,8 +136,9 @@ class LessonDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager
         EventBus.broadcast(Event.DATA_UPDATED)
     }
 
-    fun getLessons(): List<Lesson> = readableDatabase
+    fun getLessons(group: String): List<Lesson> = readableDatabase
             .select(TABLE_FILTERED)
+            .whereSimple("${Columns.GROUP} = ?", group)
             .orderBy(Columns.TIME)
             .parseList(LESSON_PARSER)
 
