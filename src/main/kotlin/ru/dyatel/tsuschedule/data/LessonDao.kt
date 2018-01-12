@@ -38,6 +38,8 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
         const val TABLE_UNFILTERED = "lessons"
         const val TABLE_FILTERED = "filtered"
 
+        val TABLES = listOf(TABLE_UNFILTERED, TABLE_FILTERED)
+
         val LESSON_PARSER = object : MapRowParser<Lesson> {
             override fun parseRow(columns: Map<String, Any?>): Lesson {
                 return Lesson(
@@ -73,7 +75,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
     }
 
     override fun createTables(db: SQLiteDatabase) {
-        listOf(TABLE_UNFILTERED, TABLE_FILTERED).forEach {
+        TABLES.forEach {
             db.createTable(it, true,
                     Columns.GROUP to TEXT,
                     Columns.PARITY to TEXT,
@@ -90,15 +92,14 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 4) {
-            db.dropTable(TABLE_UNFILTERED, true)
-            db.dropTable(TABLE_FILTERED, true)
+            TABLES.forEach { db.dropTable(it, true) }
             createTables(db)
             return
         }
         if (oldVersion < 6) {
             val group = context.schedulePreferences.group
             val type = TEXT.render()
-            for (table in arrayOf(TABLE_UNFILTERED, TABLE_FILTERED))
+            for (table in TABLES)
                 db.execSQL("ALTER TABLE $table ADD COLUMN ${Columns.GROUP} $type DEFAULT '$group'")
         }
     }
@@ -112,6 +113,13 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
         }
 
         applyModifiers()
+    }
+
+    fun remove(group: String) {
+        writableDatabase.transaction {
+            val argument = arrayOf(group)
+            TABLES.forEach { delete(it, "${Columns.GROUP} = ?", argument) }
+        }
     }
 
     private fun applyModifiers() {
