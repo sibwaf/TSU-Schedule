@@ -36,6 +36,7 @@ import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
+import ru.dyatel.tsuschedule.utilities.SchedulePreferences
 import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
@@ -63,6 +64,9 @@ class MainActivity : SingleActivity(), EventListener {
         createNotificationChannels(ctx)
 
         val preferences = schedulePreferences
+
+        val updater = Updater(ctx)
+        updater.handleMigration()
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         ViewCompat.setElevation(toolbar, resources.getDimension(R.dimen.elevation))
@@ -108,7 +112,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         EventBus.subscribe(this, Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER)
 
-        if (!handleUpdateNotification(intent)) doAsync { checkUpdates() }
+        if (!handleUpdateNotification(intent)) doAsync { checkUpdates(preferences, updater) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -136,9 +140,7 @@ class MainActivity : SingleActivity(), EventListener {
         return result
     }
 
-    private fun checkUpdates() {
-        val preferences = ctx.schedulePreferences
-
+    private fun checkUpdates(preferences: SchedulePreferences, updater: Updater) {
         if (!preferences.autoupdate) return
 
         val now = DateTime.now(TimeZone.getDefault())
@@ -148,7 +150,7 @@ class MainActivity : SingleActivity(), EventListener {
         try {
             val lastKnown = preferences.lastRelease
 
-            Updater(ctx).fetchUpdateLink()?.takeIf { it.url != lastKnown }?.run {
+            updater.fetchUpdateLink()?.takeIf { it.url != lastKnown }?.run {
                 val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
                 val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
@@ -166,7 +168,7 @@ class MainActivity : SingleActivity(), EventListener {
 
             preferences.lastAutoupdate = now
         } catch (e: Exception) {
-            (e as? ParsingException)?.handle()
+            e.handle()
         }
     }
 
