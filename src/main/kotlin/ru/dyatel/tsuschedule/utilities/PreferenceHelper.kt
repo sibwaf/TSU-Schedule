@@ -12,6 +12,7 @@ import java.util.TimeZone
 private const val DATA_PREFERENCES = "data_preferences"
 
 private const val DATA_GROUP = "group"
+private const val DATA_GROUPS = "groups"
 
 private const val DATA_LAST_AUTO_UPDATE = "last_auto_update"
 private const val DATA_LAST_RELEASE = "last_release"
@@ -45,9 +46,25 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getBoolean(preference, fallback)
         }
 
+    @Deprecated("use group list instead")
     var group: String
         get() = dataPreferences.getString(DATA_GROUP, "")
         set(value) = dataPreferences.editAndApply { putString(DATA_GROUP, value) }
+
+    val groups: List<String>
+        get() = dataPreferences.getStringSet(DATA_GROUPS, emptySet()).sorted()
+
+    fun addGroup(group: String) {
+        dataPreferences.editAndApply {
+            putStringSet(DATA_GROUPS, HashSet(groups).apply { add(group) })
+        }
+    }
+
+    fun removeGroup(group: String) {
+        dataPreferences.editAndApply {
+            putStringSet(DATA_GROUPS, HashSet(groups).apply { remove(group) })
+        }
+    }
 
     var lastAutoupdate: DateTime?
         get() {
