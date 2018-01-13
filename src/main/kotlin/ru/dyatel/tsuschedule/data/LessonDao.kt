@@ -7,7 +7,6 @@ import org.jetbrains.anko.db.INTEGER
 import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.TEXT
 import org.jetbrains.anko.db.createTable
-import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
@@ -41,10 +40,9 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
 
         val TABLES = listOf(TABLE_UNFILTERED, TABLE_FILTERED)
 
-        val LESSON_PARSER = object : MapRowParser<Pair<String, Lesson>> {
-            override fun parseRow(columns: Map<String, Any?>): Pair<String, Lesson> {
-                val group = columns[Columns.GROUP.removeSurrounding("`")] as String
-                return group to Lesson(
+        val LESSON_PARSER = object : MapRowParser<Lesson> {
+            override fun parseRow(columns: Map<String, Any?>): Lesson {
+                return Lesson(
                         Parity.valueOf(columns[Columns.PARITY] as String),
                         columns[Columns.WEEKDAY] as String,
                         columns[Columns.TIME] as String,
@@ -116,7 +114,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
                     .forEach { insert(TABLE_UNFILTERED, null, it) }
         }
 
-        applyModifiers()
+        applyModifiers(group)
     }
 
     fun remove(group: String) {
@@ -126,21 +124,23 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
         }
     }
 
-    private fun applyModifiers() {
-        val filters = databaseManager.filterDao.getFilters().filter { it.enabled }
+    private fun applyModifiers(group: String) {
+        val filters = databaseManager.filterDao.getFilters(group).filter { it.enabled }
 
         writableDatabase.transaction {
-            delete(TABLE_FILTERED)
-            select(TABLE_UNFILTERED).parseList(LESSON_PARSER)
+            delete(TABLE_FILTERED, "${Columns.GROUP} = ?", arrayOf(group))
+            select(TABLE_UNFILTERED)
+                    .whereSimple("${Columns.GROUP} = ?", group)
+                    .parseList(LESSON_PARSER)
                     .mapNotNull {
-                        var result: Lesson? = it.second
+                        var result: Lesson? = it
                         for (filter in filters) {
                             if (result == null) break
                             result = filter.apply(result)
                         }
-                        if (result != null) it.first to result else null
+                        result
                     }
-                    .map { it.second.toContentValues().apply { put(Columns.GROUP, it.first) } }
+                    .map { it.toContentValues().apply { put(Columns.GROUP, group) } }
                     .forEach { insert(TABLE_FILTERED, null, it) }
         }
 
@@ -152,8 +152,9 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
             .whereSimple("${Columns.GROUP} = ?", group)
             .orderBy(Columns.TIME)
             .parseList(LESSON_PARSER)
-            .map { it.second }
 
-    override fun handleEvent(type: Event, payload: Any?) = applyModifiers()
+    override fun handleEvent(type: Event, payload: Any?) {
+        context.schedulePreferences.groups.forEach { applyModifiers(it) }
+    }
 
 }

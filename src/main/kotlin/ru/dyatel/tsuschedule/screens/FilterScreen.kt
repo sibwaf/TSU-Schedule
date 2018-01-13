@@ -28,7 +28,7 @@ class FilterScreenView(context: Context) : BaseScreenView<FilterScreen>(context)
 
 }
 
-class FilterScreen : Screen<FilterScreenView>() {
+class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
 
     private lateinit var filters: List<Filter>
     private lateinit var predefinedFilters: List<PredefinedFilter>
@@ -39,7 +39,7 @@ class FilterScreen : Screen<FilterScreenView>() {
         super.onShow(context)
         EventBus.broadcast(Event.DISABLE_NAVIGATION_DRAWER)
 
-        val separatedFilters = activity.database.filterDao.getFilters()
+        val separatedFilters = activity.database.filterDao.getFilters(group)
                 .partition { it !is PredefinedFilter }
         filters = separatedFilters.first
         predefinedFilters = separatedFilters.second.map { it as PredefinedFilter }
@@ -48,7 +48,7 @@ class FilterScreen : Screen<FilterScreenView>() {
     }
 
     override fun onHide(context: Context) {
-        activity.database.filterDao.updateFilters(filters + predefinedFilters)
+        activity.database.filterDao.updateFilters(group, filters + predefinedFilters)
 
         EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
         super.onHide(context)

@@ -2,8 +2,10 @@ package ru.dyatel.tsuschedule.data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.db.AUTOINCREMENT
 import org.jetbrains.anko.db.FOREIGN_KEY
 import org.jetbrains.anko.db.INTEGER
+import org.jetbrains.anko.db.LongParser
 import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.PRIMARY_KEY
 import org.jetbrains.anko.db.TEXT
@@ -13,14 +15,17 @@ import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.transaction
+import org.jetbrains.anko.db.update
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import kotlin.reflect.KClass
 
 class FilterDao(private val context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 
     private object FilterColumns {
         const val ID = "filter_id"
+        const val GROUP = "`group`"
         const val TYPE = "type"
         const val ENABLED = "enabled"
     }
@@ -99,7 +104,8 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
 
     override fun createTables(db: SQLiteDatabase) {
         db.createTable(TABLE_FILTERS, true,
-                FilterColumns.ID to INTEGER + PRIMARY_KEY,
+                FilterColumns.ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
+                FilterColumns.GROUP to TEXT,
                 FilterColumns.TYPE to TEXT,
                 FilterColumns.ENABLED to TEXT)
         db.createTable(TABLE_DATA, true,
@@ -116,28 +122,33 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
             createTables(db)
             return
         }
+        if (oldVersion < 6) {
+            val group = context.schedulePreferences.group
+            val type = TEXT.render()
+            db.execSQL("ALTER TABLE $TABLE_FILTERS ADD COLUMN ${FilterColumns.GROUP} $type")
+            db.update(TABLE_FILTERS, FilterColumns.GROUP to group).exec()
+        }
     }
 
-    fun updateFilters(filters: List<Filter>) {
+    fun updateFilters(group: String, filters: List<Filter>) {
         // TODO: validate filter order
 
         writableDatabase.transaction {
-            delete(TABLE_DATA)
-            delete(TABLE_FILTERS)
+            removeFilters(group)
 
-            filters.forEachIndexed { index, filter ->
-                if (filter !is PredefinedFilter) TODO()
+            filters.forEach {
+                if (it !is PredefinedFilter) TODO()
 
-                val type = PredefinedFilters.toType(filter)
+                val type = PredefinedFilters.toType(it)
 
-                insert(TABLE_FILTERS,
-                        FilterColumns.ID to index,
+                val id = insert(TABLE_FILTERS,
+                        FilterColumns.GROUP to group,
                         FilterColumns.TYPE to type,
-                        FilterColumns.ENABLED to filter.enabled.toString())
+                        FilterColumns.ENABLED to it.enabled.toString())
 
-                filter.save().entries.forEach { (key, value) ->
+                it.save().forEach { (key, value) ->
                     insert(TABLE_DATA,
-                            DataColumns.ID to index,
+                            DataColumns.ID to id,
                             DataColumns.KEY to key,
                             DataColumns.VALUE to value)
                 }
@@ -147,8 +158,20 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
         EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
     }
 
-    fun getFilters(): List<Filter> = readableDatabase.use { database ->
+    fun removeFilters(group: String) {
+        writableDatabase.transaction {
+            val ids = select(TABLE_FILTERS, FilterColumns.ID)
+                    .whereSimple("${FilterColumns.GROUP} = ?", group)
+                    .parseList(LongParser)
+
+            delete(TABLE_DATA, "${DataColumns.ID} IN (${ids.joinToString(", ")})")
+            delete(TABLE_FILTERS, "${FilterColumns.GROUP} = ?", arrayOf(group))
+        }
+    }
+
+    fun getFilters(group: String): List<Filter> = readableDatabase.use { database ->
         val (normal, predefined) = database.select(TABLE_FILTERS)
+                .whereSimple("${FilterColumns.GROUP} = ?", group)
                 .orderBy(FilterColumns.ID)
                 .parseList(FILTER_PARSER)
                 .map { (id, filter) ->
