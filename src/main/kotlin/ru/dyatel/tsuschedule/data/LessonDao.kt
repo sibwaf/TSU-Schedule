@@ -96,12 +96,21 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
             createTables(db)
             return
         }
+
+        val preferences = context.schedulePreferences
+
         if (oldVersion < 6) {
-            val group = context.schedulePreferences.group
-            val type = TEXT.render()
-            for (table in TABLES) {
-                db.execSQL("ALTER TABLE $table ADD COLUMN ${Columns.GROUP} $type")
-                db.update(table, Columns.GROUP to group).exec()
+            val group = preferences.group
+            if (group in preferences.groups) {
+                val type = TEXT.render()
+                for (table in TABLES) {
+                    db.execSQL("ALTER TABLE $table ADD COLUMN ${Columns.GROUP} $type")
+                    db.update(table, Columns.GROUP to group).exec()
+                }
+            } else {
+                TABLES.forEach { db.dropTable(it, true) }
+                createTables(db)
+                return
             }
         }
     }

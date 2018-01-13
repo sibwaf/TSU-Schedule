@@ -39,7 +39,7 @@ class Updater(private val context: Context) {
 
     fun handleMigration() {
         if (preferences.lastUsedVersion <= 11) {
-            preferences.addGroup(preferences.group)
+            preferences.group.takeIf { it.isNotBlank() }?.let { preferences.addGroup(it) }
         }
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
     }
