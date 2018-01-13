@@ -91,7 +91,7 @@ class MainActivity : SingleActivity(), EventListener {
         val groupButtons = preferences.groups.mapIndexed { id, group ->
             PrimaryDrawerItem()
                     .withIdentifier((id + SCHEDULE_SCREEN_ID_START).toLong())
-                    .withIcon(CommunityMaterial.Icon.cmd_clock)
+                    .withIcon(CommunityMaterial.Icon.cmd_account_multiple)
                     .withName(group)
                     .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false }
         }.toTypedArray()
