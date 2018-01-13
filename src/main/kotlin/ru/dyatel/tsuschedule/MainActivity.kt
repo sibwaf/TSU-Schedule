@@ -7,9 +7,11 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.Toolbar
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.materialdrawer.Drawer
@@ -21,10 +23,17 @@ import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
 import hirondelle.date4j.DateTime
 import org.jetbrains.anko.ctx
+import org.jetbrains.anko.dip
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
+import org.jetbrains.anko.padding
+import org.jetbrains.anko.textView
+import org.jetbrains.anko.wrapContent
+import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
@@ -43,7 +52,7 @@ private const val SCHEDULE_SCREEN_ID_START = 1000
 class MainActivity : SingleActivity(), EventListener {
 
     private lateinit var drawer: Drawer
-    //private lateinit var parityIndicator: TextView
+    private lateinit var parityIndicator: TextView
 
     override fun createNavigator() = Navigator
             .withRoot(HomeScreen())
@@ -70,17 +79,17 @@ class MainActivity : SingleActivity(), EventListener {
         ViewCompat.setElevation(toolbar, resources.getDimension(R.dimen.elevation))
         setSupportActionBar(toolbar)
 
-        // TODO: fix it
-        /*val header = frameLayout {
+        val header = ctx.frameLayout {
             parityIndicator = textView {
-                ViewCompat.setElevation(this, resources.getDimension(R.dimen.elevation))
+                gravity = Gravity.CENTER
+                textSize = 18f
+                text = currentWeekParity.toText(ctx)
+            }.lparams {
                 width = matchParent
                 height = wrapContent
-                gravity = CENTER
                 padding = dip(4)
-                text = currentWeekParity.toText(ctx)
             }
-        }*/
+        }
 
         val addGroupButton = PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_plus)
@@ -106,7 +115,7 @@ class MainActivity : SingleActivity(), EventListener {
                 .withActivity(this)
                 .withRootView(R.id.drawer_layout)
                 .withToolbar(toolbar)
-                //.withStickyHeader(header)
+                .withStickyHeader(header)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(addGroupButton, *groupButtons, DividerDrawerItem(), settingsButton)
@@ -215,7 +224,7 @@ class MainActivity : SingleActivity(), EventListener {
         override fun onDrawerClosed(drawerView: View) = Unit
 
         override fun onDrawerOpened(drawerView: View) {
-            //parityIndicator.text = currentWeekParity.toText(ctx)
+            parityIndicator.text = currentWeekParity.toText(ctx)
         }
 
     }
