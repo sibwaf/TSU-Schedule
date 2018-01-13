@@ -132,7 +132,11 @@ class MainActivity : SingleActivity(), EventListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.filters -> getNavigator().goTo(FilterScreen())
+            R.id.filters -> {
+                val id = drawer.currentSelection - SCHEDULE_SCREEN_ID_START
+                val group = schedulePreferences.groups[id.toInt()]
+                getNavigator().goTo(FilterScreen(group))
+            }
             else -> return super.onOptionsItemSelected(item)
         }
         return true
