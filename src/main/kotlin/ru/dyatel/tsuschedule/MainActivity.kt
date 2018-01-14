@@ -1,5 +1,7 @@
 package ru.dyatel.tsuschedule
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +13,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
@@ -25,12 +28,15 @@ import hirondelle.date4j.DateTime
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.editText
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.padding
+import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.data.currentWeekParity
@@ -91,26 +97,6 @@ class MainActivity : SingleActivity(), EventListener {
             }
         }
 
-        val addGroupButton = PrimaryDrawerItem()
-                .withIcon(CommunityMaterial.Icon.cmd_plus)
-                .withName(R.string.button_add_group)
-                .withSelectable(false)
-                .withOnDrawerItemClickListener { _, _, _ -> false } // TODO: dialog
-
-        val groupButtons = preferences.groups.mapIndexed { id, group ->
-            PrimaryDrawerItem()
-                    .withIdentifier((id + SCHEDULE_SCREEN_ID_START).toLong())
-                    .withIcon(CommunityMaterial.Icon.cmd_account_multiple)
-                    .withName(group)
-                    .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false }
-        }.toTypedArray()
-
-        val settingsButton = PrimaryDrawerItem()
-                .withIcon(CommunityMaterial.Icon.cmd_settings)
-                .withName(R.string.screen_settings)
-                .withOnDrawerItemClickListener { _, _, _ -> getNavigator().goTo(PreferenceScreen()); false }
-                .withSelectable(false)
-
         drawer = DrawerBuilder()
                 .withActivity(this)
                 .withRootView(R.id.drawer_layout)
@@ -118,12 +104,13 @@ class MainActivity : SingleActivity(), EventListener {
                 .withStickyHeader(header)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
-                .addDrawerItems(addGroupButton, *groupButtons, DividerDrawerItem(), settingsButton)
                 .withSelectedItem(-1)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withShowDrawerOnFirstLaunch(true)
                 .build()
+
+        generateDrawerButtons()
 
         EventBus.subscribe(this,
                 Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
@@ -149,6 +136,34 @@ class MainActivity : SingleActivity(), EventListener {
             else -> return super.onOptionsItemSelected(item)
         }
         return true
+    }
+
+    private fun generateDrawerButtons() {
+        val preferences = schedulePreferences
+
+        drawer.removeAllItems()
+
+        drawer.addItem(PrimaryDrawerItem()
+                .withIcon(CommunityMaterial.Icon.cmd_plus)
+                .withName(R.string.button_add_group)
+                .withSelectable(false)
+                .withOnDrawerItemClickListener { _, _, _ -> showAddGroupDialog(); true })
+
+        for ((id, group) in preferences.groups.withIndex()) {
+            drawer.addItem(PrimaryDrawerItem()
+                    .withIdentifier((id + SCHEDULE_SCREEN_ID_START).toLong())
+                    .withIcon(CommunityMaterial.Icon.cmd_account_multiple)
+                    .withName(group)
+                    .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false })
+        }
+
+        drawer.addItem(DividerDrawerItem())
+
+        drawer.addItem(PrimaryDrawerItem()
+                .withIcon(CommunityMaterial.Icon.cmd_settings)
+                .withName(R.string.screen_settings)
+                .withOnDrawerItemClickListener { _, _, _ -> getNavigator().goTo(PreferenceScreen()); false }
+                .withSelectable(false))
     }
 
     private fun handleUpdateNotification(intent: Intent): Boolean {
@@ -190,6 +205,47 @@ class MainActivity : SingleActivity(), EventListener {
         } catch (e: Exception) {
             e.handle()
         }
+    }
+
+    private fun showAddGroupDialog() {
+        val preferences = schedulePreferences
+
+        val view = ctx.frameLayout {
+            editText().lparams {
+                leftPadding = dip(12)
+                rightPadding = dip(12)
+                width = matchParent
+                height = wrapContent
+            }
+        }
+        val editor = view.getChildAt(0) as EditText
+
+        AlertDialog.Builder(ctx)
+                .setTitle(R.string.dialog_add_group_title)
+                .setMessage(R.string.dialog_add_group_message)
+                .setView(view)
+                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
+                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .show()
+                .apply {
+                    getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { _ ->
+                        val group = editor.text.toString()
+                        if (group.isBlank()) {
+                            setMessage(getString(R.string.dialog_add_group_message_blank))
+                            return@setOnClickListener
+                        }
+                        if (group in preferences.groups) {
+                            setMessage(getString(R.string.dialog_add_group_message_duplicate))
+                            return@setOnClickListener
+                        }
+
+                        preferences.addGroup(group)
+
+                        generateDrawerButtons()
+                        drawer.setSelection((SCHEDULE_SCREEN_ID_START + preferences.groups.indexOf(group)).toLong())
+                        drawer.closeDrawer()
+                    }
+                }
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
