@@ -60,6 +60,16 @@ class MainActivity : SingleActivity(), EventListener {
     private lateinit var drawer: Drawer
     private lateinit var parityIndicator: TextView
 
+    private var selectedGroup: String?
+        get() {
+            val id = drawer.currentSelection - SCHEDULE_SCREEN_ID_START
+            return if (id >= 0) schedulePreferences.groups[id.toInt()] else null
+        }
+        set(value) {
+            val id = schedulePreferences.groups.indexOf(value) + SCHEDULE_SCREEN_ID_START
+            drawer.setSelection(id.toLong())
+        }
+
     override fun createNavigator() = Navigator
             .withRoot(HomeScreen())
             .transition(NoAnimationTransition())
@@ -128,11 +138,7 @@ class MainActivity : SingleActivity(), EventListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.filters -> {
-                val id = drawer.currentSelection - SCHEDULE_SCREEN_ID_START
-                val group = schedulePreferences.groups[id.toInt()]
-                getNavigator().goTo(FilterScreen(group))
-            }
+            R.id.filters -> getNavigator().goTo(FilterScreen(selectedGroup!!)) // TODO: check for null
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -242,7 +248,7 @@ class MainActivity : SingleActivity(), EventListener {
                         preferences.addGroup(group)
 
                         generateDrawerButtons()
-                        drawer.setSelection((SCHEDULE_SCREEN_ID_START + preferences.groups.indexOf(group)).toLong())
+                        selectedGroup = group
                         drawer.closeDrawer()
                     }
                 }
@@ -264,12 +270,7 @@ class MainActivity : SingleActivity(), EventListener {
                 toggle.isDrawerIndicatorEnabled = true
                 layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             }
-            Event.NAVIGATION_TO -> {
-                val group = payload as String
-
-                val id = schedulePreferences.groups.indexOf(group) + SCHEDULE_SCREEN_ID_START
-                drawer.setSelection(id.toLong())
-            }
+            Event.NAVIGATION_TO -> selectedGroup = payload as String
         }
     }
 
