@@ -37,6 +37,7 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.rightPadding
+import org.jetbrains.anko.singleLine
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.data.currentWeekParity
@@ -150,7 +151,6 @@ class MainActivity : SingleActivity(), EventListener {
     }
 
     private fun generateDrawerButtons() {
-        // TODO: do not navigate to already chosen screens
         drawer.removeAllItems()
 
         drawer.addItem(PrimaryDrawerItem()
@@ -219,7 +219,9 @@ class MainActivity : SingleActivity(), EventListener {
 
     private fun showAddGroupDialog() {
         val view = ctx.frameLayout {
-            editText().lparams {
+            editText {
+                singleLine = true
+            }.lparams {
                 leftPadding = dip(12)
                 rightPadding = dip(12)
                 width = matchParent
