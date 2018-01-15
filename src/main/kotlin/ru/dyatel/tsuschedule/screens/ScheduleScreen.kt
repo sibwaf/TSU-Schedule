@@ -93,7 +93,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         lessons = activity.database.lessonDao
 
-        EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
+        EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         handleEvent(Event.DATA_UPDATED, null)
     }
 
@@ -104,24 +104,33 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
     override fun getTitle(context: Context) = context.getString(R.string.screen_schedule, group)!!
 
-    fun updateData() = doAsync {
-        val context = context ?: return@doAsync
-        val preferences = context.schedulePreferences
+    fun updateData() {
+        val context = context ?: return
 
-        val parser = Parser()
-        parser.setTimeout(preferences.connectionTimeout * 1000)
+        context.runOnUiThread { view.isRefreshing = true }
+        doAsync {
+            val preferences = context.schedulePreferences
 
-        try {
-            val data = parser.getLessons(group)
-            if (group in preferences.groups) lessons.update(group, data)
-        } catch (e: Exception) {
-            EventBus.broadcast(Event.DATA_UPDATE_FAILED)
-            uiThread { e.handle { longSnackbar(view, it) } }
+            val parser = Parser()
+            parser.setTimeout(preferences.connectionTimeout * 1000)
+
+            try {
+                val data = parser.getLessons(group)
+                if (group in preferences.groups) lessons.update(group, data)
+            } catch (e: Exception) {
+                EventBus.broadcast(Event.DATA_UPDATE_FAILED)
+                uiThread { e.handle { longSnackbar(view, it) } }
+            }
         }
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
         val context = context!!
+
+        if (type == Event.INITIAL_DATA_FETCH && (payload as String) == group) {
+            updateData()
+            return
+        }
 
         if (type == Event.DATA_UPDATED) {
             val (odd, even) = lessons.getLessons(group).partition { it.parity == Parity.ODD }
