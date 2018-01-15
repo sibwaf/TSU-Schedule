@@ -150,7 +150,7 @@ class MainActivity : SingleActivity(), EventListener {
     }
 
     private fun generateDrawerButtons() {
-        // TODO: move all navigation handlers to a navigation listener
+        // TODO: do not navigate to already chosen screens
         drawer.removeAllItems()
 
         drawer.addItem(PrimaryDrawerItem()
@@ -263,14 +263,17 @@ class MainActivity : SingleActivity(), EventListener {
                 .setTitle(R.string.dialog_remove_group_title)
                 .setMessage(getString(R.string.dialog_remove_group_message, group))
                 .setPositiveButton(R.string.dialog_ok, { _, _ ->
-                    val groups = preferences.groups
-
                     val navigator = getNavigator()
+
+                    val groups = preferences.groups
+                    val newGroup: String?
                     if (groups.size > 1) {
                         val index = groups.indexOf(group)
-                        selectedGroup = if (index == groups.size - 1) groups[index - 1] else groups[index + 1]
+                        newGroup = if (index == groups.size - 1) groups[index - 1] else groups[index + 1]
+                        selectedGroup = newGroup
                     } else {
                         preferences.group = ""
+                        newGroup = null
                         navigator.replace(HomeScreen())
                     }
 
@@ -279,7 +282,7 @@ class MainActivity : SingleActivity(), EventListener {
                     preferences.removeGroup(group)
 
                     generateDrawerButtons()
-                    // TODO: fix menu item selection
+                    newGroup?.let { selectedGroup = it }
                 })
                 .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
                 .show()
