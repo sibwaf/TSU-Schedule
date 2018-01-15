@@ -5,15 +5,18 @@
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 
+    <string name="menu_delete_group">Удалить</string>
+
     <string name="dialog_ok">ОК</string>
     <string name="dialog_cancel">Отмена</string>
+
     <string name="dialog_add_group_title">Добавление группы</string>
     <string name="dialog_add_group_message">Введите индекс группы:</string>
-    <string name="dialog_add_group_message_blank">Индекс группы не может быть пустым,
-        попробуйте ещё раз:
-    </string>
-    <string name="dialog_add_group_message_duplicate">Эта группа уже была добавлена,
-        попробуйте ещё раз:
+    <string name="dialog_add_group_message_blank">Индекс группы не может быть пустым, попробуйте ещё раз:</string>
+    <string name="dialog_add_group_message_duplicate">Эта группа уже была добавлена, попробуйте ещё раз:</string>
+    <string name="dialog_remove_group_title">Удаление группы</string>
+    <string name="dialog_remove_group_message">Вы уверены, что хотите удалить группу %s?
+        Вместе с ней будут удалены все настройки фильтров и кэш расписания.
     </string>
 
     <string name="button_add_group">Добавить группу</string>

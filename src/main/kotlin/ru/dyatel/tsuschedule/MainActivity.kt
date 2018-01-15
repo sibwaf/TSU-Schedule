@@ -40,6 +40,7 @@ import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.data.currentWeekParity
+import ru.dyatel.tsuschedule.data.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
@@ -66,8 +67,12 @@ class MainActivity : SingleActivity(), EventListener {
             return if (id >= 0) schedulePreferences.groups[id.toInt()] else null
         }
         set(value) {
-            val id = schedulePreferences.groups.indexOf(value) + SCHEDULE_SCREEN_ID_START
+            val preferences = schedulePreferences
+
+            val id = preferences.groups.indexOf(value) + SCHEDULE_SCREEN_ID_START
             drawer.setSelection(id.toLong())
+
+            value?.let { preferences.group = it }
         }
 
     override fun createNavigator() = Navigator
@@ -114,7 +119,6 @@ class MainActivity : SingleActivity(), EventListener {
                 .withStickyHeader(header)
                 .withTranslucentStatusBar(false)
                 .withActionBarDrawerToggleAnimated(true)
-                .withSelectedItem(-1)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withShowDrawerOnFirstLaunch(true)
@@ -133,18 +137,23 @@ class MainActivity : SingleActivity(), EventListener {
         menu.findItem(R.id.filters).icon = IconicsDrawable(ctx).actionBar()
                 .icon(CommunityMaterial.Icon.cmd_filter)
                 .colorRes(R.color.text_title_color)
+        menu.findItem(R.id.delete_group).icon = IconicsDrawable(ctx).actionBar()
+                .icon(CommunityMaterial.Icon.cmd_delete)
+                .colorRes(R.color.text_title_color)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.filters -> getNavigator().goTo(FilterScreen(selectedGroup!!)) // TODO: check for null
+            R.id.filters -> getNavigator().goTo(FilterScreen(selectedGroup!!))
+            R.id.delete_group -> showDeleteGroupDialog()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
     }
 
     private fun generateDrawerButtons() {
+        // TODO: move all navigation handlers to a navigation listener
         val preferences = schedulePreferences
 
         drawer.removeAllItems()
@@ -252,6 +261,36 @@ class MainActivity : SingleActivity(), EventListener {
                         drawer.closeDrawer()
                     }
                 }
+    }
+
+    private fun showDeleteGroupDialog() {
+        val group = selectedGroup!!
+
+        AlertDialog.Builder(ctx)
+                .setTitle(R.string.dialog_remove_group_title)
+                .setMessage(getString(R.string.dialog_remove_group_message, group))
+                .setPositiveButton(R.string.dialog_ok, { _, _ ->
+                    val preferences = schedulePreferences
+                    val groups = preferences.groups
+
+                    val navigator = getNavigator()
+                    if (groups.size > 1) {
+                        val index = groups.indexOf(group)
+                        selectedGroup = if (index == groups.size - 1) groups[index - 1] else groups[index + 1]
+                    } else {
+                        preferences.group = ""
+                        navigator.replace(HomeScreen())
+                    }
+
+                    database.lessonDao.remove(group)
+                    database.filterDao.removeFilters(group)
+                    preferences.removeGroup(group)
+
+                    generateDrawerButtons()
+                    // TODO: fix menu item selection
+                })
+                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .show()
     }
 
     override fun handleEvent(type: Event, payload: Any?) {

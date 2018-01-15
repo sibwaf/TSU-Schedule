@@ -91,10 +91,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun onShow(context: Context?) {
         super.onShow(context)
 
-        with(activity) {
-            lessons = database.lessonDao
-            schedulePreferences.group = group
-        }
+        lessons = activity.database.lessonDao
 
         EventBus.subscribe(this, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         handleEvent(Event.DATA_UPDATED, null)
@@ -116,6 +113,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         try {
             val data = parser.getLessons(group)
+            // TODO: check if group still exists
             lessons.update(group, data)
         } catch (e: Exception) {
             EventBus.broadcast(Event.DATA_UPDATE_FAILED)
@@ -136,6 +134,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
     override fun onUpdateMenu(menu: Menu) {
         menu.findItem(R.id.filters).isVisible = true
+        menu.findItem(R.id.delete_group).isVisible = true
     }
 
 }
