@@ -21,6 +21,7 @@ import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
+import ru.dyatel.tsuschedule.utilities.hideIf
 import java.util.ArrayList
 
 class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
@@ -45,30 +46,33 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = parent.context.linearLayout {
-            lparams {
+            lparams(width = matchParent) {
                 orientation = LinearLayout.HORIZONTAL
-                width = matchParent
                 margin = dip(1)
             }
 
-            view { id = typeViewId }.lparams {
-                width = dip(4)
-                height = matchParent
+            view { id = typeViewId }.lparams(width = dip(4), height = matchParent) {
                 rightMargin = dip(4)
             }
 
             verticalLayout {
+                lparams(width = matchParent)
+
                 relativeLayout {
+                    lparams(width = matchParent)
+
                     textView { id = timeViewId }.lparams {
                         leftOf(auditoryViewId)
                         alignParentLeft()
                     }
-                    textView { id = auditoryViewId }.lparams { alignParentRight() }
-                }.lparams { width = matchParent }
+                    textView { id = auditoryViewId }.lparams {
+                        alignParentRight()
+                    }
+                }
 
                 textView { id = disciplineViewId }
                 textView { id = teacherViewId }
-            }.lparams { width = matchParent }
+            }
         }
 
         return Holder(view)
@@ -87,8 +91,8 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
             discipline.text = lesson.discipline
             teacher.text = lesson.teacher
 
-            auditory.visibility = if (lesson.auditory == null) View.GONE else View.VISIBLE
-            teacher.visibility = if (lesson.teacher == null) View.GONE else View.VISIBLE
+            auditory.hideIf { lesson.auditory == null }
+            teacher.hideIf { lesson.teacher == null }
         }
     }
 

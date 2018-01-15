@@ -17,7 +17,8 @@ fun URL.download(destination: File, timeout: Int, onProgressUpdate: (Int) -> Uni
             var count: Int
             do {
                 count = input.read(buffer)
-                if (count == -1) break
+                if (count == -1)
+                    break
 
                 output.write(buffer, 0, count)
 

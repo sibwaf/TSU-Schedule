@@ -29,7 +29,7 @@ class SchedulePreferences(private val context: Context) {
         get() {
             val preference = context.getString(R.string.preference_timeout)
             val fallback = context.getString(R.string.preference_timeout_default)
-            return preferences.getString(preference, fallback).toInt() // TODO: WTF?
+            return preferences.getString(preference, fallback).toInt() * 1000
         }
 
     val autoupdate: Boolean
@@ -68,8 +68,9 @@ class SchedulePreferences(private val context: Context) {
     var lastAutoupdate: DateTime?
         get() {
             val timestamp = dataPreferences.getLong(DATA_LAST_AUTO_UPDATE, -1)
+            if (timestamp == -1L)
+                return null
 
-            if (timestamp == -1L) return null
             return DateTime.forInstant(timestamp, TimeZone.getDefault())
         }
         set(value) {

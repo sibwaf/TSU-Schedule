@@ -44,7 +44,8 @@ class UpdaterApi {
                 e.log()
                 continue
             }
-            if (!token.prerelease || allowPrerelease) return token.release
+            if (!token.prerelease || allowPrerelease)
+                return token.release
         }
 
         return null
@@ -57,10 +58,11 @@ class UpdaterApi {
                 .map { it.find<String>("browser_download_url") }
                 .toList()
 
-        if (links.isEmpty()) throw ParsingException("No .apk files in assets")
+        if (links.isEmpty())
+            throw ParsingException("No .apk files in assets")
 
         val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
-        val release =  Release(json.find("tag_name"), url)
+        val release = Release(json.find("tag_name"), url)
 
         return ReleaseToken(release, json.find("prerelease"))
     }

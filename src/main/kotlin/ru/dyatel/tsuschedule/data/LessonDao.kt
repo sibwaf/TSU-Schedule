@@ -128,13 +128,12 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
 
     fun remove(group: String) {
         writableDatabase.transaction {
-            val argument = arrayOf(group)
-            TABLES.forEach { delete(it, "${Columns.GROUP} = ?", argument) }
+            TABLES.forEach { delete(it, "${Columns.GROUP} = ?", arrayOf(group)) }
         }
     }
 
     private fun applyModifiers(group: String) {
-        val filters = databaseManager.filterDao.getFilters(group).filter { it.enabled }
+        val filters = databaseManager.filters.request(group).filter { it.enabled }
 
         writableDatabase.transaction {
             delete(TABLE_FILTERED, "${Columns.GROUP} = ?", arrayOf(group))
@@ -144,7 +143,8 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
                     .mapNotNull {
                         var result: Lesson? = it
                         for (filter in filters) {
-                            if (result == null) break
+                            if (result == null)
+                                break
                             result = filter.apply(result)
                         }
                         result
@@ -156,7 +156,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
         EventBus.broadcast(Event.DATA_UPDATED)
     }
 
-    fun getLessons(group: String): List<Lesson> = readableDatabase
+    fun request(group: String): List<Lesson> = readableDatabase
             .select(TABLE_FILTERED)
             .whereSimple("${Columns.GROUP} = ?", group)
             .orderBy(Columns.TIME)

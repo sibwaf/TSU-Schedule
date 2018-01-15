@@ -30,6 +30,12 @@ class PreferenceView(context: Context) : BaseScreenView<PreferenceScreen>(contex
                 .commit()
     }
 
+    fun detachFragment(fragmentManager: FragmentManager) {
+        fragmentManager.beginTransaction()
+                .detach(fragment)
+                .commit()
+    }
+
 }
 
 class PreferenceScreen : Screen<PreferenceView>() {
@@ -43,6 +49,7 @@ class PreferenceScreen : Screen<PreferenceView>() {
     }
 
     override fun onHide(context: Context?) {
+        view.detachFragment(activity.fragmentManager)
         EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
         super.onHide(context)
     }

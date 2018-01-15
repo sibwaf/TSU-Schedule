@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.utilities
 
 import android.preference.Preference
+import android.view.View
 
 class NumberPreferenceValidator(
         private val acceptEmptyInput: Boolean = false,
@@ -8,9 +9,8 @@ class NumberPreferenceValidator(
 ) : Preference.OnPreferenceChangeListener {
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any): Boolean {
-        if (newValue == "") {
+        if (newValue == "")
             return acceptEmptyInput && (constraint == null || 0 in constraint)
-        }
 
         return try {
             val number = (newValue as String).toInt()
@@ -20,4 +20,8 @@ class NumberPreferenceValidator(
         }
     }
 
+}
+
+fun View.hideIf(condition: () -> Boolean) {
+    visibility = if (condition()) View.GONE else View.VISIBLE
 }

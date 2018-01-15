@@ -9,11 +9,12 @@ import ru.dyatel.tsuschedule.NOTIFICATION_CHANNEL_UPDATES
 import ru.dyatel.tsuschedule.R
 
 fun createNotificationChannels(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val notificationManager = context.notificationManager
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+        return
 
-        val name = context.getString(R.string.notification_channel_updates_name)
-        val updateChannel = NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, IMPORTANCE_LOW)
-        notificationManager.createNotificationChannel(updateChannel)
-    }
+    val notificationManager = context.notificationManager
+
+    val name = context.getString(R.string.notification_channel_updates_name)
+    val updateChannel = NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, IMPORTANCE_LOW)
+    notificationManager.createNotificationChannel(updateChannel)
 }

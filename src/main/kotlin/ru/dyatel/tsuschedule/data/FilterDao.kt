@@ -140,11 +140,11 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
         }
     }
 
-    fun updateFilters(group: String, filters: List<Filter>) {
+    fun update(group: String, filters: List<Filter>) {
         // TODO: validate filter order
 
         writableDatabase.transaction {
-            removeFilters(group)
+            remove(group)
 
             filters.forEach {
                 if (it !is PredefinedFilter) TODO()
@@ -168,18 +168,19 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
         EventBus.broadcast(Event.DATA_MODIFIER_SET_CHANGED)
     }
 
-    fun removeFilters(group: String) {
+    fun remove(group: String) {
         writableDatabase.transaction {
             val ids = select(TABLE_FILTERS, FilterColumns.ID)
                     .whereSimple("${FilterColumns.GROUP} = ?", group)
                     .parseList(LongParser)
+                    .joinToString(", ")
 
-            delete(TABLE_DATA, "${DataColumns.ID} IN (${ids.joinToString(", ")})")
+            delete(TABLE_DATA, "${DataColumns.ID} IN ($ids)")
             delete(TABLE_FILTERS, "${FilterColumns.GROUP} = ?", arrayOf(group))
         }
     }
 
-    fun getFilters(group: String): List<Filter> = readableDatabase.use { database ->
+    fun request(group: String): List<Filter> = readableDatabase.use { database ->
         val (normal, predefined) = database.select(TABLE_FILTERS)
                 .whereSimple("${FilterColumns.GROUP} = ?", group)
                 .orderBy(FilterColumns.ID)
