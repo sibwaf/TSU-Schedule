@@ -49,7 +49,6 @@ import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
-import ru.dyatel.tsuschedule.utilities.SchedulePreferences
 import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
@@ -61,14 +60,14 @@ class MainActivity : SingleActivity(), EventListener {
     private lateinit var drawer: Drawer
     private lateinit var parityIndicator: TextView
 
+    private val preferences = schedulePreferences
+
     private var selectedGroup: String?
         get() {
             val id = drawer.currentSelection - SCHEDULE_SCREEN_ID_START
-            return if (id >= 0) schedulePreferences.groups[id.toInt()] else null
+            return if (id >= 0) preferences.groups[id.toInt()] else null
         }
         set(value) {
-            val preferences = schedulePreferences
-
             val id = preferences.groups.indexOf(value) + SCHEDULE_SCREEN_ID_START
             drawer.setSelection(id.toLong())
 
@@ -90,8 +89,6 @@ class MainActivity : SingleActivity(), EventListener {
         setContentView(R.layout.activity)
 
         createNotificationChannels(ctx)
-
-        val preferences = schedulePreferences
 
         val updater = Updater(ctx)
         updater.handleMigration()
@@ -129,7 +126,7 @@ class MainActivity : SingleActivity(), EventListener {
         EventBus.subscribe(this,
                 Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
 
-        if (!handleUpdateNotification(intent)) doAsync { checkUpdates(preferences, updater) }
+        if (!handleUpdateNotification(intent)) doAsync { checkUpdates(updater) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -154,8 +151,6 @@ class MainActivity : SingleActivity(), EventListener {
 
     private fun generateDrawerButtons() {
         // TODO: move all navigation handlers to a navigation listener
-        val preferences = schedulePreferences
-
         drawer.removeAllItems()
 
         drawer.addItem(PrimaryDrawerItem()
@@ -190,7 +185,7 @@ class MainActivity : SingleActivity(), EventListener {
         return result
     }
 
-    private fun checkUpdates(preferences: SchedulePreferences, updater: Updater) {
+    private fun checkUpdates(updater: Updater) {
         if (!preferences.autoupdate) return
 
         val now = DateTime.now(TimeZone.getDefault())
@@ -223,8 +218,6 @@ class MainActivity : SingleActivity(), EventListener {
     }
 
     private fun showAddGroupDialog() {
-        val preferences = schedulePreferences
-
         val view = ctx.frameLayout {
             editText().lparams {
                 leftPadding = dip(12)
@@ -270,7 +263,6 @@ class MainActivity : SingleActivity(), EventListener {
                 .setTitle(R.string.dialog_remove_group_title)
                 .setMessage(getString(R.string.dialog_remove_group_message, group))
                 .setPositiveButton(R.string.dialog_ok, { _, _ ->
-                    val preferences = schedulePreferences
                     val groups = preferences.groups
 
                     val navigator = getNavigator()
