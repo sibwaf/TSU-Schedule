@@ -54,5 +54,5 @@ class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
         super.onHide(context)
     }
 
-    override fun getTitle(context: Context) = context.getString(R.string.screen_filters)!!
+    override fun getTitle(context: Context) = context.getString(R.string.screen_filters, group)!!
 }

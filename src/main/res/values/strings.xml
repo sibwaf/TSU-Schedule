@@ -20,8 +20,8 @@
     </string>
 
     <string name="button_add_group">Добавить группу</string>
-    <string name="screen_schedule">Расписание</string>
-    <string name="screen_filters">Фильтры</string>
+    <string name="screen_schedule">Расписание (%s)</string>
+    <string name="screen_filters">Фильтры (%s)</string>
     <string name="screen_settings">Настройки</string>
 
     <string name="hint_group_index">Индекс группы</string>
