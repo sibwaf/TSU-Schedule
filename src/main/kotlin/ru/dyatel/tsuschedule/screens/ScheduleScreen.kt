@@ -91,7 +91,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun onShow(context: Context?) {
         super.onShow(context)
 
-        lessons = activity.database.lessonDao
+        lessons = activity.database.lessons
 
         EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         handleEvent(Event.DATA_UPDATED, null)
@@ -112,11 +112,12 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
             val preferences = context.schedulePreferences
 
             val parser = Parser()
-            parser.setTimeout(preferences.connectionTimeout * 1000)
+            parser.setTimeout(preferences.connectionTimeout)
 
             try {
                 val data = parser.getLessons(group)
-                if (group in preferences.groups) lessons.update(group, data)
+                if (group in preferences.groups)
+                    lessons.update(group, data)
             } catch (e: Exception) {
                 EventBus.broadcast(Event.DATA_UPDATE_FAILED)
                 uiThread { e.handle { longSnackbar(view, it) } }
@@ -133,7 +134,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
         }
 
         if (type == Event.DATA_UPDATED) {
-            val (odd, even) = lessons.getLessons(group).partition { it.parity == Parity.ODD }
+            val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
             context.runOnUiThread { weeks.updateData(odd, even) }
         }
 

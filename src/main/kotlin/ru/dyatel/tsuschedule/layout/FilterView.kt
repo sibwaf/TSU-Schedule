@@ -23,6 +23,7 @@ import org.jetbrains.anko.spinner
 import org.jetbrains.anko.switch
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.Filter
 import ru.dyatel.tsuschedule.data.SubgroupFilter
@@ -40,15 +41,11 @@ open class FilterView(context: Context) : CardView(context) {
     private val bodyContainer: ViewGroup
 
     init {
-        layoutParams = MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                .apply { margin = dip(6) }
+        layoutParams = MarginLayoutParams(matchParent, wrapContent).apply { margin = dip(6) }
         radius = dip(2).toFloat()
 
         context.verticalLayout {
-            lparams {
-                width = matchParent
-                margin = dip(4)
-            }
+            lparams(width = matchParent) { margin = dip(4) }
 
             relativeLayout {
                 lparams(width = matchParent)
@@ -65,11 +62,7 @@ open class FilterView(context: Context) : CardView(context) {
             }
             frameLayout {
                 id = bodyViewId
-
-                lparams {
-                    width = matchParent
-                    margin = dip(4)
-                }
+                lparams(width = matchParent) { margin = dip(4) }
             }.apply { visibility = View.GONE }
         }.let { super.addView(it) }
 

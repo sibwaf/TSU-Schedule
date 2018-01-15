@@ -3,10 +3,8 @@ package ru.dyatel.tsuschedule.utilities
 import org.json.JSONArray
 import org.json.JSONObject
 
-inline fun <reified T> JSONObject.find(name: String): T {
-    val result = get(name) ?: throw NoSuchElementException()
-    return result as T
-}
+inline fun <reified T> JSONObject.find(name: String): T =
+        get(name) as T? ?: throw NoSuchElementException()
 
 operator fun JSONArray.iterator() = object : Iterator<Any> {
 

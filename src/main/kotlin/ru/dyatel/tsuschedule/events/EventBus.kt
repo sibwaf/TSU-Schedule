@@ -10,7 +10,7 @@ object EventBus {
     private val listeners = EnumMap<Event, EventListenerList>(Event::class.java)
 
     fun subscribe(listener: EventListener, vararg types: Event) {
-        val typeArray = if (types.isEmpty()) Event.values() else types
+        val typeArray = types.takeIf { it.isNotEmpty() } ?: Event.values()
         typeArray.forEach {
             val list = listeners.getOrPut(it, { ArrayList() })
             list += listener

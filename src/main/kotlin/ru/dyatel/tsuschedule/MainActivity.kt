@@ -127,7 +127,8 @@ class MainActivity : SingleActivity(), EventListener {
         EventBus.subscribe(this,
                 Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
 
-        if (!handleUpdateNotification(intent)) doAsync { checkUpdates(updater) }
+        if (!handleUpdateNotification(intent))
+            doAsync { checkUpdates(updater) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -186,11 +187,13 @@ class MainActivity : SingleActivity(), EventListener {
     }
 
     private fun checkUpdates(updater: Updater) {
-        if (!preferences.autoupdate) return
+        if (!preferences.autoupdate)
+            return
 
         val now = DateTime.now(TimeZone.getDefault())
         val shouldCheck = preferences.lastAutoupdate?.plusDays(3)?.lt(now) ?: true
-        if (!shouldCheck) return
+        if (!shouldCheck)
+            return
 
         try {
             val lastKnown = preferences.lastRelease
@@ -283,8 +286,8 @@ class MainActivity : SingleActivity(), EventListener {
                         navigator.replace(HomeScreen())
                     }
 
-                    database.lessonDao.remove(group)
-                    database.filterDao.removeFilters(group)
+                    database.lessons.remove(group)
+                    database.filters.remove(group)
                     preferences.removeGroup(group)
 
                     generateDrawerButtons()

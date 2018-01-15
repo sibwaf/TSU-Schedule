@@ -21,9 +21,11 @@ class UpdateFileProvider : ContentProvider() {
         fun getUriForFile(context: Context, file: File): Uri {
             val relative = file.relativeToOrNull(getUpdateDirectory(context))
                     ?: throw IllegalArgumentException("File is not contained in update directory")
-            if (relative.extension != "apk") throw IllegalArgumentException("File is not an .apk")
+            if (relative.extension != "apk")
+                throw IllegalArgumentException("File is not an .apk")
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return Uri.fromFile(file)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
+                return Uri.fromFile(file)
 
             return Uri.Builder()
                     .scheme("content")

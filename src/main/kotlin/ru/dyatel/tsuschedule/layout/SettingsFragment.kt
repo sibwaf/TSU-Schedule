@@ -20,7 +20,7 @@ import ru.dyatel.tsuschedule.utilities.schedulePreferences
 class SettingsFragment : PreferenceFragment(), EventListener {
 
     private lateinit var updateButton: Preference
-    private var updateButtonCheckingMode = true
+    private var updateAvailable = false
 
     private lateinit var updater: Updater
 
@@ -36,15 +36,18 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
-                if (updateButtonCheckingMode) updater.checkDialog { longSnackbar(view, it) }
-                else updater.installDialog { longSnackbar(view, it)}
+
+                if (updateAvailable)
+                    updater.installDialog { longSnackbar(view, it) }
+                else
+                    updater.checkDialog { longSnackbar(view, it) }
+
                 true
             }
         }
         syncUpdateButton(ctx.schedulePreferences.lastRelease)
 
-        preferenceScreen.findPreference(getString(R.string.preference_version))
-                .summary = BuildConfig.VERSION_NAME
+        preferenceScreen.findPreference(getString(R.string.preference_version)).summary = BuildConfig.VERSION_NAME
 
         EventBus.subscribe(this, Event.PREFERENCES_LATEST_VERSION_CHANGED)
     }
@@ -57,12 +60,11 @@ class SettingsFragment : PreferenceFragment(), EventListener {
     override fun handleEvent(type: Event, payload: Any?) = runOnUiThread { syncUpdateButton(payload as String?) }
 
     private fun syncUpdateButton(lastRelease: String?) {
-        updateButtonCheckingMode = lastRelease == null
-        if (updateButtonCheckingMode)
-            updateButton.setTitle(R.string.preference_update_check_title)
-        else
+        updateAvailable = lastRelease != null
+        if (updateAvailable)
             updateButton.setTitle(R.string.preference_update_install_title)
-
+        else
+            updateButton.setTitle(R.string.preference_update_check_title)
     }
 
 }

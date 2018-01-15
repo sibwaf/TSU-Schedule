@@ -58,16 +58,15 @@ class WeekPagerAdapter(private val context: Context, data: WeekDataContainer) : 
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        if (obj !is Parity) throw IllegalArgumentException("Key must be a Parity instance")
+        if (obj !is Parity)
+            throw IllegalArgumentException("Key must be a Parity instance")
         container.removeView(views.remove(obj))
     }
 
     override fun getPageTitle(position: Int) = pages[position].parity.toText(context)
 
-    fun getPosition(parity: Parity): Int {
-        val index = pages.indexOfFirst { it.parity == parity }
-        if (index == -1) throw IllegalArgumentException("No pages with parity <$parity> exist")
-        return index
-    }
+    fun getPosition(parity: Parity) =
+            pages.indexOfFirst { it.parity == parity }.takeUnless { it == -1 }
+                    ?: throw IllegalArgumentException("No pages with parity <$parity> exist")
 
 }

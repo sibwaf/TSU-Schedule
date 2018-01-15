@@ -23,7 +23,7 @@ class Updater(private val context: Context) {
     private val api = UpdaterApi()
 
     fun fetchUpdateLink(): Release? {
-        api.setTimeout(preferences.connectionTimeout * 1000)
+        api.setTimeout(preferences.connectionTimeout)
 
         val release = api.getLatestRelease(preferences.allowPrerelease)?.takeIf { Release.CURRENT < it }
         preferences.lastRelease = release?.url
@@ -66,9 +66,7 @@ class Updater(private val context: Context) {
 
     fun installDialog(showMessage: (Int) -> Unit = {}) {
         checkDialog().setOnDismissListener {
-            val preferences = context.schedulePreferences
-            val link = preferences.lastRelease
-            if (link == null) {
+            val link = preferences.lastRelease ?: run {
                 showMessage(R.string.update_not_found)
                 return@setOnDismissListener
             }
@@ -80,7 +78,7 @@ class Updater(private val context: Context) {
                 val task = doAsync {
                     try {
                         val file = UpdateFileProvider.getUpdateDirectory(context).resolve("update.apk")
-                        URL(link).download(file, preferences.connectionTimeout * 1000) { value ->
+                        URL(link).download(file, preferences.connectionTimeout) { value ->
                             uiThread { progress = value }
                         }
                         installUpdate(file)

@@ -12,10 +12,10 @@ private const val DB_VERSION = 6
 class DatabaseManager(context: Context) :
         ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
-    val lessonDao = LessonDao(context, this)
-    val filterDao = FilterDao(context, this)
+    val lessons = LessonDao(context, this)
+    val filters = FilterDao(context, this)
 
-    private val parts = setOf(lessonDao, filterDao)
+    private val parts = setOf(lessons, filters)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)

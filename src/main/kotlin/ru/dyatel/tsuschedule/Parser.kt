@@ -20,12 +20,11 @@ class Parser {
     }
 
     fun getLessons(group: String): Set<Lesson> {
-        if (group.isBlank()) throw BadGroupException()
-
         val response = connection.data("group", group).get()
         val result = response.getElementById("results")
 
-        if (result.childNodeSize() <= 1) throw BadGroupException()
+        if (result.childNodeSize() <= 1)
+            throw BadGroupException()
 
         val lessons = HashSet<Lesson>()
         var currentWeekday: String? = null
@@ -51,17 +50,12 @@ class Parser {
                     lessons += builder.build()
                 }
 
-        if (lessons.size == 0) throw EmptyResultException()
-
-        return lessons
+        return lessons.takeIf { it.isNotEmpty() } ?: throw EmptyResultException()
     }
 
     private fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
 
-    private fun <T> Collection<T>.requireSingleOrNull(): T? {
-        if (isEmpty()) return null
-        return singleOrNull() ?: throw ParsingException()
-    }
+    private fun <T> Collection<T>.requireSingleOrNull() = if (isEmpty()) null else requireSingle()
 
 }
 

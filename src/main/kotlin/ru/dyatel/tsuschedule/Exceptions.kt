@@ -36,8 +36,10 @@ class BadGroupException : IllegalArgumentException {
 }
 
 fun Exception.log() {
-    if (BuildConfig.DEBUG) Log.e("ExceptionHandler", "Caught an exception:", this)
-    else Crashlytics.logException(this)
+    if (BuildConfig.DEBUG)
+        Log.e("ExceptionHandler", "Caught an exception:", this)
+    else
+        Crashlytics.logException(this)
 }
 
 fun Exception.handle(showMessage: (Int) -> Unit = {}) {

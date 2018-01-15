@@ -17,13 +17,12 @@ class FilterScreenView(context: Context) : BaseScreenView<FilterScreen>(context)
     private val container: ViewGroup = verticalLayout()
 
     fun attachFilters(filters: List<Filter>, predefinedFilters: List<PredefinedFilter>) {
-        with(container) {
-            removeAllViews()
+        if (filters.any()) TODO("Not implemented")
 
-            if (filters.any()) TODO("Not implemented")
-
-            predefinedFilters.map { it.createView(context) }.forEach { addView(it) }
-        }
+        container.removeAllViews()
+        predefinedFilters
+                .map { it.createView(context) }
+                .forEach { container.addView(it) }
     }
 
 }
@@ -39,7 +38,7 @@ class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
         super.onShow(context)
         EventBus.broadcast(Event.DISABLE_NAVIGATION_DRAWER)
 
-        val separatedFilters = activity.database.filterDao.getFilters(group)
+        val separatedFilters = activity.database.filters.request(group)
                 .partition { it !is PredefinedFilter }
         filters = separatedFilters.first
         predefinedFilters = separatedFilters.second.map { it as PredefinedFilter }
@@ -48,7 +47,7 @@ class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
     }
 
     override fun onHide(context: Context) {
-        activity.database.filterDao.updateFilters(group, filters + predefinedFilters)
+        activity.database.filters.update(group, filters + predefinedFilters)
 
         EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
         super.onHide(context)

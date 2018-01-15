@@ -3,11 +3,11 @@ package ru.dyatel.tsuschedule.layout
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import org.jetbrains.anko.find
+import org.jetbrains.anko.layoutInflater
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.Lesson
 import java.util.ArrayList
@@ -40,8 +40,8 @@ class WeekdayListAdapter : RecyclerView.Adapter<WeekdayListAdapter.Holder>() {
     private val weekdays = ArrayList<Weekday>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.weekday, parent, false)
-        return Holder(view)
+        val inflater = parent.context.layoutInflater
+        return Holder(inflater.inflate(R.layout.weekday, parent, false))
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
