@@ -113,8 +113,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         try {
             val data = parser.getLessons(group)
-            // TODO: check if group still exists
-            lessons.update(group, data)
+            if (group in preferences.groups) lessons.update(group, data)
         } catch (e: Exception) {
             EventBus.broadcast(Event.DATA_UPDATE_FAILED)
             uiThread { e.handle { longSnackbar(view, it) } }
