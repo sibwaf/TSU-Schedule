@@ -253,6 +253,8 @@ class MainActivity : SingleActivity(), EventListener {
                         selectedGroup = group
                         drawer.closeDrawer()
 
+                        EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
+
                         dismiss()
                     }
                 }
