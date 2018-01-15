@@ -252,6 +252,8 @@ class MainActivity : SingleActivity(), EventListener {
                         generateDrawerButtons()
                         selectedGroup = group
                         drawer.closeDrawer()
+
+                        dismiss()
                     }
                 }
     }
