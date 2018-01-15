@@ -102,7 +102,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
         super.onHide(context)
     }
 
-    override fun getTitle(context: Context) = context.getString(R.string.screen_schedule)!!
+    override fun getTitle(context: Context) = context.getString(R.string.screen_schedule, group)!!
 
     fun updateData() = doAsync {
         val context = context ?: return@doAsync
