@@ -120,6 +120,7 @@ class MainActivity : SingleActivity(), EventListener {
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withShowDrawerOnFirstLaunch(true)
+                .withSavedInstance(savedInstanceState)
                 .build()
 
         generateDrawerButtons()
@@ -129,6 +130,11 @@ class MainActivity : SingleActivity(), EventListener {
 
         if (!handleUpdateNotification(intent))
             doAsync { checkUpdates(updater) }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        selectedGroup = preferences.group
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
