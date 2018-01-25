@@ -88,13 +88,15 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
     override fun createView(context: Context) = ScheduleView(context).apply { bindData(weeks) }
 
-    override fun onShow(context: Context?) {
+    override fun onShow(context: Context) {
         super.onShow(context)
 
         lessons = activity.database.lessons
 
         EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
         handleEvent(Event.DATA_UPDATED, null)
+
+        context.schedulePreferences.group = group
     }
 
     override fun onHide(context: Context?) {
