@@ -71,8 +71,6 @@ class MainActivity : SingleActivity(), EventListener {
         set(value) {
             val id = preferences.groups.indexOf(value) + SCHEDULE_SCREEN_ID_START
             drawer.setSelection(id.toLong())
-
-            value?.let { preferences.group = it }
         }
 
     override fun createNavigator() = Navigator
@@ -285,7 +283,7 @@ class MainActivity : SingleActivity(), EventListener {
                     if (groups.size > 1) {
                         val index = groups.indexOf(group)
                         newGroup = if (index == groups.size - 1) groups[index - 1] else groups[index + 1]
-                        selectedGroup = newGroup
+                        navigator.replace(ScheduleScreen(newGroup))
                     } else {
                         preferences.group = ""
                         newGroup = null
