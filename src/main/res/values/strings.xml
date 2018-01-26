@@ -5,6 +5,7 @@
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 
+    <string name="menu_filters">Фильтры</string>
     <string name="menu_delete_group">Удалить</string>
 
     <string name="dialog_ok">ОК</string>
