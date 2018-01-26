@@ -160,7 +160,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         drawer.addItem(PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_plus)
-                .withName(R.string.button_add_group)
+                .withName(R.string.drawer_add_group)
                 .withSelectable(false)
                 .withOnDrawerItemClickListener { _, _, _ -> showAddGroupDialog(); true })
 
