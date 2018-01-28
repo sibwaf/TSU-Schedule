@@ -44,13 +44,13 @@ class PreferenceScreen : Screen<PreferenceView>() {
 
     override fun onShow(context: Context) {
         super.onShow(context)
-        EventBus.broadcast(Event.DISABLE_NAVIGATION_DRAWER)
+        EventBus.broadcast(Event.SET_DRAWER_ENABLED, false)
         view.attachFragment(activity.fragmentManager)
     }
 
     override fun onHide(context: Context?) {
         view.detachFragment(activity.fragmentManager)
-        EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
+        EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
         super.onHide(context)
     }
 
