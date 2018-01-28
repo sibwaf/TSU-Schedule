@@ -36,7 +36,7 @@ class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
 
     override fun onShow(context: Context) {
         super.onShow(context)
-        EventBus.broadcast(Event.DISABLE_NAVIGATION_DRAWER)
+        EventBus.broadcast(Event.SET_DRAWER_ENABLED, false)
 
         val separatedFilters = activity.database.filters.request(group)
                 .partition { it !is PredefinedFilter }
@@ -49,7 +49,7 @@ class FilterScreen(private val group: String) : Screen<FilterScreenView>() {
     override fun onHide(context: Context) {
         activity.database.filters.update(group, filters + predefinedFilters)
 
-        EventBus.broadcast(Event.ENABLE_NAVIGATION_DRAWER)
+        EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
         super.onHide(context)
     }
 

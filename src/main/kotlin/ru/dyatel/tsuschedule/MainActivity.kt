@@ -95,6 +95,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
+        handleEvent(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         val header = ctx.frameLayout {
             parityIndicator = textView {
@@ -124,9 +125,7 @@ class MainActivity : SingleActivity(), EventListener {
         generateDrawerButtons()
 
         EventBus.subscribe(this,
-                Event.SET_TOOLBAR_SHADOW_ENABLED,
-                Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
-        handleEvent(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
+                Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.NAVIGATION_TO)
 
         if (!handleUpdateNotification(intent))
             doAsync { checkUpdates(updater) }
@@ -304,25 +303,27 @@ class MainActivity : SingleActivity(), EventListener {
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
-        val toggle = drawer.actionBarDrawerToggle
-        val layout = drawer.drawerLayout
-        val actionBar = supportActionBar
-
         when (type) {
             Event.SET_TOOLBAR_SHADOW_ENABLED -> {
                 val enabled = payload as Boolean
                 val elevation = resources.getDimension(R.dimen.elevation)
                 ViewCompat.setElevation(toolbar, if (enabled) elevation else 0f)
             }
-            Event.DISABLE_NAVIGATION_DRAWER -> {
-                toggle.isDrawerIndicatorEnabled = false
-                actionBar?.setDisplayHomeAsUpEnabled(true)
-                layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-            }
-            Event.ENABLE_NAVIGATION_DRAWER -> {
-                actionBar?.setDisplayHomeAsUpEnabled(false)
-                toggle.isDrawerIndicatorEnabled = true
-                layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            Event.SET_DRAWER_ENABLED -> {
+                val toggle = drawer.actionBarDrawerToggle
+                val layout = drawer.drawerLayout
+                val actionBar = supportActionBar!!
+
+                val enabled = payload as Boolean
+                if (enabled) {
+                    actionBar.setDisplayHomeAsUpEnabled(false)
+                    toggle.isDrawerIndicatorEnabled = true
+                    layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                } else {
+                    toggle.isDrawerIndicatorEnabled = false
+                    actionBar.setDisplayHomeAsUpEnabled(true)
+                    layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
             }
             Event.NAVIGATION_TO -> selectedGroup = payload as String
         }
