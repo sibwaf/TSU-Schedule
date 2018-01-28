@@ -58,6 +58,7 @@ private const val SCHEDULE_SCREEN_ID_START = 1000
 
 class MainActivity : SingleActivity(), EventListener {
 
+    private lateinit var toolbar: Toolbar
     private lateinit var drawer: Drawer
     private lateinit var parityIndicator: TextView
 
@@ -92,8 +93,7 @@ class MainActivity : SingleActivity(), EventListener {
         val updater = Updater(ctx)
         updater.handleMigration()
 
-        val toolbar = find<Toolbar>(R.id.toolbar)
-        ViewCompat.setElevation(toolbar, resources.getDimension(R.dimen.elevation))
+        toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val header = ctx.frameLayout {
@@ -124,7 +124,9 @@ class MainActivity : SingleActivity(), EventListener {
         generateDrawerButtons()
 
         EventBus.subscribe(this,
+                Event.SET_TOOLBAR_SHADOW_ENABLED,
                 Event.DISABLE_NAVIGATION_DRAWER, Event.ENABLE_NAVIGATION_DRAWER, Event.NAVIGATION_TO)
+        handleEvent(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         if (!handleUpdateNotification(intent))
             doAsync { checkUpdates(updater) }
@@ -160,7 +162,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         drawer.addItem(PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_plus)
-                .withName(R.string.drawer_add_group)
+                .withName(R.string.button_add_group)
                 .withSelectable(false)
                 .withOnDrawerItemClickListener { _, _, _ -> showAddGroupDialog(); true })
 
@@ -307,6 +309,11 @@ class MainActivity : SingleActivity(), EventListener {
         val actionBar = supportActionBar
 
         when (type) {
+            Event.SET_TOOLBAR_SHADOW_ENABLED -> {
+                val enabled = payload as Boolean
+                val elevation = resources.getDimension(R.dimen.elevation)
+                ViewCompat.setElevation(toolbar, if (enabled) elevation else 0f)
+            }
             Event.DISABLE_NAVIGATION_DRAWER -> {
                 toggle.isDrawerIndicatorEnabled = false
                 actionBar?.setDisplayHomeAsUpEnabled(true)

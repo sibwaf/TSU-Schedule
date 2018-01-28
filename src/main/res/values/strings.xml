@@ -8,6 +8,8 @@
     <string name="menu_filters">Фильтры</string>
     <string name="menu_delete_group">Удалить</string>
 
+    <string name="form_hint_group_index">Индекс группы</string>
+
     <string name="dialog_ok">ОК</string>
     <string name="dialog_cancel">Отмена</string>
 
@@ -20,8 +22,9 @@
         Вместе с ней будут удалены все настройки фильтров и кэш расписания.
     </string>
 
-    <string name="drawer_add_group">Добавить группу</string>
+    <string name="button_add_group">Добавить группу</string>
 
+    <string name="screen_home">Начальный экран</string>
     <string name="screen_schedule">Расписание (%s)</string>
     <string name="screen_filters">Фильтры (%s)</string>
     <string name="screen_settings">Настройки</string>
