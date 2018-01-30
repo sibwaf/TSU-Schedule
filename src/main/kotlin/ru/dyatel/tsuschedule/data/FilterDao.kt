@@ -127,7 +127,7 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
 
         if (oldVersion < 6) {
             val group = preferences.group
-            if (group in preferences.groups) {
+            if (group != null && group in preferences.groups) {
                 val type = TEXT.render()
                 db.execSQL("ALTER TABLE $TABLE_FILTERS ADD COLUMN ${FilterColumns.GROUP} $type")
                 db.update(TABLE_FILTERS, FilterColumns.GROUP to group).exec()
