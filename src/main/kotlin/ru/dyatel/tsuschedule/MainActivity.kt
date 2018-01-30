@@ -118,7 +118,6 @@ class MainActivity : SingleActivity(), EventListener {
                 .withActionBarDrawerToggleAnimated(true)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
-                .withShowDrawerOnFirstLaunch(true)
                 .withSavedInstance(savedInstanceState)
                 .build()
 
