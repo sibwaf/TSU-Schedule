@@ -132,7 +132,7 @@ class MainActivity : SingleActivity(), EventListener {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        selectedGroup = preferences.group
+        preferences.group?.let { selectedGroup = it }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -285,7 +285,7 @@ class MainActivity : SingleActivity(), EventListener {
                         newGroup = if (index == groups.size - 1) groups[index - 1] else groups[index + 1]
                         navigator.replace(ScheduleScreen(newGroup))
                     } else {
-                        preferences.group = ""
+                        preferences.group = null
                         newGroup = null
                         navigator.replace(HomeScreen())
                     }

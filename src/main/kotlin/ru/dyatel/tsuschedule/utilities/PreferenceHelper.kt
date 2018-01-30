@@ -46,8 +46,8 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getBoolean(preference, fallback)
         }
 
-    var group: String
-        get() = dataPreferences.getString(DATA_GROUP, "")
+    var group: String?
+        get() = dataPreferences.getString(DATA_GROUP, null)?.takeIf { it.isNotBlank() }
         set(value) = dataPreferences.editAndApply { putString(DATA_GROUP, value) }
 
     val groups: List<String>

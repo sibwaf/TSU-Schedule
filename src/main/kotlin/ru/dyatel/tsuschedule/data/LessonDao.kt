@@ -101,7 +101,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
 
         if (oldVersion < 6) {
             val group = preferences.group
-            if (group in preferences.groups) {
+            if (group != null && group in preferences.groups) {
                 val type = TEXT.render()
                 for (table in TABLES) {
                     db.execSQL("ALTER TABLE $table ADD COLUMN ${Columns.GROUP} $type")
