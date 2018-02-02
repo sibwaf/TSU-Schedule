@@ -125,7 +125,7 @@ class MainActivity : SingleActivity(), EventListener {
         generateDrawerButtons()
 
         EventBus.subscribe(this,
-                Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.NAVIGATION_TO)
+                Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
 
         if (!handleUpdateNotification(intent))
             doAsync { checkUpdates(updater) }
@@ -255,12 +255,7 @@ class MainActivity : SingleActivity(), EventListener {
                                 return@setOnClickListener
                             }
 
-                            preferences.addGroup(group)
-
-                            generateDrawerButtons()
-                            selectedGroup = group
-                            drawer.closeDrawer()
-
+                            handleEvent(Event.ADD_GROUP, group)
                             EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
 
                             dismiss()
@@ -328,7 +323,17 @@ class MainActivity : SingleActivity(), EventListener {
                     layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
             }
-            Event.NAVIGATION_TO -> selectedGroup = payload as String
+            Event.ADD_GROUP -> {
+                val group = payload as String
+
+                preferences.addGroup(group)
+
+                generateDrawerButtons()
+                selectedGroup = group
+                drawer.closeDrawer()
+
+                EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
+            }
         }
     }
 
