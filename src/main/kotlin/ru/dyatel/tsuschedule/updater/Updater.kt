@@ -7,9 +7,11 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.uiThread
+import ru.dyatel.tsuschedule.BadGroupException
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.File
@@ -39,7 +41,12 @@ class Updater(private val context: Context) {
 
     fun handleMigration() {
         if (preferences.lastUsedVersion <= 11) {
-            preferences.group?.let { preferences.addGroup(it) }
+            try {
+                preferences.group
+                        ?.let { Validator.validateGroup(it) }
+                        ?.let { preferences.addGroup(it) }
+            } catch (e: BadGroupException) {
+            }
         }
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
     }
