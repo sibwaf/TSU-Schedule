@@ -87,12 +87,14 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
                 LessonType.PRACTICE -> R.string.lesson_type_practice
                 LessonType.LECTURE -> R.string.lesson_type_lecture
                 LessonType.LABORATORY -> R.string.lesson_type_laboratory
-            }.let { context.getString(it) }
+                LessonType.UNKNOWN -> null
+            }?.let { context.getString(it) }
 
             typeMarker.backgroundResource = when (lesson.type) {
                 LessonType.PRACTICE -> R.color.practice_color
                 LessonType.LECTURE -> R.color.lecture_color
                 LessonType.LABORATORY -> R.color.laboratory_color
+                LessonType.UNKNOWN -> R.color.unknown_color
             }
             time.text = lesson.time
             auditory.text = lesson.auditory

@@ -17,5 +17,6 @@
     <color name="practice_color">@color/md_light_green_A400</color>
     <color name="lecture_color">@color/md_light_blue_A400</color>
     <color name="laboratory_color">@color/md_red_A400</color>
+    <color name="unknown_color">@color/md_grey_700</color>
 
 </resources>
