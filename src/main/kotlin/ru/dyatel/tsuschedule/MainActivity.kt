@@ -50,6 +50,7 @@ import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
+import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
@@ -246,25 +247,28 @@ class MainActivity : SingleActivity(), EventListener {
                 .show()
                 .apply {
                     getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { _ ->
-                        val group = editor.text.toString()
-                        if (group.isBlank()) {
+                        try {
+                            val group = Validator.validateGroup(editor.text.toString())
+
+                            if (group in preferences.groups) {
+                                setMessage(getString(R.string.dialog_add_group_message_duplicate))
+                                return@setOnClickListener
+                            }
+
+                            preferences.addGroup(group)
+
+                            generateDrawerButtons()
+                            selectedGroup = group
+                            drawer.closeDrawer()
+
+                            EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
+
+                            dismiss()
+                        } catch (e: BlankGroupIndexException) {
                             setMessage(getString(R.string.dialog_add_group_message_blank))
-                            return@setOnClickListener
+                        } catch (e: ShortGroupIndexException) {
+                            setMessage(getString(R.string.dialog_add_group_message_short))
                         }
-                        if (group in preferences.groups) {
-                            setMessage(getString(R.string.dialog_add_group_message_duplicate))
-                            return@setOnClickListener
-                        }
-
-                        preferences.addGroup(group)
-
-                        generateDrawerButtons()
-                        selectedGroup = group
-                        drawer.closeDrawer()
-
-                        EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
-
-                        dismiss()
                     }
                 }
     }

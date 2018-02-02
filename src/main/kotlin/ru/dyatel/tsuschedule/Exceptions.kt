@@ -9,30 +9,38 @@ import java.lang.IllegalArgumentException
 import java.net.SocketTimeoutException
 
 open class ParsingException : RuntimeException {
-
     constructor() : super()
     constructor(message: String) : super(message)
     constructor(message: String, cause: Throwable) : super(message, cause)
     constructor(cause: Throwable) : super(cause)
-
 }
 
 class EmptyResultException : ParsingException {
-
     constructor() : super()
     constructor(message: String) : super(message)
     constructor(message: String, cause: Throwable) : super(message, cause)
     constructor(cause: Throwable) : super(cause)
-
 }
 
-class BadGroupException : IllegalArgumentException {
-
+open class BadGroupException : IllegalArgumentException {
     constructor() : super()
     constructor(message: String) : super(message)
     constructor(message: String, cause: Throwable) : super(message, cause)
     constructor(cause: Throwable) : super(cause)
+}
 
+class BlankGroupIndexException : BadGroupException {
+    constructor() : super()
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
+}
+
+class ShortGroupIndexException : BadGroupException {
+    constructor() : super()
+    constructor(message: String) : super(message)
+    constructor(message: String, cause: Throwable) : super(message, cause)
+    constructor(cause: Throwable) : super(cause)
 }
 
 fun Exception.log() {
