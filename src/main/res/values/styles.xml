@@ -19,17 +19,19 @@
     </style>
 
     <style name="HomeFormHintTheme" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/text_title_color</item>
+        <item name="android:textColor">@color/home_text_color</item>
     </style>
 
-    <style name="HomeFormErrorTheme" parent="TextAppearance.AppCompat.Small"></style>
+    <style name="HomeFormErrorTheme" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/home_error_color</item>
+    </style>
 
     <style name="HomeFormEditTextTheme" parent="Widget.AppCompat.EditText">
         <item name="android:textSize">18sp</item>
-        <item name="android:textColorPrimary">@color/text_title_color</item>
+        <item name="android:textColorPrimary">@color/home_text_color</item>
 
-        <item name="colorControlNormal">@color/text_title_color</item>
-        <item name="colorAccent">@color/text_title_color</item>
+        <item name="colorControlNormal">@color/home_text_color</item>
+        <item name="colorAccent">@color/home_text_color</item>
     </style>
 
     <style name="WeekdayTheme">
