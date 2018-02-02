@@ -10,6 +10,6 @@ enum class Event {
 
     PREFERENCES_LATEST_VERSION_CHANGED,
 
-    NAVIGATION_TO
+    ADD_GROUP
 
 }

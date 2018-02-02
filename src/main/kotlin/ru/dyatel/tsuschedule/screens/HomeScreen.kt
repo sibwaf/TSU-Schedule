@@ -21,9 +21,12 @@ import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.singleLine
 import org.jetbrains.anko.topOf
 import org.jetbrains.anko.verticalLayout
+import ru.dyatel.tsuschedule.BlankGroupIndexException
 import ru.dyatel.tsuschedule.R
+import ru.dyatel.tsuschedule.ShortGroupIndexException
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.utilities.Validator
 
 class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
 
@@ -51,7 +54,7 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
             verticalLayout {
                 id = formContainerId
 
-                textInputLayout {
+                val input = textInputLayout {
                     setHintTextAppearance(R.style.HomeFormHintTheme)
                     setErrorTextAppearance(R.style.HomeFormErrorTheme)
 
@@ -64,7 +67,18 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
                     }
                 }.lparams(width = dip(300))
 
-                button(R.string.button_add_group).lparams(width = dip(300))
+                button(R.string.button_add_group) {
+                    setOnClickListener {
+                        try {
+                            val group = Validator.validateGroup(input.editText!!.text.toString())
+                            EventBus.broadcast(Event.ADD_GROUP, group)
+                        } catch (e: BlankGroupIndexException) {
+                            input.error = context.getString(R.string.form_error_blank_group)
+                        } catch (e: ShortGroupIndexException) {
+                            input.error = context.getString(R.string.form_error_short_group)
+                        }
+                    }
+                }.lparams(width = dip(300))
             }.lparams {
                 centerInParent()
             }
