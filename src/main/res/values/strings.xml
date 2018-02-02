@@ -5,6 +5,10 @@
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 
+    <string name="lesson_type_practice">Практика</string>
+    <string name="lesson_type_lecture">Лекция</string>
+    <string name="lesson_type_laboratory">Лабораторная</string>
+
     <string name="menu_filters">Фильтры</string>
     <string name="menu_delete_group">Удалить</string>
 
