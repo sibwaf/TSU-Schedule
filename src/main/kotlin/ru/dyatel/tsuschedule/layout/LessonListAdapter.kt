@@ -27,7 +27,7 @@ import java.util.ArrayList
 class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
 
     private companion object {
-        val typeViewId = View.generateViewId()
+        val typeMarkerViewId = View.generateViewId()
         val timeViewId = View.generateViewId()
         val auditoryViewId = View.generateViewId()
         val disciplineViewId = View.generateViewId()
@@ -35,7 +35,7 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
     }
 
     class Holder(v: View) : RecyclerView.ViewHolder(v) {
-        val type = v.find<View>(typeViewId)
+        val typeMarker = v.find<View>(typeMarkerViewId)
         val time = v.find<TextView>(timeViewId)
         val auditory = v.find<TextView>(auditoryViewId)
         val discipline = v.find<TextView>(disciplineViewId)
@@ -48,10 +48,10 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
         val view = parent.context.linearLayout {
             lparams(width = matchParent) {
                 orientation = LinearLayout.HORIZONTAL
-                margin = dip(1)
+                margin = dip(2)
             }
 
-            view { id = typeViewId }.lparams(width = dip(4), height = matchParent) {
+            view { id = typeMarkerViewId }.lparams(width = dip(4), height = matchParent) {
                 rightMargin = dip(4)
             }
 
@@ -81,14 +81,22 @@ class LessonListAdapter : RecyclerView.Adapter<LessonListAdapter.Holder>() {
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val lesson = lessons[position]
         with(holder) {
-            type.backgroundResource = when (lesson.type) {
+            val context = itemView.context
+
+            val typeText = when (lesson.type) {
+                LessonType.PRACTICE -> R.string.lesson_type_practice
+                LessonType.LECTURE -> R.string.lesson_type_lecture
+                LessonType.LABORATORY -> R.string.lesson_type_laboratory
+            }.let { context.getString(it) }
+
+            typeMarker.backgroundResource = when (lesson.type) {
                 LessonType.PRACTICE -> R.color.practice_color
                 LessonType.LECTURE -> R.color.lecture_color
                 LessonType.LABORATORY -> R.color.laboratory_color
             }
             time.text = lesson.time
             auditory.text = lesson.auditory
-            discipline.text = lesson.discipline
+            discipline.text = typeText?.let { "${lesson.discipline} ($typeText)" } ?: lesson.discipline
             teacher.text = lesson.teacher
 
             auditory.hideIf { lesson.auditory == null }
