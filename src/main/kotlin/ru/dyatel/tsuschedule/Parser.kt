@@ -102,26 +102,35 @@ private class LessonBuilder {
     }
 
     fun parseTime(text: String) {
-        time = TIME_PATTERN.find(text.trim())?.value ?:
-                throw ParsingException("Can't parse lesson's time from <$text>")
+        time = TIME_PATTERN.find(text.trim())?.value
+                ?: throw ParsingException("Can't parse lesson's time from <$text>")
     }
 
     fun parseDescription(text: String) {
-        text.replace(BLANK_PARENTHESES_PATTERN, "").let {
-            val match = SUBGROUP_PATTERN.find(it)
-            if (match != null) {
-                subgroup = match.groupValues[1].toInt()
-                it.removeRange(match.range)
-            } else {
-                subgroup = null
-                it
-            }
-        }.let {
-            TYPE_PATTERN.find(it)?.let { match ->
-                type = TYPE_MAPPING[match.groupValues[1]]!!
-                it.removeRange(match.range)
-            } ?: throw ParsingException("Can't determine lesson type from <$text>")
-        }.trim().removeSuffix(",").trim().let { discipline = it }
+        text.replace(BLANK_PARENTHESES_PATTERN, "")
+                .let {
+                    val match = SUBGROUP_PATTERN.find(it)
+                    if (match != null) {
+                        subgroup = match.groupValues[1].toInt()
+                        it.removeRange(match.range)
+                    } else {
+                        subgroup = null
+                        it
+                    }
+                }
+                .let {
+                    val match = TYPE_PATTERN.find(it)
+                    if (match != null) {
+                        type = TYPE_MAPPING[match.groupValues[1]]!!
+                        it.removeRange(match.range)
+                    } else {
+                        type = LessonType.UNKNOWN
+                        it
+                    }
+                }
+                .trim()
+                .removeSuffix(",").trim()
+                .let { discipline = it }
     }
 
     fun parseAuditory(text: String?) {

@@ -19,5 +19,5 @@ data class Lesson(
 }
 
 enum class LessonType {
-    PRACTICE, LECTURE, LABORATORY
+    PRACTICE, LECTURE, LABORATORY, UNKNOWN
 }
