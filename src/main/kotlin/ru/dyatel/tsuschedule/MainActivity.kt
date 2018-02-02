@@ -21,6 +21,7 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
+import com.mikepenz.materialize.util.UIUtils
 import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
@@ -107,16 +108,15 @@ class MainActivity : SingleActivity(), EventListener {
                 width = matchParent
                 height = wrapContent
                 padding = dip(4)
+                topMargin = UIUtils.getStatusBarHeight(ctx)
             }
         }
 
         drawer = DrawerBuilder()
                 .withActivity(this)
-                .withRootView(R.id.drawer_layout)
                 .withToolbar(toolbar)
                 .withStickyHeader(header)
                 .withTranslucentStatusBar(false)
-                .withActionBarDrawerToggleAnimated(true)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withSavedInstance(savedInstanceState)

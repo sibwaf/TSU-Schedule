@@ -12,16 +12,9 @@
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/ToolbarTheme"/>
 
-    <FrameLayout
-            android:id="@+id/drawer_layout"
+    <com.wealthfront.magellan.ScreenContainer
+            android:id="@id/magellan_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <com.wealthfront.magellan.ScreenContainer
-                android:id="@id/magellan_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-    </FrameLayout>
+            android:layout_height="match_parent"/>
 
 </LinearLayout>
