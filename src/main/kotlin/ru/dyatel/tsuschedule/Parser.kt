@@ -24,7 +24,7 @@ class Parser {
         val result = response.getElementById("results")
 
         if (result.childNodeSize() <= 1)
-            throw BadGroupException()
+            throw EmptyResultException()
 
         val lessons = HashSet<Lesson>()
         var currentWeekday: String? = null
@@ -50,7 +50,7 @@ class Parser {
                     lessons += builder.build()
                 }
 
-        return lessons.takeIf { it.isNotEmpty() } ?: throw EmptyResultException()
+        return lessons
     }
 
     private fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
