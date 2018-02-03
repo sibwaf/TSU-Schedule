@@ -1,9 +1,8 @@
 package ru.dyatel.tsuschedule.parsing
 
 import org.junit.Test
-import ru.dyatel.tsuschedule.BadGroupException
+import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.Parser
-import java.util.HashSet
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -20,23 +19,23 @@ class ParserTest {
         val lessons = parser.getLessons(group)
         assertFalse(lessons.isEmpty(), "No lessons were received")
 
-        val weekdays = lessons
+        val weekdayCount = lessons
                 .map { it.weekday }
                 .distinct()
-                .toCollection(HashSet())
+                .count()
 
-        assertTrue(weekdays.size >= 3, "Got too few weekdays")
-    }
-
-    @Test fun testNoGroup() {
-        assertFailsWith<BadGroupException> { check("") }
+        assertTrue(weekdayCount > 1, "Got too few weekdays")
     }
 
     @Test fun testBadGroup() {
-        assertFailsWith<BadGroupException> { check("221") }
+        assertFailsWith<EmptyResultException> { check("221") }
     }
 
     @Test fun test221251() = check("221251")
+
+    @Test fun test221261() = check("221261")
+
+    @Test fun test221271() = check("221271")
 
     @Test fun test230751() = check("230751")
 
@@ -49,5 +48,7 @@ class ParserTest {
     @Test fun test520761() = check("520761")
 
     @Test fun test622641() = check("622641")
+
+    @Test fun test930169() = check("930169")
 
 }
