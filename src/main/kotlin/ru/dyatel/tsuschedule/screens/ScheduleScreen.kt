@@ -13,6 +13,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
+import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.Parser
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.LessonDao
@@ -63,6 +64,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
             setupWithViewPager(pager)
         }
 
+        // TODO: bind data update events to groups
         swipeRefresh = find<SwipeRefreshLayout>(R.id.swipe_refresh).apply {
             setOnRefreshListener { screen.updateData() }
             setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
@@ -118,6 +120,9 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
             try {
                 val data = parser.getLessons(group)
+                if (data.isEmpty())
+                    throw EmptyResultException()
+
                 if (group in preferences.groups)
                     lessons.update(group, data)
             } catch (e: Exception) {

@@ -57,7 +57,6 @@ fun Exception.handle(showMessage: (Int) -> Unit = {}) {
             log()
             R.string.failure_parsing_failed
         }
-        is BadGroupException -> R.string.failure_wrong_group_index
         is SocketTimeoutException -> R.string.failure_connection_timeout
         is IOException -> R.string.failure_unsuccessful_request
         else -> throw this
