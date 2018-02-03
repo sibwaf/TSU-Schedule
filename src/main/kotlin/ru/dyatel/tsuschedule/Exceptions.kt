@@ -44,10 +44,10 @@ class ShortGroupIndexException : BadGroupException {
 }
 
 fun Exception.log() {
-    if (BuildConfig.DEBUG)
-        Log.e("ExceptionHandler", "Caught an exception:", this)
-    else
+    if (BuildConfig.ENABLE_CRASHLYTICS)
         Crashlytics.logException(this)
+    else
+        Log.e("ExceptionHandler", "Caught an exception:", this)
 }
 
 fun Exception.handle(showMessage: (Int) -> Unit = {}) {
