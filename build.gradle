@@ -3,8 +3,8 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
         maven { url "https://maven.fabric.io/public" }
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:2.3.3"
@@ -21,12 +21,15 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "io.fabric"
 
+Properties properties = new Properties()
+properties.load(rootProject.file("local.properties").newInputStream())
+
+def enableSigning = properties.getProperty("signing.storeFile") != null
+def enableCrashlytics = properties.getProperty("fabric.key") != null
+
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
-
-    Properties properties = new Properties()
-    properties.load(rootProject.file("local.properties").newDataInputStream())
 
     defaultConfig {
         applicationId "ru.dyatel.tsuschedule"
@@ -35,24 +38,35 @@ android {
         versionCode 11
         versionName "1.0.1"
 
-        manifestPlaceholders = [fabricKey: properties.getProperty("fabric.key")]
+        manifestPlaceholders = ["fabricKey": enableCrashlytics ? properties.getProperty("fabric.key") : ""]
     }
 
-    signingConfigs {
-        release {
-            storeFile file(properties.get("signing.storeFile"))
-            storePassword properties.get("signing.storePassword")
-            keyAlias properties.get("signing.keyAlias")
-            keyPassword properties.get("signing.keyPassword")
+    if (enableSigning) {
+        signingConfigs {
+            release {
+                storeFile file(properties.getProperty("signing.storeFile"))
+                storePassword properties.getProperty("signing.storePassword")
+                keyAlias properties.getProperty("signing.keyAlias")
+                keyPassword properties.getProperty("signing.keyPassword")
+            }
         }
     }
 
     buildTypes {
+        debug {
+            ext.enableCrashlytics = false
+            buildConfigField "boolean", "ENABLE_CRASHLYTICS", "false"
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
 
-            signingConfig signingConfigs.release
+            if (enableSigning) {
+                signingConfig signingConfigs.release
+            }
+
+            ext.enableCrashlytics = enableCrashlytics
+            buildConfigField "boolean", "ENABLE_CRASHLYTICS", "$enableCrashlytics"
         }
     }
 

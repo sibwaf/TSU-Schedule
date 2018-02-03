@@ -13,7 +13,7 @@ class ScheduleApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        if (!BuildConfig.DEBUG)
+        if (BuildConfig.ENABLE_CRASHLYTICS)
             Fabric.with(this, Crashlytics())
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
