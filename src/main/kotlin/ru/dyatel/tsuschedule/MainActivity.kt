@@ -97,7 +97,6 @@ class MainActivity : SingleActivity(), EventListener {
 
         toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
-        handleEvent(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         val header = ctx.frameLayout {
             parityIndicator = textView {
@@ -126,6 +125,7 @@ class MainActivity : SingleActivity(), EventListener {
 
         EventBus.subscribe(this,
                 Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
+        EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         if (!handleUpdateNotification(intent))
             doAsync { checkUpdates(updater) }
@@ -255,8 +255,7 @@ class MainActivity : SingleActivity(), EventListener {
                                 return@setOnClickListener
                             }
 
-                            handleEvent(Event.ADD_GROUP, group)
-                            EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
+                            EventBus.broadcast(Event.ADD_GROUP, group)
 
                             dismiss()
                         } catch (e: BlankGroupIndexException) {

@@ -95,8 +95,8 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         lessons = activity.database.lessons
 
-        EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATE_FAILED, Event.DATA_UPDATED)
-        handleEvent(Event.DATA_UPDATED, null)
+        EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATED)
+        handleEvent(Event.DATA_UPDATED, group)
 
         context.schedulePreferences.group = group
     }
@@ -126,26 +126,28 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
                 if (group in preferences.groups)
                     lessons.update(group, data)
             } catch (e: Exception) {
-                EventBus.broadcast(Event.DATA_UPDATE_FAILED)
-                uiThread { e.handle { longSnackbar(view, it) } }
+                uiThread {
+                    view.isRefreshing = false
+                    e.handle { longSnackbar(view, it) }
+                }
             }
         }
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
-        val context = context!!
-
-        if (type == Event.INITIAL_DATA_FETCH && (payload as String) == group) {
-            updateData()
+        if (payload as String != group)
             return
-        }
 
-        if (type == Event.DATA_UPDATED) {
-            val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
-            context.runOnUiThread { weeks.updateData(odd, even) }
+        when (type) {
+            Event.INITIAL_DATA_FETCH -> updateData()
+            Event.DATA_UPDATED -> {
+                val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
+                context!!.runOnUiThread {
+                    weeks.updateData(odd, even)
+                    view.isRefreshing = false
+                }
+            }
         }
-
-        context.runOnUiThread { view.isRefreshing = false }
     }
 
     override fun onUpdateMenu(menu: Menu) {
