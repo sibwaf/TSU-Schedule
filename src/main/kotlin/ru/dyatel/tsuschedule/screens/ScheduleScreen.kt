@@ -26,6 +26,7 @@ import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
+import ru.dyatel.tsuschedule.utilities.ctx
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
@@ -80,9 +81,6 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
 
 class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventListener {
 
-    private val context: Context?
-        get() = activity
-
     private val weeks = WeekDataContainer()
 
     private lateinit var lessons: LessonDao
@@ -110,7 +108,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun getTitle(context: Context) = context.getString(R.string.screen_schedule, group)!!
 
     fun fetchLessons() {
-        val preferences = context!!.schedulePreferences
+        val preferences = ctx!!.schedulePreferences
 
         AsyncFetchStateKeeper.setState(group, true)
 
@@ -146,7 +144,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
         if (payload as String != group)
             return
 
-        context!!.runOnUiThread {
+        ctx!!.runOnUiThread {
             when (type) {
                 Event.INITIAL_DATA_FETCH -> fetchLessons()
                 Event.DATA_UPDATED -> loadLessons()
