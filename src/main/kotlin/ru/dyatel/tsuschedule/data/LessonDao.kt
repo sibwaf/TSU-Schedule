@@ -16,7 +16,8 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
-class LessonDao(private val context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager), EventListener {
+class LessonDao(private val context: Context, databaseManager: DatabaseManager)
+    : DatabasePart(databaseManager), EventListener {
 
     private object Columns {
         const val GROUP = "`group`"
@@ -153,7 +154,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager) 
                     .forEach { insert(TABLE_FILTERED, null, it) }
         }
 
-        EventBus.broadcast(Event.DATA_UPDATED)
+        EventBus.broadcast(Event.DATA_UPDATED, group)
     }
 
     fun request(group: String): List<Lesson> = readableDatabase
