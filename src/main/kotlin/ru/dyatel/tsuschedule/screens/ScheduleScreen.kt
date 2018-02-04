@@ -64,9 +64,8 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
             setupWithViewPager(pager)
         }
 
-        // TODO: bind data update events to groups
         swipeRefresh = find<SwipeRefreshLayout>(R.id.swipe_refresh).apply {
-            setOnRefreshListener { screen.updateData() }
+            setOnRefreshListener { screen.fetchLessons() }
             setOnChildScrollUpCallback { _, _ -> blockSwipeRefresh }
         }
     }
@@ -94,58 +93,63 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
         super.onShow(context)
 
         lessons = activity.database.lessons
+        context.schedulePreferences.group = group
+
+        loadLessons()
+        AsyncFetchStateKeeper.attachView(group, view)
 
         EventBus.subscribe(this, Event.INITIAL_DATA_FETCH, Event.DATA_UPDATED)
-        handleEvent(Event.DATA_UPDATED, group)
-
-        context.schedulePreferences.group = group
     }
 
     override fun onHide(context: Context?) {
+        AsyncFetchStateKeeper.detachView(group)
         EventBus.unsubscribe(this)
         super.onHide(context)
     }
 
     override fun getTitle(context: Context) = context.getString(R.string.screen_schedule, group)!!
 
-    fun updateData() {
-        val context = context ?: return
+    fun fetchLessons() {
+        val preferences = context!!.schedulePreferences
 
-        context.runOnUiThread { view.isRefreshing = true }
+        AsyncFetchStateKeeper.setState(group, true)
+
         doAsync {
-            val preferences = context.schedulePreferences
-
-            val parser = Parser()
-            parser.setTimeout(preferences.connectionTimeout)
-
             try {
-                val data = parser.getLessons(group)
-                if (data.isEmpty())
-                    throw EmptyResultException()
+                val parser = Parser().apply { setTimeout(preferences.connectionTimeout) }
+                val data = parser.getLessons(group).takeIf { it.isNotEmpty() }
+                        ?: throw EmptyResultException()
 
                 if (group in preferences.groups)
                     lessons.update(group, data)
             } catch (e: Exception) {
                 uiThread {
-                    view.isRefreshing = false
-                    e.handle { longSnackbar(view, it) }
+                    val view = AsyncFetchStateKeeper.getView(group)
+                    if (view != null) {
+                        e.handle { longSnackbar(view, it) }
+                    } else {
+                        e.handle()
+                    }
                 }
+            } finally {
+                uiThread { AsyncFetchStateKeeper.setState(group, false) }
             }
         }
+    }
+
+    private fun loadLessons() {
+        val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
+        weeks.updateData(odd, even)
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
         if (payload as String != group)
             return
 
-        when (type) {
-            Event.INITIAL_DATA_FETCH -> updateData()
-            Event.DATA_UPDATED -> {
-                val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
-                context!!.runOnUiThread {
-                    weeks.updateData(odd, even)
-                    view.isRefreshing = false
-                }
+        context!!.runOnUiThread {
+            when (type) {
+                Event.INITIAL_DATA_FETCH -> fetchLessons()
+                Event.DATA_UPDATED -> loadLessons()
             }
         }
     }
@@ -153,6 +157,31 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun onUpdateMenu(menu: Menu) {
         menu.findItem(R.id.filters).isVisible = true
         menu.findItem(R.id.delete_group).isVisible = true
+    }
+
+}
+
+private object AsyncFetchStateKeeper {
+
+    private val states = mutableMapOf<String, Boolean>()
+    private val views = mutableMapOf<String, ScheduleView>()
+
+    fun getState(group: String) = states.getOrDefault(group, false)
+
+    fun setState(group: String, state: Boolean) {
+        states[group] = state
+        views[group]?.isRefreshing = state
+    }
+
+    fun getView(group: String) = views[group]
+
+    fun attachView(group: String, view: ScheduleView) {
+        views[group] = view
+        view.isRefreshing = getState(group)
+    }
+
+    fun detachView(group: String) {
+        views.remove(group)
     }
 
 }
