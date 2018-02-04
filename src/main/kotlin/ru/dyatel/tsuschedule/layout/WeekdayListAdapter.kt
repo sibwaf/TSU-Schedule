@@ -52,7 +52,6 @@ class WeekdayListAdapter : RecyclerView.Adapter<WeekdayListAdapter.Holder>() {
 
     override fun getItemCount() = weekdays.size
 
-    // TODO: should be callable from any thread
     fun updateData(lessons: List<Lesson>) {
         weekdays.clear()
 
