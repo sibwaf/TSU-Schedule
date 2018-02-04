@@ -54,7 +54,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
     }
 
     init {
-        inflate(context, R.layout.main_screen, this)
+        inflate(context, R.layout.schedule, this)
 
         pager = find<ViewPager>(R.id.pager).apply {
             addOnPageChangeListener(pagerScrollListener)
