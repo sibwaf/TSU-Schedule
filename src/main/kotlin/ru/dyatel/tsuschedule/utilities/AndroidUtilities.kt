@@ -6,6 +6,7 @@ import android.os.Build
 import android.preference.Preference
 import android.support.v4.app.NotificationManagerCompat
 import android.view.View
+import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.notificationManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -58,3 +59,6 @@ fun createNotificationChannels(context: Context) {
     val updateChannel = NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW)
     notificationManager.createNotificationChannel(updateChannel)
 }
+
+val Screen<*>.ctx: Context?
+    get() = getActivity()
