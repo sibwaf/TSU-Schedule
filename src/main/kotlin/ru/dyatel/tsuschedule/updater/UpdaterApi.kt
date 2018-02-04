@@ -4,6 +4,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import ru.dyatel.tsuschedule.GITHUB_REPOSITORY
 import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.log
@@ -13,12 +14,7 @@ import java.net.HttpURLConnection
 
 class UpdaterApi {
 
-    private companion object {
-        const val REPOSITORY = "dya-tel/TSU-Schedule"
-        const val URL = "https://api.github.com/repos/$REPOSITORY/releases"
-    }
-
-    private val connection = Jsoup.connect(URL)
+    private val connection = Jsoup.connect("https://api.github.com/repos/$GITHUB_REPOSITORY/releases")
             .ignoreHttpErrors(true)
             .ignoreContentType(true)
 
