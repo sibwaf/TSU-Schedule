@@ -30,24 +30,22 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
     private lateinit var updateButton: Preference
     private var updateAvailable = false
 
-    private lateinit var updater: Updater
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val ctx = ctx!!
-
-        updater = Updater(ctx)
 
         preferenceManager.findPreference(getString(R.string.preference_timeout))
                 .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..30)
 
         updateButton = preferenceManager.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
-                activity!!.notificationManager.cancel(NOTIFICATION_UPDATE)
+                val activity = activity!!
+
+                activity.notificationManager.cancel(NOTIFICATION_UPDATE)
+                val updater = Updater(activity)
 
                 val view = view!!
                 if (updateAvailable)
@@ -58,7 +56,7 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
                 true
             }
         }
-        syncUpdateButton(ctx.schedulePreferences.lastRelease)
+        syncUpdateButton(ctx!!.schedulePreferences.lastRelease)
 
         preferenceManager.findPreference(getString(R.string.preference_version)).summary = BuildConfig.VERSION_NAME
 
