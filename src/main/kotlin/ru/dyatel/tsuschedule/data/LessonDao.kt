@@ -9,7 +9,6 @@ import org.jetbrains.anko.db.TEXT
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
-import org.jetbrains.anko.db.transaction
 import org.jetbrains.anko.db.update
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
@@ -117,18 +116,19 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
     }
 
     fun update(group: String, lessons: Collection<Lesson>) {
-        writableDatabase.transaction {
+        executeTransaction {
             remove(group)
+
             lessons.map { it.toContentValues() }
                     .onEach { it.put(Columns.GROUP, group) }
                     .forEach { insert(TABLE_UNFILTERED, null, it) }
-        }
 
-        applyModifiers(group)
+            applyModifiers(group)
+        }
     }
 
     fun remove(group: String) {
-        writableDatabase.transaction {
+        executeTransaction {
             TABLES.forEach { delete(it, "${Columns.GROUP} = ?", arrayOf(group)) }
         }
     }
@@ -136,7 +136,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
     private fun applyModifiers(group: String) {
         val filters = databaseManager.filters.request(group).filter { it.enabled }
 
-        writableDatabase.transaction {
+        executeTransaction {
             delete(TABLE_FILTERED, "${Columns.GROUP} = ?", arrayOf(group))
             select(TABLE_UNFILTERED)
                     .whereSimple("${Columns.GROUP} = ?", group)
@@ -157,11 +157,14 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
         EventBus.broadcast(Event.DATA_UPDATED, group)
     }
 
-    fun request(group: String): List<Lesson> = readableDatabase
-            .select(TABLE_FILTERED)
-            .whereSimple("${Columns.GROUP} = ?", group)
-            .orderBy(Columns.TIME)
-            .parseList(LESSON_PARSER)
+    fun request(group: String): List<Lesson> {
+        return execute {
+            select(TABLE_FILTERED)
+                    .whereSimple("${Columns.GROUP} = ?", group)
+                    .orderBy(Columns.TIME)
+                    .parseList(LESSON_PARSER)
+        }
+    }
 
     override fun handleEvent(type: Event, payload: Any?) {
         context.schedulePreferences.groups.forEach { applyModifiers(it) }
