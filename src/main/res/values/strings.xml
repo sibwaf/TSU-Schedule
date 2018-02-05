@@ -35,7 +35,6 @@
     <string name="button_add_group">Добавить группу</string>
 
     <string name="screen_home">Начальный экран</string>
-    <string name="screen_schedule">Расписание (%s)</string>
     <string name="screen_filters">Фильтры (%s)</string>
     <string name="screen_settings">Настройки</string>
 
