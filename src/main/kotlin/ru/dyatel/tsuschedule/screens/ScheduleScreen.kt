@@ -105,7 +105,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
         super.onHide(context)
     }
 
-    override fun getTitle(context: Context) = context.getString(R.string.screen_schedule, group)!!
+    override fun getTitle(context: Context) = group
 
     fun fetchLessons() {
         val preferences = ctx!!.schedulePreferences
