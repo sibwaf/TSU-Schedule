@@ -72,7 +72,7 @@ private class LessonBuilder {
 
         val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
 
-        val SUBGROUP_PATTERN = Regex("\\((\\d) ?п/?гр?\\)")
+        val SUBGROUP_PATTERN = Regex("\\(\\s*(\\d) ?п/?гр?\\s*\\)")
 
         val TYPE_MAPPING = mapOf(
                 "Пр" to LessonType.PRACTICE,
