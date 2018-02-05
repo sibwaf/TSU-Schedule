@@ -14,7 +14,6 @@ import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
-import org.jetbrains.anko.db.transaction
 import org.jetbrains.anko.db.update
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
@@ -42,7 +41,6 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
         const val TABLE_DATA = "filter_data"
 
         val FILTER_PARSER = object : MapRowParser<Pair<Int, Filter>> {
-
             override fun parseRow(columns: Map<String, Any?>): Pair<Int, Filter> {
                 val id = (columns[FilterColumns.ID] as Long).toInt()
                 val type = columns[FilterColumns.TYPE] as String
@@ -50,17 +48,14 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
 
                 return id to PredefinedFilters.fromType(type).also { it.enabled = enabled }
             }
-
         }
 
         val DATA_PARSER = object : MapRowParser<Pair<String, String>> {
-
             override fun parseRow(columns: Map<String, Any?>): Pair<String, String> {
                 val key = columns[DataColumns.KEY] as String
                 val value = columns[DataColumns.VALUE] as String
                 return key to value
             }
-
         }
 
     }
@@ -143,7 +138,7 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
     fun update(group: String, filters: List<Filter>) {
         // TODO: validate filter order
 
-        writableDatabase.transaction {
+        executeTransaction {
             remove(group)
 
             filters.forEach {
@@ -169,7 +164,7 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
     }
 
     fun remove(group: String) {
-        writableDatabase.transaction {
+        executeTransaction {
             val ids = select(TABLE_FILTERS, FilterColumns.ID)
                     .whereSimple("${FilterColumns.GROUP} = ?", group)
                     .parseList(LongParser)
@@ -180,24 +175,26 @@ class FilterDao(private val context: Context, databaseManager: DatabaseManager) 
         }
     }
 
-    fun request(group: String): List<Filter> = readableDatabase.use { database ->
-        val (normal, predefined) = database.select(TABLE_FILTERS)
-                .whereSimple("${FilterColumns.GROUP} = ?", group)
-                .orderBy(FilterColumns.ID)
-                .parseList(FILTER_PARSER)
-                .map { (id, filter) ->
-                    if (filter !is PredefinedFilter) TODO()
+    fun request(group: String): List<Filter> {
+        return execute {
+            val (normal, predefined) = select(TABLE_FILTERS)
+                    .whereSimple("${FilterColumns.GROUP} = ?", group)
+                    .orderBy(FilterColumns.ID)
+                    .parseList(FILTER_PARSER)
+                    .map { (id, filter) ->
+                        if (filter !is PredefinedFilter) TODO()
 
-                    val data = database.select(TABLE_DATA)
-                            .whereSimple("${DataColumns.ID} = $id")
-                            .parseList(DATA_PARSER)
-                            .toMap()
+                        val data = select(TABLE_DATA)
+                                .whereSimple("${DataColumns.ID} = $id")
+                                .parseList(DATA_PARSER)
+                                .toMap()
 
-                    filter.apply { load(data) }
-                }
-                .partition { it !is PredefinedFilter }
+                        filter.apply { load(data) }
+                    }
+                    .partition { it !is PredefinedFilter }
 
-        normal + PredefinedFilters.ensurePresenceAndOrder(predefined)
+            normal + PredefinedFilters.ensurePresenceAndOrder(predefined)
+        }
     }
 
 }

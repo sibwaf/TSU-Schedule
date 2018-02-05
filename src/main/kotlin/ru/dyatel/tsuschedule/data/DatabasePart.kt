@@ -1,14 +1,13 @@
 package ru.dyatel.tsuschedule.data
 
 import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.db.transaction
 
 abstract class DatabasePart(protected val databaseManager: DatabaseManager) {
 
-    protected val readableDatabase
-        get() = databaseManager.readableDatabase!!
+    protected fun <T> execute(block: SQLiteDatabase.() -> T): T = databaseManager.use(block)
 
-    protected val writableDatabase
-        get() = databaseManager.writableDatabase!!
+    protected fun executeTransaction(block: SQLiteDatabase.() -> Unit) = execute { transaction(block) }
 
     abstract fun createTables(db: SQLiteDatabase)
 
