@@ -3,8 +3,9 @@ package ru.dyatel.tsuschedule.utilities
 import android.app.NotificationChannel
 import android.content.Context
 import android.os.Build
-import android.preference.Preference
+import android.support.v4.app.Fragment
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v7.preference.Preference
 import android.view.View
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.notificationManager
@@ -62,3 +63,6 @@ fun createNotificationChannels(context: Context) {
 
 val Screen<*>.ctx: Context?
     get() = getActivity()
+
+val Fragment.ctx: Context?
+    get() = context
