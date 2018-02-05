@@ -1,14 +1,14 @@
 package ru.dyatel.tsuschedule.screens
 
-import android.app.FragmentManager
 import android.content.Context
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
+import android.support.v4.app.FragmentManager
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
-import org.jetbrains.anko.ctx
+import com.wealthfront.magellan.support.SingleActivity
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
@@ -22,28 +22,34 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.NumberPreferenceValidator
+import ru.dyatel.tsuschedule.utilities.ctx
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
-class SettingsFragment : PreferenceFragment(), EventListener {
+class SettingsFragment : PreferenceFragmentCompat(), EventListener {
 
     private lateinit var updateButton: Preference
     private var updateAvailable = false
 
     private lateinit var updater: Updater
 
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences, rootKey)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addPreferencesFromResource(R.xml.preferences)
+        val ctx = ctx!!
 
         updater = Updater(ctx)
 
-        preferenceScreen.findPreference(getString(R.string.preference_timeout))
+        preferenceManager.findPreference(getString(R.string.preference_timeout))
                 .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..30)
 
-        updateButton = preferenceScreen.findPreference(getString(R.string.preference_update)).apply {
+        updateButton = preferenceManager.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
-                activity.notificationManager.cancel(NOTIFICATION_UPDATE)
+                activity!!.notificationManager.cancel(NOTIFICATION_UPDATE)
 
+                val view = view!!
                 if (updateAvailable)
                     updater.installDialog { longSnackbar(view, it) }
                 else
@@ -54,7 +60,7 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         }
         syncUpdateButton(ctx.schedulePreferences.lastRelease)
 
-        preferenceScreen.findPreference(getString(R.string.preference_version)).summary = BuildConfig.VERSION_NAME
+        preferenceManager.findPreference(getString(R.string.preference_version)).summary = BuildConfig.VERSION_NAME
 
         EventBus.subscribe(this, Event.PREFERENCES_LATEST_VERSION_CHANGED)
     }
@@ -64,7 +70,9 @@ class SettingsFragment : PreferenceFragment(), EventListener {
         super.onDestroy()
     }
 
-    override fun handleEvent(type: Event, payload: Any?) = runOnUiThread { syncUpdateButton(payload as String?) }
+    override fun handleEvent(type: Event, payload: Any?) {
+        ctx!!.runOnUiThread { syncUpdateButton(payload as String?) }
+    }
 
     private fun syncUpdateButton(lastRelease: String?) {
         updateAvailable = lastRelease != null
@@ -91,29 +99,34 @@ class PreferenceView(context: Context) : BaseScreenView<PreferenceScreen>(contex
     fun attachFragment(fragmentManager: FragmentManager) {
         fragmentManager.beginTransaction()
                 .add(container.id, fragment)
-                .commit()
+                .commitNow()
     }
 
     fun detachFragment(fragmentManager: FragmentManager) {
-        fragmentManager.beginTransaction()
-                .detach(fragment)
-                .commit()
+        if (!fragmentManager.isDestroyed) {
+            fragmentManager.beginTransaction()
+                    .detach(fragment)
+                    .commitNow()
+        }
     }
 
 }
 
 class PreferenceScreen : Screen<PreferenceView>() {
 
+    private val activity: SingleActivity?
+        get() = getActivity() as SingleActivity?
+
     override fun createView(context: Context) = PreferenceView(context)
 
     override fun onShow(context: Context) {
         super.onShow(context)
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, false)
-        view.attachFragment(activity.fragmentManager)
+        view.attachFragment(activity!!.supportFragmentManager)
     }
 
     override fun onHide(context: Context?) {
-        view.detachFragment(activity.fragmentManager)
+        view.detachFragment(activity!!.supportFragmentManager)
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
         super.onHide(context)
     }

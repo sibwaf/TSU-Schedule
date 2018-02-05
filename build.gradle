@@ -97,6 +97,7 @@ dependencies {
     compile "com.android.support:cardview-v7:$androidSupportVersion"
     compile "com.android.support:appcompat-v7:$androidSupportVersion"
     compile "com.android.support:support-v13:$androidSupportVersion"
+    compile "com.android.support:preference-v14:$androidSupportVersion"
     compile "com.android.support:design:$androidSupportVersion"
 
     def magellanVersion = "1.0.0"

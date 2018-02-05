@@ -1,6 +1,8 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+
         <item name="titleTextColor">@color/text_title_color</item>
 
         <item name="android:textColorPrimary">@color/text_primary_color</item>
