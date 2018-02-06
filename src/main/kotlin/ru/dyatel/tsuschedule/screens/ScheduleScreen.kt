@@ -164,7 +164,7 @@ private object AsyncFetchStateKeeper {
     private val states = mutableMapOf<String, Boolean>()
     private val views = mutableMapOf<String, ScheduleView>()
 
-    fun getState(group: String) = states.getOrDefault(group, false)
+    fun getState(group: String) = states.getOrPut(group, { false })
 
     fun setState(group: String, state: Boolean) {
         states[group] = state
