@@ -1,12 +1,10 @@
 package ru.dyatel.tsuschedule
 
 import org.jsoup.Jsoup
-import org.jsoup.UncheckedIOException
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.utilities.NullableLateinit
-import java.io.IOException
 import java.util.HashSet
 
 class Parser {
@@ -22,11 +20,7 @@ class Parser {
     }
 
     fun getLessons(group: String): Set<Lesson> {
-        val response = try {
-            connection.data("group", group).get()
-        } catch (e: UncheckedIOException) { // For some reason it is inherited from Error
-            throw IOException(e)
-        }
+        val response = connection.data("group", group).get()
         val result = response.getElementById("results")
 
         if (result.childNodeSize() <= 1)
