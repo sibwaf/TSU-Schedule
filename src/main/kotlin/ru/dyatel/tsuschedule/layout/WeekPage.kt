@@ -32,6 +32,7 @@ class WeekPage(val parity: Parity) {
             lparams { width = matchParent }
             layoutManager = LinearLayoutManager(context)
             adapter = instanceAdapter
+            descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
         }
     }
 
