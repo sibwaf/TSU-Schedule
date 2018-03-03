@@ -2,14 +2,13 @@ package ru.dyatel.tsuschedule.parsing
 
 import org.junit.Test
 import ru.dyatel.tsuschedule.EmptyResultException
-import ru.dyatel.tsuschedule.Parser
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ParserTest {
+class ScheduleParserTest {
 
-    private var parser = Parser()
+    private var parser = ScheduleParser()
 
     init {
         parser.setTimeout(30000)

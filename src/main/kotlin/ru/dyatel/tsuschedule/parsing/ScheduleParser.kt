@@ -1,13 +1,15 @@
-package ru.dyatel.tsuschedule
+package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.Jsoup
+import ru.dyatel.tsuschedule.EmptyResultException
+import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.utilities.NullableLateinit
 import java.util.HashSet
 
-class Parser {
+class ScheduleParser {
 
     private companion object {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
