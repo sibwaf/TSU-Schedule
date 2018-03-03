@@ -8,14 +8,8 @@ import kotlin.test.assertTrue
 
 class ScheduleParserTest {
 
-    private var parser = ScheduleParser()
-
-    init {
-        parser.setTimeout(30000)
-    }
-
     private fun check(group: String) {
-        val lessons = parser.getLessons(group)
+        val lessons = ScheduleParser(group).apply { setTimeout(30000) }.getLessons()
         assertFalse(lessons.isEmpty(), "No lessons were received")
 
         val weekdayCount = lessons

@@ -14,7 +14,6 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.EmptyResultException
-import ru.dyatel.tsuschedule.parsing.ScheduleParser
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.Parity
@@ -26,6 +25,7 @@ import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
+import ru.dyatel.tsuschedule.parsing.ScheduleParser
 import ru.dyatel.tsuschedule.utilities.ctx
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
@@ -114,8 +114,8 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         doAsync {
             try {
-                val parser = ScheduleParser().apply { setTimeout(preferences.connectionTimeout) }
-                val data = parser.getLessons(group).takeIf { it.isNotEmpty() }
+                val parser = ScheduleParser(group).apply { setTimeout(preferences.connectionTimeout) }
+                val data = parser.getLessons().takeIf { it.isNotEmpty() }
                         ?: throw EmptyResultException()
 
                 if (group in preferences.groups)
