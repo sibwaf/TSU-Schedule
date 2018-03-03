@@ -14,7 +14,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.EmptyResultException
-import ru.dyatel.tsuschedule.Parser
+import ru.dyatel.tsuschedule.parsing.ScheduleParser
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.Parity
@@ -114,7 +114,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
         doAsync {
             try {
-                val parser = Parser().apply { setTimeout(preferences.connectionTimeout) }
+                val parser = ScheduleParser().apply { setTimeout(preferences.connectionTimeout) }
                 val data = parser.getLessons(group).takeIf { it.isNotEmpty() }
                         ?: throw EmptyResultException()
 
