@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.updater
 
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
@@ -10,6 +11,7 @@ import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.log
 import ru.dyatel.tsuschedule.utilities.find
 import ru.dyatel.tsuschedule.utilities.iterator
+import java.io.IOException
 import java.net.HttpURLConnection
 
 class UpdaterApi {
@@ -17,19 +19,24 @@ class UpdaterApi {
     private val connection = Jsoup.connect("https://api.github.com/repos/$GITHUB_REPOSITORY/releases")
             .ignoreHttpErrors(true)
             .ignoreContentType(true)
+            .method(Connection.Method.GET)
 
     fun setTimeout(timeout: Int) {
         connection.timeout(timeout)
     }
 
     fun getLatestRelease(allowPrerelease: Boolean): Release? {
-        val response = connection.method(Connection.Method.GET).execute()
-        if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND)
+        val response = connection.execute()
+        if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
             return null
+        }
+        if (response.statusCode() != HttpURLConnection.HTTP_OK) {
+            throw IOException("Request failed with HTTP code ${response.statusCode()}")
+        }
 
         val releases = try {
             JSONArray(response.body())
-        } catch (e: Exception) {
+        } catch (e: JSONException) {
             throw ParsingException(e)
         }
 
@@ -40,8 +47,10 @@ class UpdaterApi {
                 e.log()
                 continue
             }
-            if (!token.prerelease || allowPrerelease)
+
+            if (!token.prerelease || allowPrerelease) {
                 return token.release
+            }
         }
 
         return null
@@ -53,9 +62,7 @@ class UpdaterApi {
                 .filter { it.find<String>("content_type") == MIME_APK }
                 .map { it.find<String>("browser_download_url") }
                 .toList()
-
-        if (links.isEmpty())
-            throw ParsingException("No .apk files in assets")
+                .takeIf { it.any() } ?: throw ParsingException("No .apk files in assets")
 
         val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
         val release = Release(json.find("tag_name"), url)
