@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics
 import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.net.SocketTimeoutException
+import java.util.concurrent.CancellationException
 
 open class ParsingException : RuntimeException {
     constructor() : super()
@@ -59,6 +60,7 @@ fun Exception.handle(showMessage: (Int) -> Unit = {}) {
         }
         is SocketTimeoutException -> R.string.failure_connection_timeout
         is IOException -> R.string.failure_unsuccessful_request
+        is CancellationException -> return
         else -> throw this
     }
     showMessage(message)

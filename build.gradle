@@ -83,6 +83,12 @@ android {
     }
 }
 
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
 repositories {
     jcenter()
     maven { url "https://maven.google.com" }
@@ -91,6 +97,8 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.22.5"
 
     def androidSupportVersion = "27.1.0"
     compile "com.android.support:recyclerview-v7:$androidSupportVersion"

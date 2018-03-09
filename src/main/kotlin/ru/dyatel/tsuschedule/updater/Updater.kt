@@ -3,10 +3,11 @@ package ru.dyatel.tsuschedule.updater
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import org.jetbrains.anko.doAsync
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.progressDialog
-import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.BadGroupException
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.R
@@ -15,7 +16,6 @@ import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.File
-import java.io.InterruptedIOException
 import java.net.URL
 
 class Updater(private val context: Context) {
@@ -51,25 +51,24 @@ class Updater(private val context: Context) {
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
     }
 
-    fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog =
-            context.indeterminateProgressDialog(R.string.update_finding_latest) {
-                val task = doAsync {
-                    try {
-                        val release = fetchUpdateLink()
-                        uiThread {
-                            if (release == null) showMessage(R.string.update_not_found)
-                            else showMessage(R.string.update_found)
-                        }
-                    } catch (e: Exception) {
-                        if (e !is InterruptedException && e !is InterruptedIOException)
-                            uiThread { e.handle { showMessage(it) } }
-                    } finally {
-                        uiThread { dismiss() }
-                    }
-                }
+    fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog {
+        return context.indeterminateProgressDialog(R.string.update_finding_latest) {
+            val task = launch(UI) {
+                try {
+                    val release = async { fetchUpdateLink() }.await()
 
-                setOnCancelListener { task.cancel(true) }
+                    val message = if (release == null) R.string.update_not_found else R.string.update_found
+                    showMessage(message)
+                } catch (e: Exception) {
+                    e.handle { showMessage(it) }
+                } finally {
+                    dismiss()
+                }
             }
+
+            setOnCancelListener { task.cancel() }
+        }
+    }
 
     fun installDialog(showMessage: (Int) -> Unit = {}) {
         checkDialog().setOnDismissListener {
@@ -82,23 +81,25 @@ class Updater(private val context: Context) {
                 setProgressNumberFormat(null)
                 max = 100
 
-                val task = doAsync {
+                val file = UpdateFileProvider.getUpdateDirectory(context).resolve("update.apk")
+                val task = launch(UI) {
                     try {
-                        val file = UpdateFileProvider.getUpdateDirectory(context).resolve("update.apk")
-                        URL(link).download(file, preferences.connectionTimeout) { value ->
-                            uiThread { progress = value }
-                        }
+                        async {
+                            URL(link).download(file, preferences.connectionTimeout) { value ->
+                                launch(UI) { progress = value }
+                            }
+                        }.await()
+
                         installUpdate(file)
                         preferences.lastRelease = null
                     } catch (e: Exception) {
-                        if (e !is InterruptedException && e !is InterruptedIOException)
-                            uiThread { e.handle { showMessage(it) } }
+                        e.handle(showMessage)
                     } finally {
-                        uiThread { dismiss() }
+                        dismiss()
                     }
                 }
 
-                setOnCancelListener { task.cancel(true) }
+                setOnCancelListener { task.cancel() }
             }
         }
     }
