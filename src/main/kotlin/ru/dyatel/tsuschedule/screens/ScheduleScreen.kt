@@ -8,11 +8,12 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.view.Menu
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.design.longSnackbar
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.uiThread
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.data.LessonDao
@@ -108,29 +109,26 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun getTitle(context: Context) = group
 
     fun fetchLessons() {
-        val preferences = ctx!!.schedulePreferences
-
-        AsyncFetchStateKeeper.setState(group, true)
-
-        doAsync {
+        launch(UI) {
             try {
-                val parser = ScheduleParser(group).apply { setTimeout(preferences.connectionTimeout) }
-                val data = parser.getLessons().takeIf { it.isNotEmpty() }
-                        ?: throw EmptyResultException()
+                val preferences = ctx?.schedulePreferences ?: return@launch
 
-                if (group in preferences.groups)
-                    lessons.update(group, data)
-            } catch (e: Exception) {
-                uiThread {
-                    val view = AsyncFetchStateKeeper.getView(group)
-                    if (view != null) {
-                        e.handle { longSnackbar(view, it) }
-                    } else {
-                        e.handle()
+                AsyncFetchStateKeeper.setState(group, true)
+
+                async {
+                    val parser = ScheduleParser(group).apply { setTimeout(preferences.connectionTimeout) }
+                    val data = parser.getLessons().takeIf { it.isNotEmpty() }
+                            ?: throw EmptyResultException()
+
+                    if (group in preferences.groups) {
+                        lessons.update(group, data)
                     }
-                }
+                }.await()
+            } catch (e: Exception) {
+                val view = AsyncFetchStateKeeper.getView(group)
+                e.handle { message -> view?.let { longSnackbar(it, message)} }
             } finally {
-                uiThread { AsyncFetchStateKeeper.setState(group, false) }
+                AsyncFetchStateKeeper.setState(group, false)
             }
         }
     }

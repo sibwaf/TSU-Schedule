@@ -26,9 +26,9 @@ import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
 import hirondelle.date4j.DateTime
+import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.dip
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
@@ -50,6 +50,7 @@ import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
+import ru.dyatel.tsuschedule.screens.TeacherSearchScreen
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.createNotificationChannels
@@ -127,8 +128,9 @@ class MainActivity : SingleActivity(), EventListener {
                 Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
-        if (!handleUpdateNotification(intent))
-            doAsync { checkUpdates(updater) }
+        if (!handleUpdateNotification(intent)) {
+            launch { checkUpdates(updater) }
+        }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -172,6 +174,13 @@ class MainActivity : SingleActivity(), EventListener {
                     .withName(group)
                     .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false })
         }
+
+        drawer.addItem(DividerDrawerItem())
+
+        drawer.addItem(PrimaryDrawerItem()
+                .withIcon(CommunityMaterial.Icon.cmd_account)
+                .withName(R.string.screen_teachers)
+                .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(TeacherSearchScreen()); false })
 
         drawer.addItem(DividerDrawerItem())
 
