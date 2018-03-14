@@ -6,19 +6,20 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.InputType
 import android.view.Gravity
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.backgroundColorResource
-import org.jetbrains.anko.button
 import org.jetbrains.anko.centerHorizontally
 import org.jetbrains.anko.centerInParent
-import org.jetbrains.anko.design.textInputLayout
-import org.jetbrains.anko.design.themedTextInputEditText
+import org.jetbrains.anko.design.textInputEditText
+import org.jetbrains.anko.design.themedTextInputLayout
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.imageView
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.singleLine
+import org.jetbrains.anko.themedButton
 import org.jetbrains.anko.topOf
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.BlankGroupIndexException
@@ -27,6 +28,7 @@ import ru.dyatel.tsuschedule.ShortGroupIndexException
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.utilities.Validator
+import ru.dyatel.tsuschedule.utilities.hideKeyboard
 
 class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
 
@@ -54,20 +56,20 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
             verticalLayout {
                 id = formContainerId
 
-                val input = textInputLayout {
-                    setHintTextAppearance(R.style.HomeFormHintTheme)
+                val input = themedTextInputLayout(R.style.HomeFormInputLayoutTheme) {
+                    hint = context.getString(R.string.form_hint_group_index)
                     setErrorTextAppearance(R.style.HomeFormErrorTheme)
 
-                    hint = context.getString(R.string.form_hint_group_index)
+                    textInputEditText {
+                        imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
 
-                    themedTextInputEditText(R.style.HomeFormEditTextTheme) {
                         gravity = Gravity.CENTER
                         singleLine = true
                         inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
                     }
                 }.lparams(width = dip(300))
 
-                button(R.string.button_add_group) {
+                themedButton(R.string.button_add_group, R.style.HomeFormSubmitTheme) {
                     setOnClickListener {
                         try {
                             val group = Validator.validateGroup(input.editText!!.text.toString())
@@ -97,6 +99,7 @@ class HomeScreen : Screen<HomeView>() {
     }
 
     override fun onHide(context: Context?) {
+        view.findFocus()?.hideKeyboard()
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
         super.onHide(context)
     }

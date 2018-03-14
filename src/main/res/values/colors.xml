@@ -12,6 +12,7 @@
 
     <color name="home_background_color">@color/primary_color</color>
     <color name="home_text_color">@color/text_title_color</color>
+    <color name="home_hint_color">#DFFF</color>
     <color name="home_error_color">#FF3900</color>
 
     <color name="practice_color">@color/md_light_green_A400</color>
