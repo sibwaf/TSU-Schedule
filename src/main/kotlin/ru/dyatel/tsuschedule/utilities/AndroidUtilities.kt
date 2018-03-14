@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.preference.Preference
 import android.view.View
 import com.wealthfront.magellan.Screen
+import org.jetbrains.anko.inputMethodManager
 import org.jetbrains.anko.notificationManager
 import org.json.JSONArray
 import org.json.JSONObject
@@ -31,6 +32,11 @@ class NumberPreferenceValidator(
         }
     }
 
+}
+
+fun View.hideKeyboard() {
+    context.inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+    clearFocus()
 }
 
 fun View.hideIf(condition: () -> Boolean) {

@@ -20,20 +20,22 @@
         <item name="colorControlNormal">@color/text_title_color</item>
     </style>
 
-    <style name="HomeFormHintTheme" parent="TextAppearance.AppCompat.Small">
-        <item name="android:textColor">@color/home_text_color</item>
+    <style name="HomeFormInputLayoutTheme" parent="Widget.Design.TextInputLayout">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColorPrimary">@color/home_text_color</item>
+        <item name="android:textColorHint">@color/home_hint_color</item>
+
+        <item name="colorAccent">@color/home_text_color</item>
+        <item name="colorControlNormal">@color/home_text_color</item>
     </style>
 
     <style name="HomeFormErrorTheme" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/home_error_color</item>
     </style>
 
-    <style name="HomeFormEditTextTheme" parent="Widget.AppCompat.EditText">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColorPrimary">@color/home_text_color</item>
-
-        <item name="colorControlNormal">@color/home_text_color</item>
-        <item name="colorAccent">@color/home_text_color</item>
+    <style name="HomeFormSubmitTheme" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@color/primary_color</item>
+        <item name="colorButtonNormal">@color/home_text_color</item>
     </style>
 
     <style name="WeekdayTheme">
