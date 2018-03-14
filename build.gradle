@@ -24,7 +24,6 @@ apply plugin: "io.fabric"
 Properties properties = new Properties()
 properties.load(rootProject.file("local.properties").newInputStream())
 
-def enableSigning = properties.getProperty("signing.storeFile") != null
 def enableCrashlytics = properties.getProperty("fabric.key") != null
 
 android {
@@ -41,7 +40,7 @@ android {
         manifestPlaceholders = ["fabricKey": enableCrashlytics ? properties.getProperty("fabric.key") : ""]
     }
 
-    if (enableSigning) {
+    if (properties.getProperty("signing.storeFile") != null) {
         signingConfigs {
             release {
                 storeFile file(properties.getProperty("signing.storeFile"))
@@ -50,22 +49,18 @@ android {
                 keyPassword properties.getProperty("signing.keyPassword")
             }
         }
+
+        buildTypes.release.signingConfig signingConfigs.release
     }
 
     buildTypes {
         debug {
-            ext.enableCrashlytics = false
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "false"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
 
-            if (enableSigning) {
-                signingConfig signingConfigs.release
-            }
-
-            ext.enableCrashlytics = enableCrashlytics
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "$enableCrashlytics"
         }
     }
