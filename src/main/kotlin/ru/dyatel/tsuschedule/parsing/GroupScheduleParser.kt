@@ -1,19 +1,14 @@
 package ru.dyatel.tsuschedule.parsing
 
-import org.jsoup.Connection
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.data.BaseLesson
 import ru.dyatel.tsuschedule.data.Lesson
 
-class ScheduleParser(private val group: String) : BaseParser<Lesson>() {
+object GroupScheduleParser : BaseParser<Lesson>() {
 
-    private companion object {
-        val SUBGROUP_PATTERN = Regex("\\(\\s*(\\d) ?п/?гр?\\s*\\)")
-    }
+    private val SUBGROUP_PATTERN = Regex("\\(\\s*(\\d) ?п/?гр?\\s*\\)")
 
-    override fun prepare(connection: Connection) = connection.data("group", group)!!
-
-    override fun parse(e: Element, base: BaseLesson): Lesson {
+    override fun parseSingle(e: Element, base: BaseLesson): Lesson {
         val teacher = e.getElementsByClass("teac").requireSingleOrNull()
                 ?.text()?.trim()?.takeUnless { it.isEmpty() }
 

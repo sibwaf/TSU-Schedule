@@ -17,6 +17,7 @@ import ru.dyatel.tsuschedule.data.TeacherDao
 import ru.dyatel.tsuschedule.data.database
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.TeacherListAdapter
+import ru.dyatel.tsuschedule.parsing.DataRequester
 import ru.dyatel.tsuschedule.parsing.TeacherParser
 import ru.dyatel.tsuschedule.utilities.ReplacingJobLauncher
 import ru.dyatel.tsuschedule.utilities.ctx
@@ -98,8 +99,8 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
         task.launch {
             try {
                 val teachers = async {
-                    val parser = TeacherParser().apply { setTimeout(preferences.connectionTimeout) }
-                    val teachers = parser.getTeachers(name)
+                    val requester = DataRequester().apply { timeout = preferences.connectionTimeout }
+                    val teachers = TeacherParser.parse(requester.teacherSearch(name))
 
                     val removed = oldData - teachers
 

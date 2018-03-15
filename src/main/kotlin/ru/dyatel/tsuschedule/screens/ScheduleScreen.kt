@@ -26,7 +26,8 @@ import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
-import ru.dyatel.tsuschedule.parsing.ScheduleParser
+import ru.dyatel.tsuschedule.parsing.DataRequester
+import ru.dyatel.tsuschedule.parsing.GroupScheduleParser
 import ru.dyatel.tsuschedule.utilities.ctx
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
@@ -116,9 +117,9 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
                 AsyncFetchStateKeeper.setState(group, true)
 
                 async {
-                    val parser = ScheduleParser(group).apply { setTimeout(preferences.connectionTimeout) }
-                    val data = parser.getLessons().takeIf { it.isNotEmpty() }
-                            ?: throw EmptyResultException()
+                    val requester = DataRequester().apply { timeout = preferences.connectionTimeout }
+                    val data = GroupScheduleParser.parse(requester.groupSchedule(group))
+                            .takeIf { it.isNotEmpty() } ?: throw EmptyResultException()
 
                     if (group in preferences.groups) {
                         lessons.update(group, data)
@@ -126,7 +127,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
                 }.await()
             } catch (e: Exception) {
                 val view = AsyncFetchStateKeeper.getView(group)
-                e.handle { message -> view?.let { longSnackbar(it, message)} }
+                e.handle { message -> view?.let { longSnackbar(it, message) } }
             } finally {
                 AsyncFetchStateKeeper.setState(group, false)
             }
