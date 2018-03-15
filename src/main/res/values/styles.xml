@@ -3,8 +3,6 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
-        <item name="titleTextColor">@color/text_title_color</item>
-
         <item name="android:textColorPrimary">@color/text_primary_color</item>
         <item name="android:textColorSecondary">@color/text_secondary_color</item>
 
@@ -17,13 +15,18 @@
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/primary_color</item>
+
+        <item name="android:textColorPrimary">@color/text_title_color</item>
+        <item name="android:textColorHint">@color/text_title_hint_color</item>
+
+        <item name="colorAccent">@color/text_title_color</item>
         <item name="colorControlNormal">@color/text_title_color</item>
     </style>
 
     <style name="HomeFormInputLayoutTheme" parent="Widget.Design.TextInputLayout">
         <item name="android:textSize">18sp</item>
         <item name="android:textColorPrimary">@color/home_text_color</item>
-        <item name="android:textColorHint">@color/home_hint_color</item>
+        <item name="android:textColorHint">@color/text_title_hint_color</item>
 
         <item name="colorAccent">@color/home_text_color</item>
         <item name="colorControlNormal">@color/home_text_color</item>

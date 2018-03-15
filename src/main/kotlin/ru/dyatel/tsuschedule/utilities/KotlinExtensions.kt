@@ -1,7 +1,11 @@
 package ru.dyatel.tsuschedule.utilities
 
+import kotlinx.coroutines.experimental.CoroutineDispatcher
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.cancelAndJoin
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlinx.coroutines.experimental.launch as launchCoroutine
 
 class NullableLateinit<T> : ReadWriteProperty<Any, T?> {
 
@@ -17,5 +21,25 @@ class NullableLateinit<T> : ReadWriteProperty<Any, T?> {
         this.value = value
         initialized = true
     }
+
+}
+
+class ReplacingJobLauncher(private val dispatcher: CoroutineDispatcher) {
+
+    private var task: Job? = null
+
+    fun launch(block: suspend () -> Unit) {
+        val oldTask = task
+        task = launchCoroutine(dispatcher) {
+            oldTask?.cancelAndJoin()
+            block()
+        }
+    }
+
+    suspend fun join() = task?.join()
+
+    fun cancel() = task?.cancel()
+
+    suspend fun cancelAndJoin() = task?.cancelAndJoin()
 
 }
