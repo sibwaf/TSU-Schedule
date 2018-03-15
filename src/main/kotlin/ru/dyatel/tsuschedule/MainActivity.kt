@@ -8,15 +8,18 @@ import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
+import com.mikepenz.iconics.typeface.IIcon
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
@@ -140,14 +143,25 @@ class MainActivity : SingleActivity(), EventListener {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        menu.findItem(R.id.filters).icon = IconicsDrawable(ctx).actionBar()
-                .icon(CommunityMaterial.Icon.cmd_filter)
-                .colorRes(R.color.text_title_color)
-        menu.findItem(R.id.delete_group).icon = IconicsDrawable(ctx).actionBar()
-                .icon(CommunityMaterial.Icon.cmd_delete)
-                .colorRes(R.color.text_title_color)
+        menu.findItem(R.id.filters).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_filter)
+        menu.findItem(R.id.delete_group).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_delete)
+        menu.findItem(R.id.search).apply { icon = getActionBarIcon(CommunityMaterial.Icon.cmd_magnify) }
+                .actionView.let { it as SearchView }
+                .apply {
+                    queryHint = getString(R.string.menu_search) + "..."
+
+                    setIconifiedByDefault(false)
+                    isSubmitButtonEnabled = true
+
+                    imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
+
+                    maxWidth = Int.MAX_VALUE
+                }
         return super.onCreateOptionsMenu(menu)
     }
+
+    private fun getActionBarIcon(icon: IIcon) =
+            IconicsDrawable(ctx).actionBar().icon(icon).colorRes(R.color.text_title_color)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

@@ -9,6 +9,7 @@
     <string name="lesson_type_lecture">Лекция</string>
     <string name="lesson_type_laboratory">Лабораторная</string>
 
+    <string name="menu_search">Поиск</string>
     <string name="menu_filters">Фильтры</string>
     <string name="menu_delete_group">Удалить</string>
 
@@ -36,6 +37,7 @@
 
     <string name="screen_home">Начальный экран</string>
     <string name="screen_filters">Фильтры (%s)</string>
+    <string name="screen_teachers">Преподаватели</string>
     <string name="screen_settings">Настройки</string>
 
     <string name="filter_common_practice">Объединять подгруппы на практических занятиях</string>
