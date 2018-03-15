@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.screens
 
 import android.content.Context
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
@@ -28,6 +29,7 @@ class TeacherSearchView(context: Context) : BaseScreenView<TeacherSearchScreen>(
     private val teacherRecycler = recyclerView {
         lparams(width = matchParent, height = matchParent)
         layoutManager = LinearLayoutManager(context)
+        addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
     }
 
     fun setAdapter(adapter: TeacherListAdapter) {
@@ -64,6 +66,8 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
     override fun onShow(context: Context) {
         super.onShow(context)
         teacherDao = activity.database.teachers
+
+        adapter.bindNavigator(navigator)
         view.setAdapter(adapter)
     }
 
