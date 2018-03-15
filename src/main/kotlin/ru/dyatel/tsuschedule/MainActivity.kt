@@ -138,7 +138,9 @@ class MainActivity : SingleActivity(), EventListener {
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-        preferences.group?.let { selectedGroup = it }
+        if (savedInstanceState == null) {
+            preferences.group?.let { selectedGroup = it }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
