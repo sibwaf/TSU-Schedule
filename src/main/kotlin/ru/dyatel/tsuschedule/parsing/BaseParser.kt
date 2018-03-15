@@ -1,7 +1,5 @@
 package ru.dyatel.tsuschedule.parsing
 
-import org.jsoup.Connection
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
@@ -17,24 +15,15 @@ abstract class BaseParser<out T : BaseLesson> {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
     }
 
-    private val connection = Jsoup.connect("http://schedule.tsu.tula.ru/")
-
-    fun setTimeout(timeout: Int) {
-        connection.timeout(timeout)
-    }
-
-    fun getLessons(): Set<T> {
-        val response = prepare(connection).get()
-        val result = response.getElementById("results")
-
-        if (result.childNodeSize() <= 1) {
+    fun parse(element: Element): Set<T> {
+        if (element.childNodeSize() <= 1) {
             throw EmptyResultException()
         }
 
         val lessons = HashSet<T>()
         var currentWeekday: String? = null
 
-        result.children()
+        element.children()
                 .filter { !it.hasClass("screenonly") }
                 .map { it.child(0).child(0).children().last() } // Ignore the padding row
                 .forEach {
@@ -51,15 +40,13 @@ abstract class BaseParser<out T : BaseLesson> {
                     builder.parseDescription(it.getElementsByClass("disc").requireSingle().text())
                     builder.parseAuditory(it.getElementsByClass("aud").requireSingleOrNull()?.text())
 
-                    lessons += parse(it, builder.build())
+                    lessons += parseSingle(it, builder.build())
                 }
 
         return lessons
     }
 
-    protected abstract fun prepare(connection: Connection): Connection
-
-    protected abstract fun parse(e: Element, base: BaseLesson): T
+    protected abstract fun parseSingle(e: Element, base: BaseLesson): T
 
     protected fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
 

@@ -8,8 +8,10 @@ import kotlin.test.assertTrue
 
 class TeacherScheduleParserTest {
 
+    private val requester = DataRequester()
+
     private fun check(teacher: String) {
-        val lessons = TeacherScheduleParser(teacher).apply { setTimeout(30000) }.getLessons()
+        val lessons = TeacherScheduleParser.parse(requester.teacherSchedule(teacher))
         assertFalse(lessons.isEmpty(), "No lessons were received")
 
         val weekdayCount = lessons

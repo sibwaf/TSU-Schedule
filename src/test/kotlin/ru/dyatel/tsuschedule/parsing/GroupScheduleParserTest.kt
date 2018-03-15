@@ -6,10 +6,12 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class ScheduleParserTest {
+class GroupScheduleParserTest {
+
+    private val requester = DataRequester()
 
     private fun check(group: String) {
-        val lessons = ScheduleParser(group).apply { setTimeout(30000) }.getLessons()
+        val lessons = GroupScheduleParser.parse(requester.groupSchedule(group))
         assertFalse(lessons.isEmpty(), "No lessons were received")
 
         val weekdayCount = lessons
