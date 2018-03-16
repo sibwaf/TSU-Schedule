@@ -6,13 +6,22 @@ import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.data.BaseLesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.Parity
-import ru.dyatel.tsuschedule.utilities.NullableLateinit
 import java.util.HashSet
 
 abstract class BaseParser<out T : BaseLesson> {
 
     private companion object {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
+        val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
+        val BLANK_PARENTHESES_PATTERN = Regex("\\(\\s*\\)")
+
+        val TYPE_MAPPING = mapOf(
+                "Пр" to LessonType.PRACTICE,
+                "Практ" to LessonType.PRACTICE,
+                "Л" to LessonType.LECTURE,
+                "Лаб" to LessonType.LABORATORY
+        )
+        val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
     }
 
     fun parse(element: Element): Set<T> {
@@ -27,23 +36,55 @@ abstract class BaseParser<out T : BaseLesson> {
                 .filter { !it.hasClass("screenonly") }
                 .map { it.child(0).child(0).children().last() } // Ignore the padding row
                 .forEach {
-                    val builder = BaseLessonBuilder()
-
                     val timeText = it.getElementsByClass("time").requireSingle().text().trim()
                     val weekday = WEEKDAY_PATTERN.find(timeText)?.value ?: currentWeekday
                     currentWeekday = weekday ?: throw ParsingException("Can't find weekday of the lesson")
 
-                    builder.setWeekday(weekday)
-                    builder.parseParity(it.getElementsByClass("parity").requireSingle().text())
-                    builder.parseTime(timeText)
+                    val parity = parseParity(it)
+                    val time = parseTime(timeText)
+                    val auditory = parseAuditory(it)
+                    val (type, discipline) = parseDiscipline(it)
 
-                    builder.parseDescription(it.getElementsByClass("disc").requireSingle().text())
-                    builder.parseAuditory(it.getElementsByClass("aud").requireSingleOrNull()?.text())
-
-                    lessons += parseSingle(it, builder.build())
+                    lessons += parseSingle(it, BaseLesson(parity, weekday, time, discipline, auditory, type))
                 }
 
         return lessons
+    }
+
+    private fun parseParity(e: Element): Parity {
+        val text = e.getElementsByClass("parity").requireSingle().text().trim()
+        return when (text) {
+            "н/н" -> Parity.ODD
+            "ч/н" -> Parity.EVEN
+            else -> throw ParsingException("Can't determine parity from <$text>")
+        }
+    }
+
+    private fun parseTime(text: String): String {
+        return TIME_PATTERN.find(text)?.value ?: throw ParsingException("Can't parse time from <$text>")
+    }
+
+    private fun parseAuditory(e: Element): String? {
+        val text = e.getElementsByClass("aud").requireSingleOrNull()?.text()?.trim()
+        return text?.takeUnless { it.isEmpty() }
+    }
+
+    private fun parseDiscipline(e: Element): Pair<LessonType, String> {
+        var text = e.getElementsByClass("disc").requireSingle().text().trim()
+                .removeSuffix(",")
+                .replace(BLANK_PARENTHESES_PATTERN, "")
+
+        val typeMatch = TYPE_PATTERN.find(text)
+        val type: LessonType?
+
+        if (typeMatch != null) {
+            type = TYPE_MAPPING[typeMatch.groupValues[1]]!!
+            text = text.removeRange(typeMatch.range)
+        } else {
+            type = LessonType.UNKNOWN
+        }
+
+        return type to text.trim()
     }
 
     protected abstract fun parseSingle(e: Element, base: BaseLesson): T
@@ -51,73 +92,5 @@ abstract class BaseParser<out T : BaseLesson> {
     protected fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
 
     protected fun <T> Collection<T>.requireSingleOrNull() = if (isEmpty()) null else requireSingle()
-
-}
-
-private class BaseLessonBuilder {
-
-    private companion object {
-        val BLANK_PARENTHESES_PATTERN = Regex("\\(\\s*\\)")
-
-        val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
-
-        val TYPE_MAPPING = mapOf(
-                "Пр" to LessonType.PRACTICE,
-                "Практ" to LessonType.PRACTICE,
-                "Л" to LessonType.LECTURE,
-                "Лаб" to LessonType.LABORATORY
-        )
-        val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
-    }
-
-    private lateinit var parity: Parity
-
-    private lateinit var weekday: String
-    private lateinit var time: String
-
-    private lateinit var discipline: String
-    private var auditory by NullableLateinit<String>()
-
-    private lateinit var type: LessonType
-
-    fun parseParity(text: String) {
-        parity = when (text.trim()) {
-            "н/н" -> Parity.ODD
-            "ч/н" -> Parity.EVEN
-            else -> throw ParsingException("Can't determine parity from <$text>")
-        }
-    }
-
-    fun setWeekday(text: String) {
-        weekday = text
-    }
-
-    fun parseTime(text: String) {
-        time = TIME_PATTERN.find(text.trim())?.value
-                ?: throw ParsingException("Can't parse lesson's time from <$text>")
-    }
-
-    fun parseDescription(text: String) {
-        text.replace(BLANK_PARENTHESES_PATTERN, "")
-                .let {
-                    val match = TYPE_PATTERN.find(it)
-                    if (match != null) {
-                        type = TYPE_MAPPING[match.groupValues[1]]!!
-                        it.removeRange(match.range)
-                    } else {
-                        type = LessonType.UNKNOWN
-                        it
-                    }
-                }
-                .trim()
-                .removeSuffix(",").trim()
-                .let { discipline = it }
-    }
-
-    fun parseAuditory(text: String?) {
-        auditory = text?.trim()?.takeUnless { it.isEmpty() }
-    }
-
-    fun build() = BaseLesson(parity, weekday, time, discipline, auditory, type)
 
 }
