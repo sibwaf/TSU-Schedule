@@ -254,6 +254,7 @@ class MainActivity : SingleActivity(), EventListener {
         val view = ctx.frameLayout {
             editText {
                 singleLine = true
+                imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
             }.lparams {
                 leftPadding = dip(12)
                 rightPadding = dip(12)
