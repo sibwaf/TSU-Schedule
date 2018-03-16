@@ -107,6 +107,10 @@ dependencies {
     compile "com.wealthfront:magellan:$magellanVersion"
     compile "com.wealthfront:magellan-support:$magellanVersion"
 
+    def fastAdapterVersion = "3.2.4"
+    compile "com.mikepenz:fastadapter:$fastAdapterVersion@aar"
+    compile "com.mikepenz:fastadapter-commons:$fastAdapterVersion@aar"
+
     compile "com.mikepenz:materialize:1.1.2@aar"
     compile("com.mikepenz:materialdrawer:6.0.6@aar") { transitive = true }
     compile "com.mikepenz:iconics-core:3.0.3@aar"
