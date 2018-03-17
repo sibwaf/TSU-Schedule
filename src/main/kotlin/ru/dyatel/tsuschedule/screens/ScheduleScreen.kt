@@ -16,7 +16,7 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.data.GroupLesson
 import ru.dyatel.tsuschedule.data.LessonDao
 import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.data.database
@@ -74,7 +74,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
         }
     }
 
-    fun bindData(weeks: WeekDataContainer<Lesson>) {
+    fun bindData(weeks: WeekDataContainer<GroupLesson>) {
         val adapter = WeekPagerAdapter(context, weeks)
         pager.adapter = adapter
         pager.currentItem = adapter.getPosition(currentWeekParity)

@@ -10,10 +10,10 @@ import com.mikepenz.fastadapter.adapters.ItemAdapter
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
-import ru.dyatel.tsuschedule.data.BaseLesson
+import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.Parity
 
-class WeekPage<T : BaseLesson>(val parity: Parity) {
+class WeekPage<T : Lesson>(val parity: Parity) {
 
     val adapter = ItemAdapter<WeekdayItem<T>>()
     private val fastAdapter: FastAdapter<WeekdayItem<T>> = FastAdapter.with(adapter)
@@ -29,7 +29,7 @@ class WeekPage<T : BaseLesson>(val parity: Parity) {
 
 }
 
-class WeekDataContainer<T : BaseLesson>(private val viewProvider: (Context) -> BaseLessonView<T>) {
+class WeekDataContainer<T : Lesson>(private val viewProvider: (Context) -> LessonView<T>) {
 
     val oddWeek = WeekPage<T>(Parity.ODD)
     val evenWeek = WeekPage<T>(Parity.EVEN)
@@ -50,7 +50,7 @@ class WeekDataContainer<T : BaseLesson>(private val viewProvider: (Context) -> B
 
 }
 
-class WeekPagerAdapter<T : BaseLesson>(private val context: Context, data: WeekDataContainer<T>) : PagerAdapter() {
+class WeekPagerAdapter<T : Lesson>(private val context: Context, data: WeekDataContainer<T>) : PagerAdapter() {
 
     private val pages = listOf(data.oddWeek, data.evenWeek)
     private val views = mutableMapOf<Parity, View>()

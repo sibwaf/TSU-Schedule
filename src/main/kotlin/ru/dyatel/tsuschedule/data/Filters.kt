@@ -7,7 +7,7 @@ import ru.dyatel.tsuschedule.layout.SubgroupFilterView
 
 abstract class Filter(var enabled: Boolean) {
 
-    abstract fun apply(lesson: Lesson): Lesson?
+    abstract fun apply(lesson: GroupLesson): GroupLesson?
 
 }
 
@@ -32,7 +32,7 @@ class CommonPracticeFilter : PredefinedFilter() {
 
     override fun load(data: Map<String, String>) = Unit
 
-    override fun apply(lesson: Lesson): Lesson? = Lesson(
+    override fun apply(lesson: GroupLesson): GroupLesson? = GroupLesson(
             lesson.parity, lesson.weekday, lesson.time,
             lesson.discipline, lesson.auditory, lesson.teacher, lesson.type,
             lesson.subgroup.takeUnless { lesson.type == LessonType.PRACTICE }
@@ -56,6 +56,6 @@ class SubgroupFilter : PredefinedFilter() {
         data[SUBGROUP_KEY]?.toInt()?.let { subgroup = it }
     }
 
-    override fun apply(lesson: Lesson) = lesson.takeIf { it.subgroup == null || it.subgroup == subgroup }
+    override fun apply(lesson: GroupLesson) = lesson.takeIf { it.subgroup == null || it.subgroup == subgroup }
 
 }

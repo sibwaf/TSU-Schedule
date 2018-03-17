@@ -17,13 +17,13 @@ import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.BaseLesson
+import ru.dyatel.tsuschedule.data.GroupLesson
 import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.TeacherLesson
 import ru.dyatel.tsuschedule.utilities.hideIf
 
-abstract class BaseLessonView<in T : BaseLesson>(context: Context) : _LinearLayout(context) {
+abstract class LessonView<in T : Lesson>(context: Context) : _LinearLayout(context) {
 
     private companion object {
         val timeViewId = View.generateViewId()
@@ -104,7 +104,7 @@ abstract class BaseLessonView<in T : BaseLesson>(context: Context) : _LinearLayo
 
 }
 
-class GroupLessonView(context: Context) : BaseLessonView<Lesson>(context) {
+class GroupLessonView(context: Context) : LessonView<GroupLesson>(context) {
 
     private lateinit var teacherView: TextView
 
@@ -114,7 +114,7 @@ class GroupLessonView(context: Context) : BaseLessonView<Lesson>(context) {
         }
     }
 
-    override fun bind(lesson: Lesson) {
+    override fun bind(lesson: GroupLesson) {
         super.bind(lesson)
         teacherView.apply {
             text = lesson.teacher
@@ -129,7 +129,7 @@ class GroupLessonView(context: Context) : BaseLessonView<Lesson>(context) {
 
 }
 
-class TeacherLessonView(context: Context) : BaseLessonView<TeacherLesson>(context) {
+class TeacherLessonView(context: Context) : LessonView<TeacherLesson>(context) {
 
     private lateinit var groupView: TextView
 

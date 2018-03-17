@@ -3,12 +3,12 @@ package ru.dyatel.tsuschedule.parsing
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
-import ru.dyatel.tsuschedule.data.BaseLesson
+import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonType
 import ru.dyatel.tsuschedule.data.Parity
 import java.util.HashSet
 
-abstract class BaseParser<out T : BaseLesson> {
+abstract class ScheduleParser<out T : Lesson> {
 
     private companion object {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
@@ -45,7 +45,7 @@ abstract class BaseParser<out T : BaseLesson> {
                     val auditory = parseAuditory(it)
                     val (type, discipline) = parseDiscipline(it)
 
-                    lessons += parseSingle(it, BaseLesson(parity, weekday, time, discipline, auditory, type))
+                    lessons += parseSingle(it, Lesson(parity, weekday, time, discipline, auditory, type))
                 }
 
         return lessons
@@ -87,7 +87,7 @@ abstract class BaseParser<out T : BaseLesson> {
         return type to text.trim()
     }
 
-    protected abstract fun parseSingle(e: Element, base: BaseLesson): T
+    protected abstract fun parseSingle(e: Element, base: Lesson): T
 
     protected fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
 
