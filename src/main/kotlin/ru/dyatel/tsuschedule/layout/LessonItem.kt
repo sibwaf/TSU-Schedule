@@ -6,18 +6,18 @@ import android.view.ViewGroup
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import ru.dyatel.tsuschedule.ADAPTER_LESSON_ITEM_ID
-import ru.dyatel.tsuschedule.data.BaseLesson
+import ru.dyatel.tsuschedule.data.Lesson
 
-class LessonItem<T : BaseLesson>(
+class LessonItem<T : Lesson>(
         private val lesson: T,
-        private val viewProvider: (Context) -> BaseLessonView<T>
+        private val viewProvider: (Context) -> LessonView<T>
 ) : AbstractItem<LessonItem<T>, LessonItem.ViewHolder<T>>() {
 
     init {
         withIdentifier(lesson.hashCode().toLong())
     }
 
-    class ViewHolder<T : BaseLesson>(private val view: BaseLessonView<T>)
+    class ViewHolder<T : Lesson>(private val view: LessonView<T>)
         : FastAdapter.ViewHolder<LessonItem<T>>(view) {
         override fun bindView(item: LessonItem<T>, payloads: List<Any>) = view.bind(item.lesson)
 
@@ -29,7 +29,7 @@ class LessonItem<T : BaseLesson>(
     override fun getType() = ADAPTER_LESSON_ITEM_ID
 
     @Suppress("unchecked_cast")
-    override fun getViewHolder(view: View) = ViewHolder(view as BaseLessonView<T>)
+    override fun getViewHolder(view: View) = ViewHolder(view as LessonView<T>)
 
     override fun getLayoutRes() = throw UnsupportedOperationException()
 

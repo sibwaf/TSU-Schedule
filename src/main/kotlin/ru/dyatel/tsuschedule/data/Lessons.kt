@@ -1,6 +1,6 @@
 package ru.dyatel.tsuschedule.data
 
-open class BaseLesson(
+open class Lesson(
         val parity: Parity,
 
         val weekday: String,
@@ -10,13 +10,13 @@ open class BaseLesson(
         val auditory: String?,
 
         val type: LessonType
-) : Comparable<BaseLesson> {
+) : Comparable<Lesson> {
 
-    override fun compareTo(other: BaseLesson) = time.compareTo(other.time)
+    override fun compareTo(other: Lesson) = time.compareTo(other.time)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        other as? BaseLesson ?: return false
+        other as? Lesson ?: return false
 
         if (parity != other.parity) return false
         if (weekday != other.weekday) return false
@@ -40,7 +40,7 @@ open class BaseLesson(
 
 }
 
-class Lesson(
+class GroupLesson(
         parity: Parity,
 
         weekday: String,
@@ -52,11 +52,11 @@ class Lesson(
 
         type: LessonType,
         val subgroup: Int?
-) : BaseLesson(parity, weekday, time, discipline, auditory, type) {
+) : Lesson(parity, weekday, time, discipline, auditory, type) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        other as? Lesson ?: return false
+        other as? GroupLesson ?: return false
         if (!super.equals(other)) return false
 
         if (teacher != other.teacher) return false
@@ -86,7 +86,7 @@ class TeacherLesson(
         type: LessonType,
 
         val groups: List<String>
-) : BaseLesson(parity, weekday, time, discipline, auditory, type) {
+) : Lesson(parity, weekday, time, discipline, auditory, type) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

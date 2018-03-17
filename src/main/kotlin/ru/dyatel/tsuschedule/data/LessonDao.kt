@@ -40,9 +40,9 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
 
         val TABLES = listOf(TABLE_UNFILTERED, TABLE_FILTERED)
 
-        val LESSON_PARSER = object : MapRowParser<Lesson> {
-            override fun parseRow(columns: Map<String, Any?>): Lesson {
-                return Lesson(
+        val LESSON_PARSER = object : MapRowParser<GroupLesson> {
+            override fun parseRow(columns: Map<String, Any?>): GroupLesson {
+                return GroupLesson(
                         Parity.valueOf(columns[Columns.PARITY] as String),
                         columns[Columns.WEEKDAY] as String,
                         columns[Columns.TIME] as String,
@@ -57,7 +57,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
 
     }
 
-    private fun Lesson.toContentValues(): ContentValues {
+    private fun GroupLesson.toContentValues(): ContentValues {
         val values = ContentValues()
         values.put(Columns.PARITY, parity.toString())
         values.put(Columns.WEEKDAY, weekday)
@@ -115,7 +115,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
         }
     }
 
-    fun update(group: String, lessons: Collection<Lesson>) {
+    fun update(group: String, lessons: Collection<GroupLesson>) {
         executeTransaction {
             remove(group)
 
@@ -142,7 +142,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
                     .whereSimple("${Columns.GROUP} = ?", group)
                     .parseList(LESSON_PARSER)
                     .mapNotNull {
-                        var result: Lesson? = it
+                        var result: GroupLesson? = it
                         for (filter in filters) {
                             if (result == null)
                                 break
@@ -157,7 +157,7 @@ class LessonDao(private val context: Context, databaseManager: DatabaseManager)
         EventBus.broadcast(Event.DATA_UPDATED, group)
     }
 
-    fun request(group: String): List<Lesson> {
+    fun request(group: String): List<GroupLesson> {
         return execute {
             select(TABLE_FILTERED)
                     .whereSimple("${Columns.GROUP} = ?", group)

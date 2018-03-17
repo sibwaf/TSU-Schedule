@@ -23,11 +23,11 @@ import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.ADAPTER_WEEKDAY_ITEM_ID
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.BaseLesson
+import ru.dyatel.tsuschedule.data.Lesson
 
-class WeekdayItem<T : BaseLesson>(
+class WeekdayItem<T : Lesson>(
         private val name: String, lessons: List<T>,
-        viewProvider: (Context) -> BaseLessonView<T>
+        viewProvider: (Context) -> LessonView<T>
 ) : AbstractItem<WeekdayItem<T>, WeekdayItem.ViewHolder<T>>() {
 
     private companion object {
@@ -43,7 +43,7 @@ class WeekdayItem<T : BaseLesson>(
         adapter.set(lessons.map { LessonItem(it, viewProvider) })
     }
 
-    class ViewHolder<T : BaseLesson>(view: View) : FastAdapter.ViewHolder<WeekdayItem<T>>(view) {
+    class ViewHolder<T : Lesson>(view: View) : FastAdapter.ViewHolder<WeekdayItem<T>>(view) {
         private val weekdayView = view.find<TextView>(weekdayViewId)
         private val lessonRecyclerView = view.find<RecyclerView>(lessonRecyclerViewId)
 
