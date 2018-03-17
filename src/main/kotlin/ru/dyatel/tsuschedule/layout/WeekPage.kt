@@ -5,42 +5,52 @@ import android.support.v4.view.PagerAdapter
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.ViewGroup
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.adapters.ItemAdapter
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
+import ru.dyatel.tsuschedule.data.BaseLesson
 import ru.dyatel.tsuschedule.data.Parity
 
-class WeekDataContainer {
+class WeekPage<T : BaseLesson>(val parity: Parity) {
 
-    val oddWeek = WeekPage(Parity.ODD)
-    val evenWeek = WeekPage(Parity.EVEN)
-
-    fun updateData(odd: List<Lesson>, even: List<Lesson>) {
-        oddWeek.updateData(odd)
-        evenWeek.updateData(even)
-    }
-
-}
-
-class WeekPage(val parity: Parity) {
-
-    private val adapter = WeekdayListAdapter()
+    val adapter = ItemAdapter<WeekdayItem<T>>()
+    private val fastAdapter: FastAdapter<WeekdayItem<T>> = FastAdapter.with(adapter)
 
     fun createView(context: Context): View {
-        val instanceAdapter = adapter
         return context.recyclerView {
             lparams { width = matchParent }
             layoutManager = LinearLayoutManager(context)
-            adapter = instanceAdapter
+            adapter = fastAdapter
             descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
         }
     }
 
-    fun updateData(data: List<Lesson>) = adapter.updateData(data)
+}
+
+class WeekDataContainer<T : BaseLesson>(private val viewProvider: (Context) -> BaseLessonView<T>) {
+
+    val oddWeek = WeekPage<T>(Parity.ODD)
+    val evenWeek = WeekPage<T>(Parity.EVEN)
+
+    fun updateData(lessons: List<T>) {
+        val (odd, even) = lessons.partition { it.parity == Parity.ODD }
+        oddWeek.adapter.set(generateWeekdays(odd))
+        evenWeek.adapter.set(generateWeekdays(even))
+    }
+
+    private fun generateWeekdays(lessons: List<T>): List<WeekdayItem<T>> {
+        return lessons
+                .groupBy { it.weekday.toLowerCase() }
+                .toList()
+                .sortedBy { NORMAL_WEEKDAY_ORDER.indexOf(it.first) }
+                .map { (weekday, lessons) -> WeekdayItem(weekday, lessons, viewProvider) }
+    }
 
 }
 
-class WeekPagerAdapter(private val context: Context, data: WeekDataContainer) : PagerAdapter() {
+class WeekPagerAdapter<T : BaseLesson>(private val context: Context, data: WeekDataContainer<T>) : PagerAdapter() {
 
     private val pages = listOf(data.oddWeek, data.evenWeek)
     private val views = mutableMapOf<Parity, View>()
@@ -59,9 +69,7 @@ class WeekPagerAdapter(private val context: Context, data: WeekDataContainer) : 
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        if (obj !is Parity)
-            throw IllegalArgumentException("Key must be a Parity instance")
-        container.removeView(views.remove(obj))
+        container.removeView(views.remove(obj as Parity))
     }
 
     override fun getPageTitle(position: Int) = pages[position].parity.toText(context)

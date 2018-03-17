@@ -16,14 +16,15 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.R
+import ru.dyatel.tsuschedule.data.Lesson
 import ru.dyatel.tsuschedule.data.LessonDao
-import ru.dyatel.tsuschedule.data.Parity
 import ru.dyatel.tsuschedule.data.currentWeekParity
 import ru.dyatel.tsuschedule.data.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.layout.GroupLessonView
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
 import ru.dyatel.tsuschedule.parsing.DataRequester
@@ -73,7 +74,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
         }
     }
 
-    fun bindData(weeks: WeekDataContainer) {
+    fun bindData(weeks: WeekDataContainer<Lesson>) {
         val adapter = WeekPagerAdapter(context, weeks)
         pager.adapter = adapter
         pager.currentItem = adapter.getPosition(currentWeekParity)
@@ -83,7 +84,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
 
 class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventListener {
 
-    private val weeks = WeekDataContainer()
+    private val weeks = WeekDataContainer { GroupLessonView(it) }
 
     private lateinit var lessons: LessonDao
 
@@ -135,8 +136,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     }
 
     private fun loadLessons() {
-        val (odd, even) = lessons.request(group).partition { it.parity == Parity.ODD }
-        weeks.updateData(odd, even)
+        weeks.updateData(lessons.request(group))
     }
 
     override fun handleEvent(type: Event, payload: Any?) {
