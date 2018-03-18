@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
@@ -8,6 +8,7 @@ import org.jetbrains.anko.db.UNIQUE
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
+import ru.dyatel.tsuschedule.model.Teacher
 
 class TeacherDao(databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 

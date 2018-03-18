@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.model
 
 data class Teacher(
         val id: String,

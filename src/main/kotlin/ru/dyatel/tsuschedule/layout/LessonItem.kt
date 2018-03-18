@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import ru.dyatel.tsuschedule.ADAPTER_LESSON_ITEM_ID
-import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.model.Lesson
 
 class LessonItem<T : Lesson>(
         private val lesson: T,

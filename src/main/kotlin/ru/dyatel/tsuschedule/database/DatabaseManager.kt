@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.app.Activity
 import android.content.Context
@@ -11,12 +11,12 @@ private const val DB_VERSION = 8
 
 class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
-    val rawLessons = RawGroupScheduleDao(context, this)
+    val snapshots = ScheduleSnapshotDao(context, this)
     val lessons = LessonDao(context, this)
     val filters = FilterDao(context, this)
     val teachers = TeacherDao(this)
 
-    private val parts = setOf(rawLessons, lessons, filters, teachers)
+    private val parts = setOf(snapshots, lessons, filters, teachers)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)

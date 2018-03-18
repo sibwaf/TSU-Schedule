@@ -3,8 +3,8 @@ package ru.dyatel.tsuschedule.parsing
 import hirondelle.date4j.DateTime
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import ru.dyatel.tsuschedule.data.Parity
-import ru.dyatel.tsuschedule.data.weekParityOf
+import ru.dyatel.tsuschedule.model.Parity
+import ru.dyatel.tsuschedule.model.weekParityOf
 
 class WeekParityTest {
 

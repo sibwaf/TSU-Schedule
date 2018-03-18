@@ -4,7 +4,7 @@ import android.app.Application
 import android.preference.PreferenceManager
 import com.crashlytics.android.Crashlytics
 import io.fabric.sdk.android.Fabric
-import ru.dyatel.tsuschedule.data.DatabaseManager
+import ru.dyatel.tsuschedule.database.DatabaseManager
 
 class ScheduleApplication : Application() {
 

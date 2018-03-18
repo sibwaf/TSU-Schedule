@@ -2,7 +2,7 @@ package ru.dyatel.tsuschedule.parsing
 
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.dyatel.tsuschedule.data.Teacher
+import ru.dyatel.tsuschedule.model.Teacher
 import ru.dyatel.tsuschedule.utilities.find
 import ru.dyatel.tsuschedule.utilities.iterator
 

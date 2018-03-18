@@ -23,7 +23,7 @@ import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.ADAPTER_WEEKDAY_ITEM_ID
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Lesson
+import ru.dyatel.tsuschedule.model.Lesson
 
 class WeekdayItem<T : Lesson>(
         private val name: String, lessons: List<T>,

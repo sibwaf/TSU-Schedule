@@ -23,7 +23,7 @@ import org.jetbrains.anko.textColor
 import org.jetbrains.anko.textView
 import ru.dyatel.tsuschedule.ADAPTER_TEACHER_ITEM_ID
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Teacher
+import ru.dyatel.tsuschedule.model.Teacher
 import org.jetbrains.anko.append as ankoAppend
 
 class TeacherItem(val teacher: Teacher) : AbstractItem<TeacherItem, TeacherItem.ViewHolder>() {

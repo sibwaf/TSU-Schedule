@@ -17,8 +17,8 @@ import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.TeacherDao
-import ru.dyatel.tsuschedule.data.database
+import ru.dyatel.tsuschedule.database.TeacherDao
+import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.TeacherItem
 import ru.dyatel.tsuschedule.parsing.DataRequester

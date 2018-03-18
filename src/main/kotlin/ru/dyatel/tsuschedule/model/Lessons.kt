@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.model
 
 open class Lesson(
         val parity: Parity,

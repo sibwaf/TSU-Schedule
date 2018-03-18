@@ -4,10 +4,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
-import ru.dyatel.tsuschedule.data.Lesson
-import ru.dyatel.tsuschedule.data.LessonType
-import ru.dyatel.tsuschedule.data.Parity
-import ru.dyatel.tsuschedule.data.RawSchedule
+import ru.dyatel.tsuschedule.model.Lesson
+import ru.dyatel.tsuschedule.model.LessonType
+import ru.dyatel.tsuschedule.model.Parity
+import ru.dyatel.tsuschedule.model.RawSchedule
 import java.util.HashSet
 
 abstract class ScheduleParser<out T : Lesson> {
