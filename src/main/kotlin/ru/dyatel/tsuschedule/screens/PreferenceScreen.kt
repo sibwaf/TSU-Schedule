@@ -40,6 +40,9 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
         preferenceManager.findPreference(getString(R.string.preference_timeout))
                 .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..30)
 
+        preferenceManager.findPreference(getString(R.string.preference_history_size))
+                .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..Int.MAX_VALUE)
+
         updateButton = preferenceManager.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 val activity = activity!!

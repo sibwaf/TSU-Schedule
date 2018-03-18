@@ -4,6 +4,9 @@
     <string name="preference_timeout">connection_timeout</string>
     <string name="preference_timeout_default">10</string>
 
+    <string name="preference_history_size">history_size</string>
+    <string name="preference_history_size_default">3</string>
+
     <string name="preference_update_auto">check_updates</string>
     <string name="preference_update_auto_default">true</string>
     <string name="preference_update_allow_prerelease">allow_prerelease</string>
