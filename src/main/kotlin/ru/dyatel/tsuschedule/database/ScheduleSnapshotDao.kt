@@ -44,7 +44,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 8) {
+        if (oldVersion < 7) {
             db.dropTable(TABLE_RAW_SCHEDULE)
             createTables(db)
             return
