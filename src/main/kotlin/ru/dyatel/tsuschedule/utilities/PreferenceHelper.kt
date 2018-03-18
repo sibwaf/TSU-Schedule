@@ -32,6 +32,13 @@ class SchedulePreferences(private val context: Context) {
             return preferences.getString(preference, fallback).toInt() * 1000
         }
 
+    val historySize: Int
+        get() {
+            val preference = context.getString(R.string.preference_history_size)
+            val fallback = context.getString(R.string.preference_history_size_default)
+            return preferences.getString(preference, fallback).toInt()
+        }
+
     val autoupdate: Boolean
         get() {
             val preference = context.getString(R.string.preference_update_auto)

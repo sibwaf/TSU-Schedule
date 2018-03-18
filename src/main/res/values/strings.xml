@@ -63,6 +63,9 @@
     <string name="preference_timeout_title">Таймаут подключения</string>
     <string name="preference_timeout_description">В секундах, от 1 до 30</string>
 
+    <string name="preference_history_size_title">История расписания</string>
+    <string name="preference_history_size_description">Количество сохраняемых вариантов расписания, не менее 1</string>
+
     <string name="preference_category_updates">Обновление приложения</string>
     <string name="preference_update_auto_title">Проверять обновления</string>
     <string name="preference_update_auto_description">При запуске приложения, раз в 3 дня</string>
