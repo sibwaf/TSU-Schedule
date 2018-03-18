@@ -32,28 +32,29 @@ class CommonPracticeFilter : PredefinedFilter() {
 
     override fun load(data: Map<String, String>) = Unit
 
-    override fun apply(lesson: GroupLesson): GroupLesson? = GroupLesson(
-            lesson.parity, lesson.weekday, lesson.time,
-            lesson.discipline, lesson.auditory, lesson.teacher, lesson.type,
-            lesson.subgroup.takeUnless { lesson.type == LessonType.PRACTICE }
-    )
+    override fun apply(lesson: GroupLesson): GroupLesson {
+        return with(lesson) {
+            val newSubgroup = subgroup.takeUnless { type == LessonType.PRACTICE }
+            GroupLesson(parity, weekday, time, discipline, auditory, teacher, type, newSubgroup)
+        }
+    }
 
 }
 
 class SubgroupFilter : PredefinedFilter() {
 
-    var subgroup = 1
-
     private companion object {
         const val SUBGROUP_KEY = "subgroup"
     }
+
+    var subgroup = 1
 
     override fun createView(context: Context) = SubgroupFilterView(context).also { it.attachFilter(this) }
 
     override fun save() = mapOf(SUBGROUP_KEY to subgroup.toString())
 
     override fun load(data: Map<String, String>) {
-        data[SUBGROUP_KEY]?.toInt()?.let { subgroup = it }
+        data[SUBGROUP_KEY]?.let { subgroup = it.toInt() }
     }
 
     override fun apply(lesson: GroupLesson) = lesson.takeIf { it.subgroup == null || it.subgroup == subgroup }
