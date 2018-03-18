@@ -50,6 +50,13 @@ abstract class GroupScheduleDao(
     override val parser = PARSER
     override val serializer = SERIALIZER
 
+    override fun decorateTable(columns: MutableMap<String, SqlType>) {
+        columns.apply {
+            put(Columns.TEACHER, TEXT)
+            put(Columns.SUBGROUP, INTEGER)
+        }
+    }
+
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 4) {
             db.dropTable(table, true)
@@ -69,13 +76,6 @@ abstract class GroupScheduleDao(
                 createTables(db)
                 return
             }
-        }
-    }
-
-    override fun decorateTable(columns: MutableMap<String, SqlType>) {
-        columns.apply {
-            put(Columns.TEACHER, TEXT)
-            put(Columns.SUBGROUP, INTEGER)
         }
     }
 

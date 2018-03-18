@@ -7,19 +7,20 @@ import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import ru.dyatel.tsuschedule.ScheduleApplication
 
 private const val DB_FILE = "data.db"
-private const val DB_VERSION = 8
+private const val DB_VERSION = 7
 
 class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val snapshots = ScheduleSnapshotDao(context, this)
 
+    val filters = FilterDao(context, this)
     val groupSchedule = UnfilteredGroupScheduleDao(context, this)
     val filteredGroupSchedule = FilteredGroupScheduleDao(context, this)
 
-    val filters = FilterDao(context, this)
     val teachers = TeacherDao(this)
+    val teacherSchedule = TeacherScheduleDao(this)
 
-    private val parts = setOf(snapshots, groupSchedule, filteredGroupSchedule, filters, teachers)
+    private val parts = setOf(snapshots, filters, groupSchedule, filteredGroupSchedule, teachers, teacherSchedule)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)
