@@ -9,6 +9,7 @@ import org.jetbrains.anko.db.PRIMARY_KEY
 import org.jetbrains.anko.db.TEXT
 import org.jetbrains.anko.db.UNIQUE
 import org.jetbrains.anko.db.createTable
+import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
 import ru.dyatel.tsuschedule.model.RawSchedule
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
@@ -44,6 +45,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 8) {
+            db.dropTable(TABLE_RAW_SCHEDULE)
             createTables(db)
             return
         }

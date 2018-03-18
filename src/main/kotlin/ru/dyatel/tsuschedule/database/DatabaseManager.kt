@@ -12,11 +12,14 @@ private const val DB_VERSION = 8
 class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val snapshots = ScheduleSnapshotDao(context, this)
-    val lessons = LessonDao(context, this)
+
+    val groupSchedule = UnfilteredGroupScheduleDao(context, this)
+    val filteredGroupSchedule = FilteredGroupScheduleDao(context, this)
+
     val filters = FilterDao(context, this)
     val teachers = TeacherDao(this)
 
-    private val parts = setOf(snapshots, lessons, filters, teachers)
+    private val parts = setOf(snapshots, groupSchedule, filteredGroupSchedule, filters, teachers)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)
