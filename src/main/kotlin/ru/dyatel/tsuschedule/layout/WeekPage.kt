@@ -10,8 +10,8 @@ import com.mikepenz.fastadapter.adapters.ItemAdapter
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
-import ru.dyatel.tsuschedule.data.Lesson
-import ru.dyatel.tsuschedule.data.Parity
+import ru.dyatel.tsuschedule.model.Lesson
+import ru.dyatel.tsuschedule.model.Parity
 
 class WeekPage<T : Lesson>(val parity: Parity) {
 

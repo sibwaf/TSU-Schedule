@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -15,6 +15,10 @@ import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
+import ru.dyatel.tsuschedule.model.CommonPracticeFilter
+import ru.dyatel.tsuschedule.model.Filter
+import ru.dyatel.tsuschedule.model.PredefinedFilter
+import ru.dyatel.tsuschedule.model.SubgroupFilter
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.utilities.schedulePreferences

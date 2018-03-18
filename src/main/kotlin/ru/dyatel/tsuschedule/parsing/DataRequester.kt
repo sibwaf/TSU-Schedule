@@ -3,7 +3,7 @@ package ru.dyatel.tsuschedule.parsing
 import hirondelle.date4j.DateTime
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import ru.dyatel.tsuschedule.data.RawSchedule
+import ru.dyatel.tsuschedule.model.RawSchedule
 import java.util.TimeZone
 
 class DataRequester {

@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.transaction

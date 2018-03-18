@@ -16,10 +16,8 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.runOnUiThread
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.DatabaseManager
-import ru.dyatel.tsuschedule.data.GroupLesson
-import ru.dyatel.tsuschedule.data.currentWeekParity
-import ru.dyatel.tsuschedule.data.database
+import ru.dyatel.tsuschedule.database.DatabaseManager
+import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
@@ -27,6 +25,8 @@ import ru.dyatel.tsuschedule.handle
 import ru.dyatel.tsuschedule.layout.GroupLessonView
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
+import ru.dyatel.tsuschedule.model.GroupLesson
+import ru.dyatel.tsuschedule.model.currentWeekParity
 import ru.dyatel.tsuschedule.parsing.DataRequester
 import ru.dyatel.tsuschedule.parsing.GroupScheduleParser
 import ru.dyatel.tsuschedule.utilities.ctx
@@ -128,8 +128,8 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
                             .takeIf { it.isNotEmpty() } ?: throw EmptyResultException()
                     val hash = data.hashCode()
 
-                    database.rawLessons.save(group, schedule, hash)
-                    if (database.rawLessons.request(group, hash).count() > 1) {
+                    database.snapshots.save(group, schedule, hash)
+                    if (database.snapshots.request(group, hash).count() > 1) {
                         TODO()
                     }
 

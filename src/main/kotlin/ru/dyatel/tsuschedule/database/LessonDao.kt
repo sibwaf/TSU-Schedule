@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -10,6 +10,9 @@ import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
+import ru.dyatel.tsuschedule.model.GroupLesson
+import ru.dyatel.tsuschedule.model.LessonType
+import ru.dyatel.tsuschedule.model.Parity
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener

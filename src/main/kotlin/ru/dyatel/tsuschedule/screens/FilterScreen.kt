@@ -6,9 +6,9 @@ import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Filter
-import ru.dyatel.tsuschedule.data.PredefinedFilter
-import ru.dyatel.tsuschedule.data.database
+import ru.dyatel.tsuschedule.model.Filter
+import ru.dyatel.tsuschedule.model.PredefinedFilter
+import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 

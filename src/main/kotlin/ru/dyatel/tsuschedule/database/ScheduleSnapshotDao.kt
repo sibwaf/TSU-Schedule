@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.database
 
 import android.content.ContentValues
 import android.content.Context
@@ -10,9 +10,10 @@ import org.jetbrains.anko.db.TEXT
 import org.jetbrains.anko.db.UNIQUE
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.select
+import ru.dyatel.tsuschedule.model.RawSchedule
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
-class RawGroupScheduleDao(context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
+class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 
     private object Columns {
         const val TIMESTAMP = "timestamp"

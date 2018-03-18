@@ -25,8 +25,8 @@ import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.Filter
-import ru.dyatel.tsuschedule.data.SubgroupFilter
+import ru.dyatel.tsuschedule.model.Filter
+import ru.dyatel.tsuschedule.model.SubgroupFilter
 
 open class FilterView(context: Context) : CardView(context) {
 

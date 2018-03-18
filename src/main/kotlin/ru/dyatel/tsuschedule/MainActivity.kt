@@ -44,8 +44,8 @@ import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.singleLine
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
-import ru.dyatel.tsuschedule.data.currentWeekParity
-import ru.dyatel.tsuschedule.data.database
+import ru.dyatel.tsuschedule.model.currentWeekParity
+import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener

@@ -1,4 +1,4 @@
-package ru.dyatel.tsuschedule.data
+package ru.dyatel.tsuschedule.model
 
 import android.content.Context
 import ru.dyatel.tsuschedule.R

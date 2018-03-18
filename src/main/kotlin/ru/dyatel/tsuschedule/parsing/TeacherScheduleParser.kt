@@ -2,8 +2,8 @@ package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.ParsingException
-import ru.dyatel.tsuschedule.data.Lesson
-import ru.dyatel.tsuschedule.data.TeacherLesson
+import ru.dyatel.tsuschedule.model.Lesson
+import ru.dyatel.tsuschedule.model.TeacherLesson
 
 object TeacherScheduleParser : ScheduleParser<TeacherLesson>() {
 

@@ -1,8 +1,8 @@
 package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.nodes.Element
-import ru.dyatel.tsuschedule.data.Lesson
-import ru.dyatel.tsuschedule.data.GroupLesson
+import ru.dyatel.tsuschedule.model.Lesson
+import ru.dyatel.tsuschedule.model.GroupLesson
 
 object GroupScheduleParser : ScheduleParser<GroupLesson>() {
 

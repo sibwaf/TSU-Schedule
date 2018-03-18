@@ -17,10 +17,10 @@ import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.data.GroupLesson
-import ru.dyatel.tsuschedule.data.Lesson
-import ru.dyatel.tsuschedule.data.LessonType
-import ru.dyatel.tsuschedule.data.TeacherLesson
+import ru.dyatel.tsuschedule.model.GroupLesson
+import ru.dyatel.tsuschedule.model.Lesson
+import ru.dyatel.tsuschedule.model.LessonType
+import ru.dyatel.tsuschedule.model.TeacherLesson
 import ru.dyatel.tsuschedule.utilities.hideIf
 
 abstract class LessonView<in T : Lesson>(context: Context) : _LinearLayout(context) {
