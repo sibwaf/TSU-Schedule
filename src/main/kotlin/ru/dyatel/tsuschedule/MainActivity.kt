@@ -146,6 +146,7 @@ class MainActivity : SingleActivity(), EventListener {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         menu.findItem(R.id.filters).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_filter)
+        menu.findItem(R.id.history).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_history)
         menu.findItem(R.id.delete_group).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_delete)
         menu.findItem(R.id.search).apply { icon = getActionBarIcon(CommunityMaterial.Icon.cmd_magnify) }
                 .actionView.let { it as SearchView }

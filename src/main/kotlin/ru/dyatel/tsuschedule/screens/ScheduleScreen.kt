@@ -166,6 +166,10 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     override fun onUpdateMenu(menu: Menu) {
         menu.findItem(R.id.filters).isVisible = true
         menu.findItem(R.id.delete_group).isVisible = true
+
+        if (ctx!!.schedulePreferences.historySize > 1) {
+            menu.findItem(R.id.history).isVisible = true
+        }
     }
 
 }
