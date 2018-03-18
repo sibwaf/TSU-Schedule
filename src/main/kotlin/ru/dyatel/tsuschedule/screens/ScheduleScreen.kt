@@ -134,7 +134,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
                     }
 
                     if (group in preferences.groups) {
-                        database.lessons.update(group, data)
+                        database.groupSchedule.save(group, data)
                     }
                 }.await()
             } catch (e: Exception) {
@@ -147,7 +147,7 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
     }
 
     private fun loadLessons() {
-        weeks.updateData(database.lessons.request(group))
+        weeks.updateData(database.filteredGroupSchedule.request(group))
     }
 
     override fun handleEvent(type: Event, payload: Any?) {

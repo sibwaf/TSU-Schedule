@@ -44,11 +44,11 @@ import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.singleLine
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
-import ru.dyatel.tsuschedule.model.currentWeekParity
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.model.currentWeekParity
 import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
@@ -315,7 +315,7 @@ class MainActivity : SingleActivity(), EventListener {
                         navigator.replace(HomeScreen())
                     }
 
-                    database.lessons.remove(group)
+                    database.groupSchedule.remove(group)
                     database.filters.remove(group)
                     preferences.removeGroup(group)
 
