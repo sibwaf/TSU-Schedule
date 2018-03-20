@@ -50,6 +50,7 @@ import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.model.currentWeekParity
 import ru.dyatel.tsuschedule.screens.FilterScreen
+import ru.dyatel.tsuschedule.screens.HistoryScreen
 import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
@@ -169,6 +170,7 @@ class MainActivity : SingleActivity(), EventListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.filters -> getNavigator().goTo(FilterScreen(selectedGroup!!))
+            R.id.history -> getNavigator().goTo(HistoryScreen(selectedGroup!!))
             R.id.delete_group -> showDeleteGroupDialog()
             else -> return super.onOptionsItemSelected(item)
         }
