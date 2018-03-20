@@ -20,4 +20,11 @@
     <color name="laboratory_color">@color/md_red_A400</color>
     <color name="unknown_color">@color/md_grey_700</color>
 
+    <color name="snapshot_text_color">@color/text_color</color>
+    <color name="snapshot_background_color">@color/md_light_background</color>
+    <color name="snapshot_selected_text_color">#FFF</color>
+    <color name="snapshot_selected_background_color">@color/accent_color</color>
+    <color name="snapshot_remove_text_color">#FFF</color>
+    <color name="snapshot_remove_background_color">@color/md_red_900</color>
+
 </resources>
