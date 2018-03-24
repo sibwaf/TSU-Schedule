@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.view.ViewCompat
@@ -31,6 +32,7 @@ import com.wealthfront.magellan.transitions.NoAnimationTransition
 import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.ctx
+import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.find
@@ -81,6 +83,24 @@ class MainActivity : SingleActivity(), EventListener {
             drawer.setSelection(id.toLong())
         }
 
+    private val drawerListener = object : Drawer.OnDrawerListener {
+        override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
+
+        override fun onDrawerClosed(drawerView: View) = Unit
+
+        override fun onDrawerOpened(drawerView: View) {
+            parityIndicator.text = currentWeekParity.toText(ctx)
+        }
+    }
+
+    private val historySizeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == getString(R.string.preference_history_size)) {
+            preferences.groups.forEach {
+                database.snapshots.removeSurplus(it)
+            }
+        }
+    }
+
     override fun createNavigator() = Navigator
             .withRoot(HomeScreen())
             .transition(NoAnimationTransition())
@@ -128,6 +148,8 @@ class MainActivity : SingleActivity(), EventListener {
 
         generateDrawerButtons()
 
+        defaultSharedPreferences.registerOnSharedPreferenceChangeListener(historySizeListener)
+
         EventBus.subscribe(this,
                 Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
@@ -142,6 +164,11 @@ class MainActivity : SingleActivity(), EventListener {
         if (savedInstanceState == null) {
             preferences.group?.let { selectedGroup = it }
         }
+    }
+
+    override fun onDestroy() {
+        defaultSharedPreferences.unregisterOnSharedPreferenceChangeListener(historySizeListener)
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -365,18 +392,6 @@ class MainActivity : SingleActivity(), EventListener {
                 EventBus.broadcast(Event.INITIAL_DATA_FETCH, group)
             }
         }
-    }
-
-    private val drawerListener = object : Drawer.OnDrawerListener {
-
-        override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
-
-        override fun onDrawerClosed(drawerView: View) = Unit
-
-        override fun onDrawerOpened(drawerView: View) {
-            parityIndicator.text = currentWeekParity.toText(ctx)
-        }
-
     }
 
 }
