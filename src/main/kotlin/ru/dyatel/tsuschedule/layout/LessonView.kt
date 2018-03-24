@@ -91,7 +91,7 @@ abstract class LessonView<in T : Lesson>(context: Context) : _LinearLayout(conte
         timeView.text = lesson.time
         auditoryView.apply {
             text = lesson.auditory
-            hideIf { text == null }
+            hideIf { text.isEmpty() }
         }
         disciplineView.text = typeText?.let { "${lesson.discipline} ($typeText)" } ?: lesson.discipline
     }
@@ -118,7 +118,7 @@ class GroupLessonView(context: Context) : LessonView<GroupLesson>(context) {
         super.bind(lesson)
         teacherView.apply {
             text = lesson.teacher
-            hideIf { text == null }
+            hideIf { text.isEmpty() }
         }
     }
 
@@ -143,7 +143,7 @@ class TeacherLessonView(context: Context) : LessonView<TeacherLesson>(context) {
         super.bind(lesson)
         groupView.apply {
             text = lesson.groups.joinToString(", ").takeUnless { it.isEmpty() }
-            hideIf { text == null }
+            hideIf { text.isEmpty() }
         }
     }
 
