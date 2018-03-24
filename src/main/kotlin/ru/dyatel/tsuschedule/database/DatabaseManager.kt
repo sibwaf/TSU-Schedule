@@ -4,23 +4,26 @@ import android.app.Activity
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
+import org.jetbrains.anko.db.dropTable
 import ru.dyatel.tsuschedule.ScheduleApplication
+import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 7
 
-class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
+class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val snapshots = ScheduleSnapshotDao(context, this)
 
     val filters = FilterDao(context, this)
-    val groupSchedule = UnfilteredGroupScheduleDao(context, this)
+    val rawGroupSchedule = RawGroupScheduleDao(context, this)
     val filteredGroupSchedule = FilteredGroupScheduleDao(context, this)
 
     val teachers = TeacherDao(this)
     val teacherSchedule = TeacherScheduleDao(this)
 
-    private val parts = setOf(snapshots, filters, groupSchedule, filteredGroupSchedule, teachers, teacherSchedule)
+    private val parts = setOf(snapshots, filters, rawGroupSchedule, filteredGroupSchedule,
+            teachers, teacherSchedule)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)
@@ -32,6 +35,21 @@ class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FI
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         parts.forEach { it.upgradeTables(db, oldVersion, newVersion) }
+
+        if (oldVersion < 7) {
+            val oldSchedule = UnfilteredGroupScheduleDao(context, this)
+            oldSchedule.upgradeTables(db, oldVersion, newVersion)
+
+            val preferences = context.schedulePreferences
+            preferences.groups.forEach {
+                val lessons = oldSchedule.request(it)
+                if (lessons.isNotEmpty()) {
+                    snapshots.save(it, lessons)
+                }
+            }
+
+            db.dropTable(oldSchedule.table)
+        }
     }
 
 }

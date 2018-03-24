@@ -3,61 +3,64 @@ package ru.dyatel.tsuschedule.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import hirondelle.date4j.DateTime
+import org.jetbrains.anko.db.AUTOINCREMENT
 import org.jetbrains.anko.db.DEFAULT
 import org.jetbrains.anko.db.INTEGER
+import org.jetbrains.anko.db.LongParser
 import org.jetbrains.anko.db.MapRowParser
+import org.jetbrains.anko.db.PRIMARY_KEY
+import org.jetbrains.anko.db.SqlOrderDirection
 import org.jetbrains.anko.db.TEXT
-import org.jetbrains.anko.db.createIndex
 import org.jetbrains.anko.db.createTable
 import org.jetbrains.anko.db.dropTable
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
-import ru.dyatel.tsuschedule.model.RawSchedule
+import ru.dyatel.tsuschedule.model.GroupLesson
 import ru.dyatel.tsuschedule.model.ScheduleSnapshot
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
+import java.util.TimeZone
 
 class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : DatabasePart(databaseManager) {
 
-    private object Columns {
-        const val TIMESTAMP = "timestamp"
+    object Columns {
+        const val ID = "id"
         const val GROUP = "`group`"
-        const val DATA = "data"
+        val GROUP_UNESCAPED = GROUP.removeSurrounding("`")
+        const val TIMESTAMP = "timestamp"
         const val HASH = "hash"
         const val PINNED = "pinned"
         const val SELECTED = "selected"
     }
 
-    private companion object {
-        const val TABLE = "lessons_raw"
+    companion object {
+        const val TABLE = "schedule_snapshots"
 
-        val ROW_PARSER = object : MapRowParser<ScheduleSnapshot> {
+        private val ROW_PARSER = object : MapRowParser<ScheduleSnapshot> {
             override fun parseRow(columns: Map<String, Any?>): ScheduleSnapshot {
-                val schedule = RawSchedule(columns[Columns.TIMESTAMP] as Long, columns[Columns.DATA] as String)
-                val pinned = (columns[Columns.PINNED] as Long).asFlag()
-                val selected = (columns[Columns.SELECTED] as Long).asFlag()
-                return ScheduleSnapshot(schedule, pinned, selected)
+                return ScheduleSnapshot(
+                        columns[Columns.ID] as Long,
+                        columns[Columns.GROUP_UNESCAPED] as String,
+                        columns[Columns.TIMESTAMP] as Long,
+                        (columns[Columns.PINNED] as Long).asFlag(),
+                        (columns[Columns.SELECTED] as Long).asFlag())
             }
         }
 
-        fun Boolean.toInt() = if (this) 1 else 0
-        fun Long.asFlag() = this != 0L
+        private fun Boolean.toInt() = if (this) 1 else 0
+        private fun Long.asFlag() = this != 0L
     }
 
     private val preferences = context.schedulePreferences
 
     override fun createTables(db: SQLiteDatabase) {
         db.createTable(TABLE, true,
-                Columns.TIMESTAMP to INTEGER,
+                Columns.ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
                 Columns.GROUP to TEXT,
-                Columns.DATA to TEXT,
+                Columns.TIMESTAMP to INTEGER,
                 Columns.HASH to INTEGER,
                 Columns.PINNED to INTEGER + DEFAULT("0"),
                 Columns.SELECTED to INTEGER + DEFAULT("1"))
-
-        db.createIndex("timestamp_group", TABLE, true, true,
-                Columns.TIMESTAMP, Columns.GROUP)
-        db.createIndex("group_data", TABLE, true, true,
-                Columns.GROUP, Columns.DATA)
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -68,57 +71,91 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
         }
     }
 
-    fun request(group: String, hash: Int? = null): List<ScheduleSnapshot> {
+    fun request(group: String): List<ScheduleSnapshot> {
         return execute {
-            val query = select(TABLE).orderBy(Columns.TIMESTAMP)
-
-            if (hash != null) {
-                query.whereSimple("${Columns.GROUP} = ? AND ${Columns.HASH} = ?", group, hash.toString())
-            } else {
-                query.whereSimple("${Columns.GROUP} = ?", group)
-            }
-
-            query.parseList(ROW_PARSER)
+            select(TABLE)
+                    .whereSimple("${Columns.GROUP} = ?", group)
+                    .orderBy(Columns.ID)
+                    .parseList(ROW_PARSER)
         }
     }
 
-    fun save(group: String, raw: RawSchedule, hash: Int) {
+    fun save(group: String, lessons: Collection<GroupLesson>) {
+        val timezone = TimeZone.getDefault()
+        val timestamp = DateTime.now(timezone).getMilliseconds(timezone)
+
+        val hash = lessons.hashCode()
+
         executeTransaction {
             update(TABLE, Columns.SELECTED to false.toInt())
                     .whereSimple("${Columns.GROUP} = ?", group)
                     .exec()
 
+            select(TABLE, Columns.ID)
+                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.HASH} = ?", group, hash.toString())
+                    .parseList(LongParser)
+                    .forEach {
+                        // TODO: find and remove duplicates
+                    }
+
+            select(TABLE, Columns.ID)
+                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.PINNED} = 0", group)
+                    .orderBy(Columns.ID, SqlOrderDirection.DESC)
+                    .limit(preferences.historySize - 1, Int.MAX_VALUE) // -1 is not supported for some reason
+                    .parseList(LongParser)
+                    .forEach { remove(it) }
+
             val contentValues = ContentValues().apply {
                 put(Columns.GROUP, group)
-                put(Columns.TIMESTAMP, raw.timestamp)
-                put(Columns.DATA, raw.data)
+                put(Columns.TIMESTAMP, timestamp)
                 put(Columns.HASH, hash)
             }
-            insertWithOnConflict(TABLE, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE)
+            val id = insert(TABLE, null, contentValues)
 
-            execSQL("DELETE FROM $TABLE " +
-                    "WHERE ${Columns.TIMESTAMP} IN (" +
-                    "SELECT ${Columns.TIMESTAMP} FROM $TABLE " +
-                    "WHERE ${Columns.GROUP} = ? AND ${Columns.PINNED} = 0 " +
-                    "ORDER BY ${Columns.TIMESTAMP} DESC " +
-                    "LIMIT -1 OFFSET ?" +
-                    ")", arrayOf(group, preferences.historySize))
+            databaseManager.rawGroupSchedule.save(id.toString(), lessons)
+            databaseManager.filteredGroupSchedule.save(group, lessons)
         }
     }
 
-    fun update(group: String, raw: RawSchedule, pinned: Boolean, selected: Boolean) {
-        execute {
+    fun update(id: Long, pinned: Boolean, selected: Boolean) {
+        executeTransaction {
+            val old = if (selected) {
+                select(TABLE)
+                        .whereSimple("${Columns.ID} = ?", id.toString())
+                        .parseSingle(ROW_PARSER)
+            } else null
+
             update(TABLE, Columns.PINNED to pinned.toInt(), Columns.SELECTED to selected.toInt())
-                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.TIMESTAMP} = ?",
-                            group, raw.timestamp.toString())
+                    .whereSimple("${Columns.ID} = ?", id.toString())
                     .exec()
+
+            if (selected) {
+                old!!
+
+                update(TABLE, Columns.SELECTED to false.toInt())
+                        .whereSimple("${Columns.GROUP} = ? AND ${Columns.ID} != ?", old.group, id.toString())
+                        .exec()
+
+                if (!old.selected) {
+                    val lessons = databaseManager.rawGroupSchedule.request(id.toString())
+                    databaseManager.filteredGroupSchedule.save(old.group, lessons)
+                }
+            }
         }
     }
 
-    fun remove(group: String, raw: RawSchedule) {
-        execute {
-            delete(TABLE, "${Columns.GROUP} = ? AND ${Columns.TIMESTAMP} = ?",
-                    arrayOf(group, raw.timestamp.toString()))
+    fun remove(id: Long) {
+        executeTransaction {
+            val snapshot = select(TABLE)
+                    .whereSimple("${Columns.ID} = ?", id.toString())
+                    .parseSingle(ROW_PARSER)
+
+            if (snapshot.selected) {
+                databaseManager.filteredGroupSchedule.remove(snapshot.group)
+            }
+
+            databaseManager.rawGroupSchedule.remove(id.toString())
+            delete(TABLE, "${Columns.ID} = ?", arrayOf(id.toString()))
         }
     }
 

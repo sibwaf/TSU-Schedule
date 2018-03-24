@@ -122,19 +122,11 @@ class ScheduleScreen(private val group: String) : Screen<ScheduleView>(), EventL
 
                 async {
                     val requester = DataRequester().apply { timeout = preferences.connectionTimeout }
-                    val schedule = requester.groupSchedule(group)
-
-                    val data = GroupScheduleParser.parse(schedule)
+                    val lessons = GroupScheduleParser.parse(requester.groupSchedule(group))
                             .takeIf { it.isNotEmpty() } ?: throw EmptyResultException()
-                    val hash = data.hashCode()
-
-                    database.snapshots.save(group, schedule, hash)
-                    if (database.snapshots.request(group, hash).count() > 1) {
-                        TODO()
-                    }
 
                     if (group in preferences.groups) {
-                        database.groupSchedule.save(group, data)
+                        database.snapshots.save(group, lessons)
                     }
                 }.await()
             } catch (e: Exception) {

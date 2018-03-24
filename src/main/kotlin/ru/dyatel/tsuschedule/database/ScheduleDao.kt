@@ -12,7 +12,7 @@ import ru.dyatel.tsuschedule.model.LessonType
 import ru.dyatel.tsuschedule.model.Parity
 
 abstract class ScheduleDao<T : Lesson>(
-        protected val table: String,
+        val table: String,
         protected val keyColumn: String,
         databaseManager: DatabaseManager
 ) : DatabasePart(databaseManager) {

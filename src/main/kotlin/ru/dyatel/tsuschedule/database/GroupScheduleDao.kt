@@ -3,6 +3,7 @@ package ru.dyatel.tsuschedule.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.db.FOREIGN_KEY
 import org.jetbrains.anko.db.INTEGER
 import org.jetbrains.anko.db.SqlType
 import org.jetbrains.anko.db.TEXT
@@ -17,9 +18,10 @@ import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 abstract class GroupScheduleDao(
         table: String,
+        keyColumn: String,
         protected val context: Context,
         databaseManager: DatabaseManager
-) : ScheduleDao<GroupLesson>(table, "`group`", databaseManager) {
+) : ScheduleDao<GroupLesson>(table, keyColumn, databaseManager) {
 
     private object Columns {
         const val TEACHER = "teacher"
@@ -81,10 +83,11 @@ abstract class GroupScheduleDao(
 
 }
 
+@Deprecated("Use RawGroupScheduleDao instead")
 class UnfilteredGroupScheduleDao(
         context: Context,
         databaseManager: DatabaseManager
-) : GroupScheduleDao("lessons", context, databaseManager) {
+) : GroupScheduleDao("lessons", "`group`", context, databaseManager) {
 
     override fun save(key: String, lessons: Collection<GroupLesson>) {
         executeTransaction {
@@ -101,10 +104,44 @@ class UnfilteredGroupScheduleDao(
     }
 }
 
+class RawGroupScheduleDao(
+        context: Context,
+        databaseManager: DatabaseManager
+) : GroupScheduleDao("lessons_raw", ID, context, databaseManager) {
+
+    private companion object {
+        const val ID = "id"
+    }
+
+    override fun decorateTable(columns: MutableMap<String, SqlType>) {
+        super.decorateTable(columns)
+
+        val idColumn = FOREIGN_KEY(ID, ScheduleSnapshotDao.TABLE, ScheduleSnapshotDao.Columns.ID)
+        columns[idColumn.first] = idColumn.second
+    }
+
+    override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 7) {
+            db.dropTable(table, true)
+            createTables(db)
+            return
+        }
+    }
+
+    fun requestCurrentSnapshot(group: String): List<GroupLesson> {
+        return executeTransaction {
+            val snapshot = databaseManager.snapshots.request(group).singleOrNull { it.selected }
+                    ?: return@executeTransaction emptyList()
+
+            request(snapshot.id.toString())
+        }
+    }
+}
+
 class FilteredGroupScheduleDao(
         context: Context,
         databaseManager: DatabaseManager
-) : GroupScheduleDao("filtered", context, databaseManager), EventListener {
+) : GroupScheduleDao("filtered", "`group`", context, databaseManager), EventListener {
 
     init {
         EventBus.subscribe(this, Event.DATA_MODIFIER_SET_CHANGED)
@@ -130,9 +167,8 @@ class FilteredGroupScheduleDao(
 
     override fun handleEvent(type: Event, payload: Any?) {
         context.schedulePreferences.groups.forEach {
-            val unfiltered = databaseManager.groupSchedule.request(it)
+            val unfiltered = databaseManager.rawGroupSchedule.requestCurrentSnapshot(it)
             save(it, unfiltered)
         }
     }
-
 }
