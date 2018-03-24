@@ -59,8 +59,8 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
                 Columns.GROUP to TEXT,
                 Columns.TIMESTAMP to INTEGER,
                 Columns.HASH to INTEGER,
-                Columns.PINNED to INTEGER + DEFAULT("0"),
-                Columns.SELECTED to INTEGER + DEFAULT("1"))
+                Columns.PINNED to INTEGER + DEFAULT(false.toInt().toString()),
+                Columns.SELECTED to INTEGER + DEFAULT(true.toInt().toString()))
     }
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -81,39 +81,47 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
     }
 
     fun save(group: String, lessons: Collection<GroupLesson>) {
-        val timezone = TimeZone.getDefault()
-        val timestamp = DateTime.now(timezone).getMilliseconds(timezone)
-
-        val hash = lessons.hashCode()
-
         executeTransaction {
+            val timezone = TimeZone.getDefault()
+            val timestamp = DateTime.now(timezone).getMilliseconds(timezone)
+
+            val new = lessons.toSet()
+            val hash = new.hashCode()
+
             update(TABLE, Columns.SELECTED to false.toInt())
                     .whereSimple("${Columns.GROUP} = ?", group)
                     .exec()
 
-            select(TABLE, Columns.ID)
+            val duplicate = select(TABLE)
                     .whereSimple("${Columns.GROUP} = ? AND ${Columns.HASH} = ?", group, hash.toString())
-                    .parseList(LongParser)
-                    .forEach {
-                        // TODO: find and remove duplicates
-                    }
+                    .parseOpt(ROW_PARSER)
+                    ?.takeIf {
+                        val id = it.id
+                        val old = databaseManager.rawGroupSchedule.request(id.toString()).toSet()
 
-            select(TABLE, Columns.ID)
-                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.PINNED} = 0", group)
-                    .orderBy(Columns.ID, SqlOrderDirection.DESC)
-                    .limit(preferences.historySize - 1, Int.MAX_VALUE) // -1 is not supported for some reason
-                    .parseList(LongParser)
-                    .forEach { remove(it) }
+                        old == new
+                    }
 
             val contentValues = ContentValues().apply {
                 put(Columns.GROUP, group)
                 put(Columns.TIMESTAMP, timestamp)
                 put(Columns.HASH, hash)
+
+                if (duplicate != null) {
+                    put(Columns.PINNED, duplicate.pinned.toInt())
+                }
             }
             val id = insert(TABLE, null, contentValues)
 
-            databaseManager.rawGroupSchedule.save(id.toString(), lessons)
-            databaseManager.filteredGroupSchedule.save(group, lessons)
+            if (duplicate != null) {
+                databaseManager.rawGroupSchedule.transferSnapshot(duplicate.id, id)
+                remove(duplicate.id)
+            } else {
+                removeSurplus(group)
+
+                databaseManager.rawGroupSchedule.save(id.toString(), new)
+                databaseManager.filteredGroupSchedule.save(group, new)
+            }
         }
     }
 
@@ -156,6 +164,17 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
 
             databaseManager.rawGroupSchedule.remove(id.toString())
             delete(TABLE, "${Columns.ID} = ?", arrayOf(id.toString()))
+        }
+    }
+
+    fun removeSurplus(group: String) {
+        execute {
+            select(TABLE, Columns.ID)
+                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.PINNED} = 0", group)
+                    .orderBy(Columns.ID, SqlOrderDirection.DESC)
+                    .limit(preferences.historySize, Int.MAX_VALUE) // -1 is not supported for some reason
+                    .parseList(LongParser)
+                    .forEach { remove(it) }
         }
     }
 

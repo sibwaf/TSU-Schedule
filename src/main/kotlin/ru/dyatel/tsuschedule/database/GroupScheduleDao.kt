@@ -23,7 +23,7 @@ abstract class GroupScheduleDao(
         databaseManager: DatabaseManager
 ) : ScheduleDao<GroupLesson>(table, keyColumn, databaseManager) {
 
-    private object Columns {
+    protected object Columns {
         const val TEACHER = "teacher"
         const val SUBGROUP = "subgroup"
     }
@@ -107,16 +107,16 @@ class UnfilteredGroupScheduleDao(
 class RawGroupScheduleDao(
         context: Context,
         databaseManager: DatabaseManager
-) : GroupScheduleDao("lessons_raw", ID, context, databaseManager) {
+) : GroupScheduleDao("lessons_raw", Columns.ID, context, databaseManager) {
 
-    private companion object {
+    private object Columns {
         const val ID = "id"
     }
 
     override fun decorateTable(columns: MutableMap<String, SqlType>) {
         super.decorateTable(columns)
 
-        val idColumn = FOREIGN_KEY(ID, ScheduleSnapshotDao.TABLE, ScheduleSnapshotDao.Columns.ID)
+        val idColumn = FOREIGN_KEY(Columns.ID, ScheduleSnapshotDao.TABLE, ScheduleSnapshotDao.Columns.ID)
         columns[idColumn.first] = idColumn.second
     }
 
@@ -125,6 +125,14 @@ class RawGroupScheduleDao(
             db.dropTable(table, true)
             createTables(db)
             return
+        }
+    }
+
+    fun transferSnapshot(old: Long, new: Long) {
+        execute {
+            update(table, Columns.ID to new)
+                    .whereSimple("${Columns.ID} = ?", old.toString())
+                    .exec()
         }
     }
 

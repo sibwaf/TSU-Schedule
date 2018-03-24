@@ -17,7 +17,7 @@ abstract class ScheduleDao<T : Lesson>(
         databaseManager: DatabaseManager
 ) : DatabasePart(databaseManager) {
 
-    private object Columns {
+    protected object Columns {
         const val PARITY = "parity"
         const val WEEKDAY = "weekday"
         const val TIME = "time"
