@@ -170,7 +170,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
     fun removeSurplus(group: String) {
         execute {
             select(TABLE, Columns.ID)
-                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.PINNED} = 0", group)
+                    .whereSimple("${Columns.GROUP} = ? AND ${Columns.SELECTED} = 0 AND ${Columns.PINNED} = 0", group)
                     .orderBy(Columns.ID, SqlOrderDirection.DESC)
                     .limit(preferences.historySize, Int.MAX_VALUE) // -1 is not supported for some reason
                     .parseList(LongParser)
