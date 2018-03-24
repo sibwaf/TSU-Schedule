@@ -13,7 +13,6 @@ import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
 import com.mikepenz.iconics.IconicsDrawable
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
-import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
@@ -25,8 +24,6 @@ import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.layout.ScheduleSnapshotItem
-import ru.dyatel.tsuschedule.model.RawSchedule
-import ru.dyatel.tsuschedule.parsing.GroupScheduleParser
 import java.util.LinkedList
 import java.util.Queue
 
@@ -65,10 +62,8 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
     private val adapter = ItemAdapter<ScheduleSnapshotItem>()
     private val fastAdapter: FastAdapter<ScheduleSnapshotItem> = FastAdapter.with(adapter)
 
-    private val runningTasks = mutableSetOf<Job>()
-    private val pendingRemoves: Queue<RawSchedule> = LinkedList()
-
-    private var initialSelection: RawSchedule? = null
+    private val runningTasks: Queue<Job> = LinkedList()
+    private val pendingRemoves: Queue<Long> = LinkedList()
 
     override fun createView(context: Context) = HistoryView(context).apply { attachAdapter(fastAdapter) }
 
@@ -89,10 +84,6 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
                         }
                     }
                 }
-
-                if (isSelected) {
-                    initialSelection = schedule
-                }
             }
         })
 
@@ -101,18 +92,13 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
     override fun onHide(context: Context) {
         val database = activity.database
 
-        runningTasks.forEach { it.cancel() }
+        runningTasks.toList().forEach { it.cancel() }
         while (pendingRemoves.isNotEmpty()) {
-            database.snapshots.remove(group, pendingRemoves.poll())
+            database.snapshots.remove(pendingRemoves.poll())
         }
 
         adapter.adapterItems.forEach {
-            database.snapshots.update(group, it.schedule, it.pinned, it.isSelected)
-            if (it.isSelected && it.schedule != initialSelection) {
-                // TODO: keep parsed schedules
-                val lessons = GroupScheduleParser.parse(it.schedule)
-                database.groupSchedule.save(group, lessons)
-            }
+            database.snapshots.update(it.id, it.pinned, it.isSelected)
         }
 
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
@@ -121,11 +107,10 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
 
     fun itemSwiped(position: Int, direction: Int) {
         val item = adapter.getAdapterItem(position)
+        pendingRemoves += item.id
 
-        launch(UI, start = CoroutineStart.ATOMIC) {
-            pendingRemoves += item.schedule
-
-            delay(2000)
+        launch(UI) {
+            delay(3000)
 
             val newPosition = adapter.getAdapterPosition(item)
             adapter.remove(newPosition)
@@ -134,11 +119,12 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
             invokeOnCompletion(onCancelling = true) { runningTasks -= this }
 
             item.withIsSwipeable(false).cancelClickListener = {
-                cancel()
+                pendingRemoves -= it.id
 
-                pendingRemoves -= it.schedule
+                cancel()
                 it.withIsSwipeable(true).cancelClickListener = null
 
+                // TODO: fix stuck item when task is cancelled too fast
                 val newPosition = adapter.getAdapterPosition(it)
                 fastAdapter.notifyAdapterItemChanged(newPosition)
             }
@@ -146,4 +132,6 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
 
         fastAdapter.notifyAdapterItemChanged(position)
     }
+
+    override fun getTitle(context: Context) = context.getString(R.string.screen_history, group)!!
 }

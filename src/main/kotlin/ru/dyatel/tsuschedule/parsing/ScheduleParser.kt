@@ -1,13 +1,11 @@
 package ru.dyatel.tsuschedule.parsing
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.model.Lesson
 import ru.dyatel.tsuschedule.model.LessonType
 import ru.dyatel.tsuschedule.model.Parity
-import ru.dyatel.tsuschedule.model.RawSchedule
 import java.util.HashSet
 
 abstract class ScheduleParser<out T : Lesson> {
@@ -26,9 +24,7 @@ abstract class ScheduleParser<out T : Lesson> {
         val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
     }
 
-    fun parse(schedule: RawSchedule): Set<T> {
-        val element = Jsoup.parse(schedule.data).body().child(0)
-
+    fun parse(element: Element): Set<T> {
         if (element.childNodeSize() <= 1) {
             throw EmptyResultException()
         }

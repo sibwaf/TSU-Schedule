@@ -46,10 +46,10 @@ class ScheduleSnapshotItem(
         val cancelViewId = View.generateViewId()
     }
 
-    val schedule = snapshot.schedule
+    val id = snapshot.id
     var pinned = snapshot.pinned
 
-    private val datetimeText = DateTime.forInstant(schedule.timestamp, TimeZone.getDefault())
+    private val datetimeText = DateTime.forInstant(snapshot.timestamp, TimeZone.getDefault())
             .format("DD-MM-YYYY, hh:mm:ss")
 
     private var swipeable = true

@@ -317,7 +317,9 @@ class MainActivity : SingleActivity(), EventListener {
                         navigator.replace(HomeScreen())
                     }
 
-                    database.groupSchedule.remove(group)
+                    database.snapshots.request(group).forEach {
+                        database.snapshots.remove(it.id)
+                    }
                     database.filters.remove(group)
                     preferences.removeGroup(group)
 
