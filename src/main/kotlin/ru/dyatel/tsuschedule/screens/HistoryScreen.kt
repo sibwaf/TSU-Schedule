@@ -84,6 +84,12 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
                         }
                     }
                 }
+                pinClickListener = {
+                    pinned = !pinned
+
+                    val position = adapter.getAdapterPosition(this)
+                    fastAdapter.notifyAdapterItemChanged(position)
+                }
             }
         })
 
