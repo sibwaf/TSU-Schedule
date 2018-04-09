@@ -2,11 +2,14 @@ package ru.dyatel.tsuschedule
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.NotificationChannel
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.SearchView
@@ -59,7 +62,6 @@ import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.screens.TeacherSearchScreen
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.Validator
-import ru.dyatel.tsuschedule.utilities.createNotificationChannels
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.util.TimeZone
 
@@ -115,7 +117,13 @@ class MainActivity : SingleActivity(), EventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
 
-        createNotificationChannels(ctx)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = notificationManager
+
+            val name = getString(R.string.notification_channel_updates_name)
+            notificationManager.createNotificationChannel(
+                    NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW))
+        }
 
         val updater = Updater(ctx)
         updater.handleMigration()
