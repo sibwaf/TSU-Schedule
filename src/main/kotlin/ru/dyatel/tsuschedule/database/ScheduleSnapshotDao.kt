@@ -117,9 +117,11 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
                 databaseManager.rawGroupSchedule.transferSnapshot(duplicate.id, id)
                 remove(duplicate.id)
             } else {
-                removeSurplus(group)
-
                 databaseManager.rawGroupSchedule.save(id.toString(), new)
+                removeSurplus(group)
+            }
+
+            if (duplicate == null || !duplicate.selected) {
                 databaseManager.filteredGroupSchedule.save(group, new)
             }
         }
