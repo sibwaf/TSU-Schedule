@@ -1,19 +1,13 @@
 package ru.dyatel.tsuschedule.utilities
 
-import android.app.NotificationChannel
 import android.content.Context
-import android.os.Build
 import android.support.v4.app.Fragment
-import android.support.v4.app.NotificationManagerCompat
 import android.support.v7.preference.Preference
 import android.view.View
 import com.wealthfront.magellan.Screen
 import org.jetbrains.anko.inputMethodManager
-import org.jetbrains.anko.notificationManager
 import org.json.JSONArray
 import org.json.JSONObject
-import ru.dyatel.tsuschedule.NOTIFICATION_CHANNEL_UPDATES
-import ru.dyatel.tsuschedule.R
 
 class NumberPreferenceValidator(
         private val acceptEmptyInput: Boolean = false,
@@ -54,17 +48,6 @@ operator fun JSONArray.iterator() = object : Iterator<Any> {
 
     override fun next() = this@iterator[current++]
 
-}
-
-fun createNotificationChannels(context: Context) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-        return
-
-    val notificationManager = context.notificationManager
-
-    val name = context.getString(R.string.notification_channel_updates_name)
-    val updateChannel = NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW)
-    notificationManager.createNotificationChannel(updateChannel)
 }
 
 val Screen<*>.ctx: Context?
