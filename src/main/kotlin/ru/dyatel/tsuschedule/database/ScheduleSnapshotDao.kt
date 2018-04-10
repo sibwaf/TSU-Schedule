@@ -85,8 +85,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
             val timezone = TimeZone.getDefault()
             val timestamp = DateTime.now(timezone).getMilliseconds(timezone)
 
-            val new = lessons.toSet()
-            val hash = new.hashCode()
+            val hash = lessons.sumBy { it.hashCode() }
 
             update(TABLE, Columns.SELECTED to false.toInt())
                     .whereSimple("${Columns.GROUP} = ?", group)
@@ -96,10 +95,8 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
                     .whereSimple("${Columns.GROUP} = ? AND ${Columns.HASH} = ?", group, hash.toString())
                     .parseOpt(ROW_PARSER)
                     ?.takeIf {
-                        val id = it.id
-                        val old = databaseManager.rawGroupSchedule.request(id.toString()).toSet()
-
-                        old == new
+                        val old = databaseManager.rawGroupSchedule.request(it.id.toString())
+                        lessons.size == old.size && lessons.all { old.contains(it) }
                     }
 
             val contentValues = ContentValues().apply {
@@ -117,12 +114,12 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
                 databaseManager.rawGroupSchedule.transferSnapshot(duplicate.id, id)
                 remove(duplicate.id)
             } else {
-                databaseManager.rawGroupSchedule.save(id.toString(), new)
+                databaseManager.rawGroupSchedule.save(id.toString(), lessons)
                 removeSurplus(group)
             }
 
             if (duplicate == null || !duplicate.selected) {
-                databaseManager.filteredGroupSchedule.save(group, new)
+                databaseManager.filteredGroupSchedule.save(group, lessons)
             }
         }
     }
