@@ -8,7 +8,7 @@ import ru.dyatel.tsuschedule.model.LessonType
 import ru.dyatel.tsuschedule.model.Parity
 import java.util.HashSet
 
-abstract class ScheduleParser<out T : Lesson> {
+abstract class ScheduleParser<out T : Lesson> : ParserBase() {
 
     private companion object {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
@@ -88,9 +88,5 @@ abstract class ScheduleParser<out T : Lesson> {
     }
 
     protected abstract fun parseSingle(e: Element, base: Lesson): T
-
-    protected fun <T> Collection<T>.requireSingle() = singleOrNull() ?: throw ParsingException()
-
-    protected fun <T> Collection<T>.requireSingleOrNull() = if (isEmpty()) null else requireSingle()
 
 }

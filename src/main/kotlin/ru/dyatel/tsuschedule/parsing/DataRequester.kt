@@ -35,4 +35,12 @@ class DataRequester {
                 .body()
     }
 
+    fun examSchedule(group: String) : Element {
+        return Jsoup.connect("http://schedule.tsu.tula.ru/exam/")
+                .timeout(timeout)
+                .data("group", group)
+                .get()
+                .getElementById("results")
+    }
+
 }
