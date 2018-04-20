@@ -1,11 +1,13 @@
 package ru.dyatel.tsuschedule.screens
 
 import android.content.Context
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
+import android.view.View
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -14,8 +16,10 @@ import com.wealthfront.magellan.Screen
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.find
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.support.v4.swipeRefreshLayout
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.database.TeacherDao
 import ru.dyatel.tsuschedule.database.database
@@ -31,10 +35,34 @@ import java.lang.ref.WeakReference
 
 class TeacherSearchView(context: Context) : BaseScreenView<TeacherSearchScreen>(context) {
 
-    private val teacherRecycler = recyclerView {
-        lparams(width = matchParent, height = matchParent)
-        layoutManager = LinearLayoutManager(context)
-        addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+    private companion object {
+        val recyclerViewId = View.generateViewId()
+    }
+
+    private val swipeRefresh: SwipeRefreshLayout
+    private val teacherRecycler: RecyclerView
+
+    var isRefreshing: Boolean
+        get() = swipeRefresh.isRefreshing
+        set(value) {
+            swipeRefresh.isRefreshing = value
+        }
+
+    init {
+        swipeRefresh = swipeRefreshLayout {
+            isEnabled = false
+
+            recyclerView {
+                id = recyclerViewId
+
+                lparams(width = matchParent, height = matchParent)
+
+                layoutManager = LinearLayoutManager(context)
+                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+            }
+        }
+
+        teacherRecycler = swipeRefresh.find(recyclerViewId)
     }
 
     fun setAdapter(adapter: RecyclerView.Adapter<*>) {
@@ -83,18 +111,18 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
     }
 
     override fun onHide(context: Context) {
+        task.cancel()
         view.findFocus()?.hideKeyboard()
         super.onHide(context)
     }
 
-    fun updateQuery(query: String) {
+    private fun updateQuery(query: String) {
         this.query = query
 
         val name = query.trim().takeUnless { it.isEmpty() }
         adapter.filter(name)
     }
 
-    // TODO: progress indicator
     private fun request(name: String) {
         val preferences = ctx!!.schedulePreferences
 
@@ -103,6 +131,8 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
 
         task.launch {
             try {
+                view.isRefreshing = true
+
                 val teachers = async {
                     val requester = DataRequester().apply { timeout = preferences.connectionTimeout }
                     val teachers = TeacherParser.parse(requester.teacherSearch(name))
@@ -119,6 +149,8 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
                 FastAdapterDiffUtil.set(adapter, teachers.map { TeacherItem(it) }, false)
             } catch (e: Exception) {
                 e.handle { message -> view?.let { longSnackbar(it, message) } }
+            } finally {
+                view.isRefreshing = false
             }
         }
     }
