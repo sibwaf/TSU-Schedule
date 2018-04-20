@@ -99,7 +99,7 @@ class HomeScreen : Screen<HomeView>() {
     }
 
     override fun onHide(context: Context?) {
-        view.findFocus()?.hideKeyboard()
+        activity.hideKeyboard()
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
         super.onHide(context)
     }
