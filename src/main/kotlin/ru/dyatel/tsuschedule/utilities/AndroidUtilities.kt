@@ -1,5 +1,6 @@
 package ru.dyatel.tsuschedule.utilities
 
+import android.app.Activity
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v7.preference.Preference
@@ -28,9 +29,11 @@ class NumberPreferenceValidator(
 
 }
 
-fun View.hideKeyboard() {
-    context.inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
-    clearFocus()
+fun Activity.hideKeyboard() {
+    val view = currentFocus ?: return
+
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    view.clearFocus()
 }
 
 fun View.hideIf(condition: () -> Boolean) {

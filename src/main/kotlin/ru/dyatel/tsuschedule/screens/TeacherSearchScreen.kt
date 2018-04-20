@@ -112,7 +112,7 @@ class TeacherSearchScreen : Screen<TeacherSearchView>() {
 
     override fun onHide(context: Context) {
         task.cancel()
-        view.findFocus()?.hideKeyboard()
+        activity.hideKeyboard()
         super.onHide(context)
     }
 
