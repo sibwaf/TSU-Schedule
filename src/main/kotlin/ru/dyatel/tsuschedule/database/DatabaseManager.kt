@@ -22,8 +22,13 @@ class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(co
     val teachers = TeacherDao(this)
     val teacherSchedule = TeacherScheduleDao(this)
 
-    private val parts = setOf(snapshots, filters, rawGroupSchedule, filteredGroupSchedule,
-            teachers, teacherSchedule)
+    val exams = ExamScheduleDao(this)
+
+    private val parts = setOf(
+            filters,
+            snapshots, rawGroupSchedule, filteredGroupSchedule,
+            teachers, teacherSchedule,
+            exams)
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)
