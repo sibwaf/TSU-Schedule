@@ -64,8 +64,8 @@ class WeekdayItem<T : Lesson>(
                 margin = dip(4)
             }
 
-            cardElevation = ctx.resources.getDimension(R.dimen.elevation)
-            radius = dip(2).toFloat()
+            cardElevation = DIP_ELEVATION_F
+            radius = DIP_CARD_RADIUS_F
 
             verticalLayout(R.style.WeekdayTheme) {
                 lparams(width = matchParent) {

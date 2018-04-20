@@ -14,5 +14,6 @@ const val ADAPTER_TEACHER_ITEM_ID = 0
 const val ADAPTER_WEEKDAY_ITEM_ID = 1
 const val ADAPTER_LESSON_ITEM_ID = 2
 const val ADAPTER_SCHEDULE_SNAPSHOT_ITEM_ID = 3
+const val ADAPTER_EXAM_ITEM_ID = 4
 
 val NORMAL_WEEKDAY_ORDER = listOf("понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье")

@@ -11,6 +11,7 @@
 
     <string name="menu_search">Поиск</string>
     <string name="menu_filters">Фильтры</string>
+    <string name="menu_exams">Экзамены</string>
     <string name="menu_history">История</string>
     <string name="menu_delete_group">Удалить</string>
 
@@ -40,6 +41,7 @@
 
     <string name="screen_home">Начальный экран</string>
     <string name="screen_filters">Фильтры (%s)</string>
+    <string name="screen_exams">Экзамены (%s)</string>
     <string name="screen_history">История (%s)</string>
     <string name="screen_teachers">Преподаватели</string>
     <string name="screen_settings">Настройки</string>

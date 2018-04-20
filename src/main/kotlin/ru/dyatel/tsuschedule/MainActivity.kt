@@ -53,7 +53,9 @@ import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
+import ru.dyatel.tsuschedule.layout.DIP_ELEVATION_F
 import ru.dyatel.tsuschedule.model.currentWeekParity
+import ru.dyatel.tsuschedule.screens.ExamScheduleScreen
 import ru.dyatel.tsuschedule.screens.FilterScreen
 import ru.dyatel.tsuschedule.screens.HistoryScreen
 import ru.dyatel.tsuschedule.screens.HomeScreen
@@ -182,6 +184,7 @@ class MainActivity : SingleActivity(), EventListener {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         menu.findItem(R.id.filters).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_filter)
+        menu.findItem(R.id.exams).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_calendar)
         menu.findItem(R.id.history).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_history)
         menu.findItem(R.id.delete_group).icon = getActionBarIcon(CommunityMaterial.Icon.cmd_delete)
         menu.findItem(R.id.search).apply { icon = getActionBarIcon(CommunityMaterial.Icon.cmd_magnify) }
@@ -205,6 +208,7 @@ class MainActivity : SingleActivity(), EventListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.filters -> getNavigator().goTo(FilterScreen(selectedGroup!!))
+            R.id.exams -> getNavigator().goTo(ExamScheduleScreen(selectedGroup!!))
             R.id.history -> getNavigator().goTo(HistoryScreen(selectedGroup!!))
             R.id.delete_group -> showDeleteGroupDialog()
             else -> return super.onOptionsItemSelected(item)
@@ -356,6 +360,7 @@ class MainActivity : SingleActivity(), EventListener {
                         database.snapshots.remove(it.id)
                     }
                     database.filters.remove(group)
+                    database.exams.remove(group)
                     preferences.removeGroup(group)
 
                     generateDrawerButtons()
@@ -369,8 +374,7 @@ class MainActivity : SingleActivity(), EventListener {
         when (type) {
             Event.SET_TOOLBAR_SHADOW_ENABLED -> {
                 val enabled = payload as Boolean
-                val elevation = resources.getDimension(R.dimen.elevation)
-                ViewCompat.setElevation(toolbar, if (enabled) elevation else 0f)
+                ViewCompat.setElevation(toolbar, if (enabled) DIP_ELEVATION_F else 0f)
             }
             Event.SET_DRAWER_ENABLED -> {
                 val toggle = drawer.actionBarDrawerToggle

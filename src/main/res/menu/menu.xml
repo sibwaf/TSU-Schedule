@@ -11,6 +11,10 @@
           android:title="@string/menu_filters"
           app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/exams"
+          android:title="@string/menu_exams"
+          app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/history"
           android:title="@string/menu_history"
           app:showAsAction="ifRoom"/>
