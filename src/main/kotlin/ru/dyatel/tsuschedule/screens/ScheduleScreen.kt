@@ -22,7 +22,7 @@ import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
 import ru.dyatel.tsuschedule.handle
-import ru.dyatel.tsuschedule.layout.DIP_ELEVATION_F
+import ru.dyatel.tsuschedule.layout.DIM_ELEVATION_F
 import ru.dyatel.tsuschedule.layout.GroupLessonView
 import ru.dyatel.tsuschedule.layout.WeekDataContainer
 import ru.dyatel.tsuschedule.layout.WeekPagerAdapter
@@ -65,7 +65,7 @@ class ScheduleView(context: Context) : BaseScreenView<ScheduleScreen>(context) {
         }
 
         find<TabLayout>(R.id.tab_layout).apply {
-            ViewCompat.setElevation(this, DIP_ELEVATION_F)
+            ViewCompat.setElevation(this, DIM_ELEVATION_F)
             setupWithViewPager(pager)
         }
 

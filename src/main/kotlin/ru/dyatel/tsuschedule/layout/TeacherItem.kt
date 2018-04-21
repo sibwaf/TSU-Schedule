@@ -9,18 +9,16 @@ import android.widget.TextView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import org.jetbrains.anko.Bold
+import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.buildSpanned
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.leftPadding
-import org.jetbrains.anko.margin
 import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.padding
 import org.jetbrains.anko.rightPadding
-import org.jetbrains.anko.sp
 import org.jetbrains.anko.textColor
 import org.jetbrains.anko.textView
+import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.ADAPTER_TEACHER_ITEM_ID
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.Teacher
@@ -57,15 +55,15 @@ class TeacherItem(val teacher: Teacher) : AbstractItem<TeacherItem, TeacherItem.
     override fun createView(ctx: Context, parent: ViewGroup?): View {
         return ctx.frameLayout {
             lparams(width = matchParent) {
-                margin = dip(4)
-                padding = dip(4)
-                leftPadding = dip(8)
-                rightPadding = dip(8)
+                leftPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                rightPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                topPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
+                bottomPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
             }
 
             textView {
                 id = nameViewId
-                textSize = sp(7).toFloat()
+                textSize = SP_TEXT_MEDIUM
                 textColor = ContextCompat.getColor(ctx, R.color.text_color)
             }
         }

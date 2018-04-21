@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.view.ViewGroup
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.commons.utils.FastAdapterDiffUtil
@@ -12,17 +13,20 @@ import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.find
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.swipeRefreshLayout
+import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.database.ExamScheduleDao
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.handle
+import ru.dyatel.tsuschedule.layout.DIM_CARD_VERTICAL_MARGIN
 import ru.dyatel.tsuschedule.layout.ExamItem
 import ru.dyatel.tsuschedule.parsing.DataRequester
 import ru.dyatel.tsuschedule.parsing.ExamScheduleParser
@@ -50,9 +54,14 @@ class ExamScheduleView(context: Context) : BaseScreenView<ExamScheduleScreen>(co
             recyclerView {
                 id = recyclerViewId
 
-                lparams(width = matchParent, height = matchParent)
+                lparams(width = matchParent, height = matchParent) {
+                    clipToPadding = true
+                    topPadding = DIM_CARD_VERTICAL_MARGIN
+                    bottomPadding = DIM_CARD_VERTICAL_MARGIN
+                }
 
                 layoutManager = LinearLayoutManager(context)
+                descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
             }
 
             setOnRefreshListener { screen.fetch() }

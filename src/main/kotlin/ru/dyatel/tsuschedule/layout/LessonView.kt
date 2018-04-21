@@ -7,10 +7,8 @@ import org.jetbrains.anko._LinearLayout
 import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
 import org.jetbrains.anko.backgroundResource
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
 import org.jetbrains.anko.leftOf
-import org.jetbrains.anko.margin
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.textView
@@ -38,12 +36,14 @@ abstract class LessonView<in T : Lesson>(context: Context) : _LinearLayout(conte
 
     init {
         lparams(width = matchParent) {
-            margin = dip(2)
+            leftMargin = DIM_SMALL
+            rightMargin = DIM_SMALL
+            topMargin = DIM_MEDIUM
+            bottomMargin = DIM_MEDIUM
         }
 
-        typeMarkerView = view {
-        }.lparams(width = dip(4), height = matchParent) {
-            rightMargin = dip(4)
+        typeMarkerView = view().lparams(width = DIM_MEDIUM, height = matchParent) {
+            rightMargin = DIM_CARD_PADDING
         }
 
         verticalLayout {

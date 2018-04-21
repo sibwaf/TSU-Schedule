@@ -14,21 +14,20 @@ import hirondelle.date4j.DateTime
 import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
 import org.jetbrains.anko.backgroundColorResource
+import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.centerVertically
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.imageView
 import org.jetbrains.anko.leftOf
 import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
-import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.rightPadding
-import org.jetbrains.anko.sp
 import org.jetbrains.anko.textColorResource
 import org.jetbrains.anko.textResource
 import org.jetbrains.anko.textView
+import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.ADAPTER_SCHEDULE_SNAPSHOT_ITEM_ID
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.ScheduleSnapshot
@@ -129,14 +128,15 @@ class ScheduleSnapshotItem(
                 id = contentContainerId
 
                 lparams(width = matchParent) {
-                    padding = dip(8)
-                    leftPadding = dip(16)
-                    rightPadding = dip(16)
+                    leftPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                    rightPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                    topPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
+                    bottomPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
                 }
 
                 textView {
                     id = timestampViewId
-                    textSize = sp(8).toFloat()
+                    textSize = SP_TEXT_MEDIUM
                 }.lparams {
                     alignParentLeft()
                     leftOf(pinViewId)
@@ -156,14 +156,15 @@ class ScheduleSnapshotItem(
                 backgroundColorResource = R.color.snapshot_remove_background_color
 
                 lparams(width = matchParent) {
-                    padding = dip(8)
-                    leftPadding = dip(16)
-                    rightPadding = dip(16)
+                    leftPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                    rightPadding = DIM_TEXT_ITEM_HORIZONTAL_PADDING
+                    topPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
+                    bottomPadding = DIM_TEXT_ITEM_VERTICAL_PADDING
                 }
 
                 textView {
                     textResource = R.string.result_removed
-                    textSize = sp(8).toFloat()
+                    textSize = SP_TEXT_MEDIUM
                     textColorResource = R.color.snapshot_remove_text_color
                 }.lparams {
                     alignParentLeft()
@@ -173,7 +174,7 @@ class ScheduleSnapshotItem(
                 textView {
                     id = cancelViewId
                     textResource = R.string.dialog_cancel
-                    textSize = sp(8).toFloat()
+                    textSize = SP_TEXT_MEDIUM
                     textColorResource = R.color.snapshot_remove_text_color
                 }.lparams {
                     alignParentRight()

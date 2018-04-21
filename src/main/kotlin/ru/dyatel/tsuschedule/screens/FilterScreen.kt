@@ -4,17 +4,28 @@ import android.content.Context
 import android.view.ViewGroup
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
+import org.jetbrains.anko.bottomPadding
+import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.topPadding
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.R
-import ru.dyatel.tsuschedule.model.Filter
-import ru.dyatel.tsuschedule.model.PredefinedFilter
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.layout.DIM_CARD_VERTICAL_MARGIN
+import ru.dyatel.tsuschedule.model.Filter
+import ru.dyatel.tsuschedule.model.PredefinedFilter
 
 class FilterScreenView(context: Context) : BaseScreenView<FilterScreen>(context) {
 
-    private val container: ViewGroup = verticalLayout()
+    private val container: ViewGroup = verticalLayout {
+        // TODO: scrolling?
+        lparams(width = matchParent, height = matchParent) {
+            clipToPadding = false
+            topPadding = DIM_CARD_VERTICAL_MARGIN
+            bottomPadding = DIM_CARD_VERTICAL_MARGIN
+        }
+    }
 
     fun attachFilters(filters: List<Filter>, predefinedFilters: List<PredefinedFilter>) {
         if (filters.any()) TODO("Not implemented")
