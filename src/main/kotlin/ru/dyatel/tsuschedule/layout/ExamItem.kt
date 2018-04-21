@@ -42,9 +42,9 @@ class ExamItem(val exam: Exam) : AbstractItem<ExamItem, ExamItem.ViewHolder>() {
         override fun bindView(item: ExamItem, payloads: List<Any>) {
             // TODO: показывать день недели
             with(item.exam) {
-                datetimeView.text = datetime.format("DD.MM.YYYY, hh:mm")
+                datetimeView.text = examDatetime.format("DD.MM.YYYY, hh:mm")
                 disciplineView.text = discipline
-                auditoryView.text = auditory
+                auditoryView.text = examAuditory
                 teacherView.text = teacher
             }
         }
