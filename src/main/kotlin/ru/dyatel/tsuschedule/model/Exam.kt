@@ -3,12 +3,14 @@ package ru.dyatel.tsuschedule.model
 import hirondelle.date4j.DateTime
 
 data class Exam(
-        val datetime: DateTime,
         val discipline: String,
-        val auditory: String,
+        val consultationDatetime: DateTime?,
+        val examDatetime: DateTime,
+        val consultationAuditory: String?,
+        val examAuditory: String,
         val teacher: String
 ) : Comparable<Exam> {
 
-    override fun compareTo(other: Exam) = datetime.compareTo(other.datetime)
+    override fun compareTo(other: Exam) = examDatetime.compareTo(other.examDatetime)
 
 }

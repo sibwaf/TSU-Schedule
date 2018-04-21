@@ -12,7 +12,15 @@ object ExamScheduleParser : ParserBase() {
     fun parse(element: Element): Set<Exam> {
         return element.children()
                 .filter { it.tagName() == "div" }
-                .map { Exam(parseDatetime(it), parseDiscipline(it), parseAuditory(it), parseTeacher(it)) }
+                .map {
+                    Exam(
+                            parseDiscipline(it),
+                            null,
+                            parseDatetime(it),
+                            null,
+                            parseAuditory(it),
+                            parseTeacher(it))
+                }
                 .toSet()
     }
 
