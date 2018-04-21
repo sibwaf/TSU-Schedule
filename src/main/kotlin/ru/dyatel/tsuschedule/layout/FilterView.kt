@@ -1,7 +1,7 @@
 package ru.dyatel.tsuschedule.layout
 
 import android.content.Context
-import android.support.v7.widget.CardView
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -11,24 +11,23 @@ import android.widget.Switch
 import android.widget.TextView
 import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
-import org.jetbrains.anko.dip
+import org.jetbrains.anko.cardview.v7._CardView
+import org.jetbrains.anko.centerVertically
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.leftOf
-import org.jetbrains.anko.margin
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
-import org.jetbrains.anko.sp
 import org.jetbrains.anko.spinner
 import org.jetbrains.anko.switch
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
-import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.Filter
 import ru.dyatel.tsuschedule.model.SubgroupFilter
 
-open class FilterView(context: Context) : CardView(context) {
+open class FilterView(context: Context) : _CardView(context) {
 
     private companion object {
         val headerViewId = View.generateViewId()
@@ -41,29 +40,51 @@ open class FilterView(context: Context) : CardView(context) {
     private val bodyContainer: ViewGroup
 
     init {
-        layoutParams = MarginLayoutParams(matchParent, wrapContent).apply { margin = dip(6) }
-        radius = dip(2).toFloat()
+        lparams(width = matchParent) {
+            leftMargin = DIM_CARD_HORIZONTAL_MARGIN
+            rightMargin = DIM_CARD_HORIZONTAL_MARGIN
+            topMargin = DIM_CARD_VERTICAL_MARGIN
+            bottomMargin = DIM_CARD_VERTICAL_MARGIN
+        }
+
+        cardElevation = DIM_ELEVATION_F
+        radius = DIM_CARD_RADIUS_F
 
         context.verticalLayout {
-            lparams(width = matchParent) { margin = dip(4) }
+            lparams(width = matchParent) {
+                padding = DIM_CARD_PADDING
+            }
 
             relativeLayout {
                 lparams(width = matchParent)
 
                 textView {
                     id = headerViewId
-                    textSize = sp(6).toFloat()
+                    textSize = SP_TEXT_MEDIUM
+                    gravity = Gravity.CENTER
                 }.lparams {
+                    centerVertically()
                     alignParentLeft()
                     leftOf(switchViewId)
-                    leftMargin = dip(4)
                 }
-                switch { id = switchViewId }.lparams { alignParentRight() }
+
+                switch {
+                    id = switchViewId
+                }.lparams {
+                    centerVertically()
+                    alignParentRight()
+                }
             }
+
             frameLayout {
                 id = bodyViewId
-                lparams(width = matchParent) { margin = dip(4) }
-            }.apply { visibility = View.GONE }
+
+                lparams(width = matchParent) {
+                    topMargin = DIM_CARD_PADDING
+                }
+
+                visibility = View.GONE
+            }
         }.let { super.addView(it) }
 
         headerView = find(headerViewId)

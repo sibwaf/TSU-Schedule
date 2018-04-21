@@ -53,7 +53,8 @@ import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
 import ru.dyatel.tsuschedule.events.EventListener
-import ru.dyatel.tsuschedule.layout.DIP_ELEVATION_F
+import ru.dyatel.tsuschedule.layout.DIM_DIALOG_SIDE_PADDING
+import ru.dyatel.tsuschedule.layout.DIM_ELEVATION_F
 import ru.dyatel.tsuschedule.model.currentWeekParity
 import ru.dyatel.tsuschedule.screens.ExamScheduleScreen
 import ru.dyatel.tsuschedule.screens.FilterScreen
@@ -297,11 +298,9 @@ class MainActivity : SingleActivity(), EventListener {
             editText {
                 singleLine = true
                 imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_EXTRACT_UI
-            }.lparams {
-                leftPadding = dip(12)
-                rightPadding = dip(12)
-                width = matchParent
-                height = wrapContent
+            }.lparams(width = matchParent) {
+                leftPadding = DIM_DIALOG_SIDE_PADDING
+                rightPadding = DIM_DIALOG_SIDE_PADDING
             }
         }
         val editor = view.getChildAt(0) as EditText
@@ -374,7 +373,7 @@ class MainActivity : SingleActivity(), EventListener {
         when (type) {
             Event.SET_TOOLBAR_SHADOW_ENABLED -> {
                 val enabled = payload as Boolean
-                ViewCompat.setElevation(toolbar, if (enabled) DIP_ELEVATION_F else 0f)
+                ViewCompat.setElevation(toolbar, if (enabled) DIM_ELEVATION_F else 0f)
             }
             Event.SET_DRAWER_ENABLED -> {
                 val toggle = drawer.actionBarDrawerToggle

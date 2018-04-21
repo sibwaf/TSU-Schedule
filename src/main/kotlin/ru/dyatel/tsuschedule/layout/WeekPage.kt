@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
+import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
 import ru.dyatel.tsuschedule.model.Lesson
 import ru.dyatel.tsuschedule.model.Parity
@@ -20,10 +22,16 @@ class WeekPage<T : Lesson>(val parity: Parity) {
 
     fun createView(context: Context): View {
         return context.recyclerView {
-            lparams { width = matchParent }
+            lparams(width = matchParent, height = matchParent) {
+                clipToPadding = false
+                topPadding = DIM_CARD_VERTICAL_MARGIN
+                bottomPadding = DIM_CARD_VERTICAL_MARGIN
+            }
+
             layoutManager = LinearLayoutManager(context)
-            adapter = fastAdapter
             descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
+
+            adapter = fastAdapter
         }
     }
 

@@ -16,6 +16,7 @@ import org.jetbrains.anko.design.textInputEditText
 import org.jetbrains.anko.design.themedTextInputLayout
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.imageView
+import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.singleLine
@@ -27,6 +28,8 @@ import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.ShortGroupIndexException
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
+import ru.dyatel.tsuschedule.layout.DIM_LARGE
+import ru.dyatel.tsuschedule.layout.DIM_ULTRA_LARGE
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.hideKeyboard
 
@@ -40,7 +43,7 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
         backgroundColorResource = R.color.primary_color
 
         relativeLayout {
-            padding = dip(10)
+            padding = DIM_ULTRA_LARGE
 
             val icon = ContextCompat.getDrawable(context, R.drawable.logo)!!
             val color = ContextCompat.getColor(context, R.color.text_title_color)
@@ -50,7 +53,7 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
                 topOf(formContainerId)
                 centerHorizontally()
 
-                bottomMargin = dip(10)
+                bottomMargin = DIM_LARGE
             }
 
             verticalLayout {
@@ -67,7 +70,7 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
                         singleLine = true
                         inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
                     }
-                }.lparams(width = dip(300))
+                }.lparams(width = matchParent)
 
                 themedButton(R.string.button_add_group, R.style.HomeFormSubmitTheme) {
                     setOnClickListener {
@@ -80,8 +83,8 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
                             input.error = context.getString(R.string.form_error_short_group)
                         }
                     }
-                }.lparams(width = dip(300))
-            }.lparams {
+                }.lparams(width = matchParent)
+            }.lparams(width = dip(300)) {
                 centerInParent()
             }
         }

@@ -7,14 +7,17 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
+import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.cardview.v7.cardView
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
-import org.jetbrains.anko.margin
+import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.padding
+import org.jetbrains.anko.textColorResource
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.ADAPTER_EXAM_ITEM_ID
+import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.Exam
 
 class ExamItem(val exam: Exam) : AbstractItem<ExamItem, ExamItem.ViewHolder>() {
@@ -55,24 +58,48 @@ class ExamItem(val exam: Exam) : AbstractItem<ExamItem, ExamItem.ViewHolder>() {
     }
 
     override fun createView(ctx: Context, parent: ViewGroup?): View {
-        // TODO: дизайн
         return ctx.cardView {
             lparams(width = matchParent) {
-                margin = dip(4)
+                leftMargin = DIM_CARD_HORIZONTAL_MARGIN
+                rightMargin = DIM_CARD_HORIZONTAL_MARGIN
+                topMargin = DIM_CARD_VERTICAL_MARGIN
+                bottomMargin = DIM_CARD_VERTICAL_MARGIN
             }
 
-            cardElevation = DIP_ELEVATION_F
-            radius = DIP_CARD_RADIUS_F
+            cardElevation = DIM_ELEVATION_F
+            radius = DIM_CARD_RADIUS_F
 
-            verticalLayout {
-                textView {
-                    id = disciplineViewId
-                    gravity = Gravity.CENTER_HORIZONTAL
+            verticalLayout(R.style.WeekdayTheme) {
+                lparams(width = matchParent) {
+                    padding = DIM_CARD_PADDING
                 }
 
-                textView { id = teacherViewId }
-                textView { id = datetimeViewId }
-                textView { id = auditoryViewId }
+                frameLayout {
+                    lparams(width = matchParent) {
+                        bottomMargin = DIM_CARD_PADDING
+                        padding = DIM_MEDIUM
+                    }
+
+                    backgroundColorResource = R.color.primary_color
+
+                    textView {
+                        id = disciplineViewId
+                        gravity = Gravity.CENTER
+
+                        textColorResource = R.color.text_title_color
+                    }
+                }
+
+                verticalLayout {
+                    lparams(width = matchParent) {
+                        leftMargin = DIM_SMALL
+                        rightMargin = DIM_SMALL
+                    }
+
+                    textView { id = teacherViewId }
+                    textView { id = datetimeViewId }
+                    textView { id = auditoryViewId }
+                }
             }
         }
     }
