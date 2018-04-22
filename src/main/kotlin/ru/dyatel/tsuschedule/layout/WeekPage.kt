@@ -23,10 +23,11 @@ class WeekPage<T : Lesson>(val parity: Parity) {
     fun createView(context: Context): View {
         return context.recyclerView {
             lparams(width = matchParent, height = matchParent) {
-                clipToPadding = false
                 topPadding = DIM_CARD_VERTICAL_MARGIN
                 bottomPadding = DIM_CARD_VERTICAL_MARGIN
             }
+
+            clipToPadding = false
 
             layoutManager = LinearLayoutManager(context)
             descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS

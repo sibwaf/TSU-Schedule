@@ -121,6 +121,7 @@ dependencies {
     compile "org.jetbrains.anko:anko-commons:$ankoVersion"
     compile "org.jetbrains.anko:anko-sdk15:$ankoVersion"
     compile "org.jetbrains.anko:anko-support-v4:$ankoVersion"
+    compile "org.jetbrains.anko:anko-appcompat-v7:$ankoVersion"
     compile "org.jetbrains.anko:anko-recyclerview-v7:$ankoVersion"
     compile "org.jetbrains.anko:anko-cardview-v7:$ankoVersion"
     compile "org.jetbrains.anko:anko-design:$ankoVersion"

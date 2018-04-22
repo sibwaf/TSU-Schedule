@@ -1,16 +1,17 @@
 package ru.dyatel.tsuschedule.layout
 
 import android.content.Context
+import android.support.v7.widget.SwitchCompat
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.Switch
 import android.widget.TextView
 import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
+import org.jetbrains.anko.appcompat.v7.switchCompat
 import org.jetbrains.anko.cardview.v7._CardView
 import org.jetbrains.anko.centerVertically
 import org.jetbrains.anko.find
@@ -20,7 +21,6 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.spinner
-import org.jetbrains.anko.switch
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.R
@@ -36,7 +36,7 @@ open class FilterView(context: Context) : _CardView(context) {
     }
 
     private val headerView: TextView
-    private val switchView: Switch
+    private val switchView: SwitchCompat
     private val bodyContainer: ViewGroup
 
     init {
@@ -68,7 +68,7 @@ open class FilterView(context: Context) : _CardView(context) {
                     leftOf(switchViewId)
                 }
 
-                switch {
+                switchCompat {
                     id = switchViewId
                 }.lparams {
                     centerVertically()
