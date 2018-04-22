@@ -38,6 +38,8 @@
     </string>
 
     <string name="button_add_group">Добавить группу</string>
+    <string name="button_pin_snapshot">Закрепить</string>
+    <string name="button_unpin_snapshot">Открепить</string>
 
     <string name="screen_home">Начальный экран</string>
     <string name="screen_filters">Фильтры (%s)</string>

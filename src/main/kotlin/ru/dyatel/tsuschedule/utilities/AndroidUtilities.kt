@@ -3,6 +3,8 @@ package ru.dyatel.tsuschedule.utilities
 import android.app.Activity
 import android.content.Context
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
 import android.support.v7.preference.Preference
 import android.view.View
 import com.wealthfront.magellan.Screen
@@ -38,6 +40,10 @@ fun Activity.hideKeyboard() {
 
 fun View.hideIf(condition: () -> Boolean) {
     visibility = if (condition()) View.GONE else View.VISIBLE
+}
+
+fun View.setBackgroundTintResource(colorRes: Int) {
+    ViewCompat.setBackgroundTintList(this, ContextCompat.getColorStateList(context, colorRes))
 }
 
 inline fun <reified T> JSONObject.find(name: String): T =
