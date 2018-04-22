@@ -55,10 +55,11 @@ class ExamScheduleView(context: Context) : BaseScreenView<ExamScheduleScreen>(co
                 id = recyclerViewId
 
                 lparams(width = matchParent, height = matchParent) {
-                    clipToPadding = true
                     topPadding = DIM_CARD_VERTICAL_MARGIN
                     bottomPadding = DIM_CARD_VERTICAL_MARGIN
                 }
+
+                clipToPadding = false
 
                 layoutManager = LinearLayoutManager(context)
                 descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS

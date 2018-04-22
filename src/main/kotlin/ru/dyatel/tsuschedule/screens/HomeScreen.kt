@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
+import org.jetbrains.anko.appcompat.v7.themedTintedButton
 import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.centerHorizontally
 import org.jetbrains.anko.centerInParent
@@ -20,7 +21,6 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.singleLine
-import org.jetbrains.anko.themedButton
 import org.jetbrains.anko.topOf
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.BlankGroupIndexException
@@ -72,7 +72,7 @@ class HomeView(context: Context) : BaseScreenView<HomeScreen>(context) {
                     }
                 }.lparams(width = matchParent)
 
-                themedButton(R.string.button_add_group, R.style.HomeFormSubmitTheme) {
+                themedTintedButton(R.string.button_add_group, R.style.HomeFormSubmitTheme) {
                     setOnClickListener {
                         try {
                             val group = Validator.validateGroup(input.editText!!.text.toString())
