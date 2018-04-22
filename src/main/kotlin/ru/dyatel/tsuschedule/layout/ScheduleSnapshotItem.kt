@@ -3,22 +3,20 @@ package ru.dyatel.tsuschedule.layout
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Button
 import android.widget.TextView
-import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter_extensions.swipe.ISwipeable
-import com.mikepenz.iconics.IconicsDrawable
 import hirondelle.date4j.DateTime
 import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
+import org.jetbrains.anko.appcompat.v7.tintedButton
 import org.jetbrains.anko.backgroundColorResource
 import org.jetbrains.anko.bottomPadding
 import org.jetbrains.anko.centerVertically
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
-import org.jetbrains.anko.imageView
 import org.jetbrains.anko.leftOf
 import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
@@ -32,6 +30,7 @@ import ru.dyatel.tsuschedule.ADAPTER_SCHEDULE_SNAPSHOT_ITEM_ID
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.ScheduleSnapshot
 import ru.dyatel.tsuschedule.utilities.hideIf
+import ru.dyatel.tsuschedule.utilities.setBackgroundTintResource
 import java.util.TimeZone
 
 typealias ClickListener = (ScheduleSnapshotItem) -> Unit
@@ -69,17 +68,10 @@ class ScheduleSnapshotItem(
     class ViewHolder(view: View) : FastAdapter.ViewHolder<ScheduleSnapshotItem>(view) {
         private val contentContainer = view.find<ViewGroup>(contentContainerId)
         private val timestampView = view.find<TextView>(timestampViewId)
-        private val pinView = view.find<ImageView>(pinViewId)
+        private val pinView = view.find<Button>(pinViewId)
 
         private val swipedContainer = view.find<ViewGroup>(swipedContainerId)
         private val cancelView = view.find<View>(cancelViewId)
-
-        private val pinIcon = IconicsDrawable(view.context)
-                .icon(CommunityMaterial.Icon.cmd_pin)
-                .sizeDp(24)
-        private val unpinIcon = IconicsDrawable(view.context)
-                .icon(CommunityMaterial.Icon.cmd_pin_off)
-                .sizeDp(24)
 
         override fun bindView(item: ScheduleSnapshotItem, payloads: List<Any>) {
             contentContainer.hideIf { !item.swipeable }
@@ -87,23 +79,22 @@ class ScheduleSnapshotItem(
 
             timestampView.text = item.datetimeText
 
-            // Setting alpha due to a bug in Android Iconics
             if (item.isSelected) {
                 contentContainer.backgroundColorResource = R.color.snapshot_selected_background_color
                 timestampView.textColorResource = R.color.snapshot_selected_text_color
-                pinIcon.alpha(0xff).colorRes(R.color.snapshot_selected_text_color)
-                unpinIcon.alpha(0xff).colorRes(R.color.snapshot_selected_text_color)
+                pinView.setBackgroundTintResource(R.color.snapshot_selected_text_color)
+                pinView.textColorResource = R.color.snapshot_selected_background_color
             } else {
                 contentContainer.backgroundColorResource = R.color.snapshot_background_color
                 timestampView.textColorResource = R.color.snapshot_text_color
-                pinIcon.alpha(0xff).colorRes(R.color.snapshot_text_color)
-                unpinIcon.alpha(0xff).colorRes(R.color.snapshot_text_color)
+                pinView.setBackgroundTintResource(R.color.snapshot_selected_background_color)
+                pinView.textColorResource = R.color.snapshot_selected_text_color
             }
 
             if (item.pinned) {
-                pinView.setImageDrawable(unpinIcon)
+                pinView.textResource = R.string.button_unpin_snapshot
             } else {
-                pinView.setImageDrawable(pinIcon)
+                pinView.textResource = R.string.button_pin_snapshot
             }
 
             contentContainer.setOnClickListener { item.clickListener?.invoke(item) }
@@ -143,7 +134,7 @@ class ScheduleSnapshotItem(
                     centerVertically()
                 }
 
-                imageView {
+                tintedButton {
                     id = pinViewId
                 }.lparams {
                     alignParentRight()
@@ -169,6 +160,7 @@ class ScheduleSnapshotItem(
                 }.lparams {
                     alignParentLeft()
                     leftOf(cancelViewId)
+                    centerVertically()
                 }
 
                 textView {
@@ -178,6 +170,7 @@ class ScheduleSnapshotItem(
                     textColorResource = R.color.snapshot_remove_text_color
                 }.lparams {
                     alignParentRight()
+                    centerVertically()
                 }
             }
         }
