@@ -11,6 +11,11 @@ enum class Parity(private val textResource: Int) {
 
     fun toText(context: Context) = context.getString(textResource)!!
 
+    fun stableHashcode(): Int = when (this) {
+        ODD -> 2
+        EVEN -> 4
+    }
+
 }
 
 fun weekParityOf(date: DateTime): Parity {
