@@ -29,12 +29,12 @@ open class Lesson(
     }
 
     override fun hashCode(): Int {
-        var result = parity.hashCode()
+        var result = parity.stableHashcode()
         result = 31 * result + weekday.hashCode()
         result = 31 * result + time.hashCode()
         result = 31 * result + discipline.hashCode()
         result = 31 * result + (auditory?.hashCode() ?: 0)
-        result = 31 * result + type.hashCode()
+        result = 31 * result + type.stableHashcode()
         return result
     }
 
@@ -100,12 +100,21 @@ class TeacherLesson(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + groups.hashCode()
+        result = 31 * result + groups.sumBy { it.hashCode() }
         return result
     }
 
 }
 
 enum class LessonType {
-    PRACTICE, LECTURE, LABORATORY, UNKNOWN
+
+    PRACTICE, LECTURE, LABORATORY, UNKNOWN;
+
+    fun stableHashcode(): Int = when(this) {
+        PRACTICE -> 3
+        LECTURE -> 9
+        LABORATORY -> 27
+        UNKNOWN -> 81
+    }
+
 }
