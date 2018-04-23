@@ -4,6 +4,7 @@ package ru.dyatel.tsuschedule
 
 import android.util.Log
 import com.crashlytics.android.Crashlytics
+import org.jsoup.UncheckedIOException
 import java.io.IOException
 import java.lang.IllegalArgumentException
 import java.net.SocketTimeoutException
@@ -16,7 +17,7 @@ open class ParsingException : RuntimeException {
     constructor(cause: Throwable) : super(cause)
 }
 
-class EmptyResultException : ParsingException {
+class EmptyResultException : RuntimeException {
     constructor() : super()
     constructor(message: String) : super(message)
     constructor(message: String, cause: Throwable) : super(message, cause)
@@ -45,14 +46,17 @@ class ShortGroupIndexException : BadGroupException {
 }
 
 fun Exception.log() {
-    if (BuildConfig.ENABLE_CRASHLYTICS)
+    if (BuildConfig.ENABLE_CRASHLYTICS) {
         Crashlytics.logException(this)
-    else
+    } else {
         Log.e("ExceptionHandler", "Caught an exception:", this)
+    }
 }
 
 fun Exception.handle(showMessage: (Int) -> Unit = {}) {
-    val message = when (this) {
+    val exception = if (this is UncheckedIOException) ioException() else this
+
+    val message = when (exception) {
         is EmptyResultException -> R.string.failure_empty_result
         is ParsingException -> {
             log()
