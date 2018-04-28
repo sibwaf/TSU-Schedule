@@ -16,6 +16,7 @@ class ChangelogDao(databaseManager: DatabaseManager) : DatabasePart(databaseMana
 
     private object ChangelogColumns {
         const val VERSION = "version"
+        const val PRERELEASE = "prerelease"
         const val CHANGES = "changes"
     }
 
@@ -26,6 +27,7 @@ class ChangelogDao(databaseManager: DatabaseManager) : DatabasePart(databaseMana
             override fun parseRow(columns: Map<String, Any?>): VersionChangelog {
                 return VersionChangelog(
                         columns[ChangelogColumns.VERSION] as String,
+                        (columns[ChangelogColumns.PRERELEASE] as Long).asFlag(),
                         columns[ChangelogColumns.CHANGES] as String)
             }
         }
@@ -59,6 +61,7 @@ class ChangelogDao(databaseManager: DatabaseManager) : DatabasePart(databaseMana
             releases.forEach {
                 val contentValues = ContentValues().apply {
                     put(ChangelogColumns.VERSION, it.release.version)
+                    put(ChangelogColumns.PRERELEASE, it.prerelease.toInt())
                     put(ChangelogColumns.CHANGES, it.changes)
                 }
 
