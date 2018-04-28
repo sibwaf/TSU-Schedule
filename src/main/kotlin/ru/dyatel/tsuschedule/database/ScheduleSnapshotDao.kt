@@ -46,9 +46,6 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
                         (columns[Columns.SELECTED] as Long).asFlag())
             }
         }
-
-        private fun Boolean.toInt() = if (this) 1 else 0
-        private fun Long.asFlag() = this != 0L
     }
 
     private val preferences = context.schedulePreferences

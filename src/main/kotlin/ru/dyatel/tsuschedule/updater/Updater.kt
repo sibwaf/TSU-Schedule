@@ -53,7 +53,7 @@ class Updater(activity: Activity) {
 
     private val api = UpdaterApi()
 
-    fun fetchUpdate(): Release? {
+    fun fetchUpdate(): ReleaseToken? {
         val allowPrerelease = preferences.allowPrerelease
 
         api.setTimeout(preferences.connectionTimeout)
@@ -64,8 +64,7 @@ class Updater(activity: Activity) {
         val update = releases
                 .sortedByDescending { it.release }
                 .firstOrNull { !it.prerelease || allowPrerelease }
-                ?.release
-                ?.takeIf { Release.CURRENT < it }
+                ?.takeIf { Release.CURRENT < it.release }
 
         preferences.lastRelease = update?.url
         return update
@@ -122,7 +121,7 @@ class Updater(activity: Activity) {
 
         val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_UPDATES)
                 .setSmallIcon(R.drawable.notification)
-                .setContentTitle(context.getString(R.string.notification_update_found_title, update.version))
+                .setContentTitle(context.getString(R.string.notification_update_found_title, update.release.version))
                 .setContentText(context.getString(R.string.notification_update_found_description))
                 .setContentIntent(pending)
                 .build()

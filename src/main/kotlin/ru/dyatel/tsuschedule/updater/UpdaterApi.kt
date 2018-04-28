@@ -14,8 +14,6 @@ import ru.dyatel.tsuschedule.utilities.iterator
 import java.io.IOException
 import java.net.HttpURLConnection
 
-class ReleaseToken(val release: Release, val prerelease: Boolean, val changes: String)
-
 class UpdaterApi {
 
     private val connection = Jsoup.connect("https://api.github.com/repos/$GITHUB_REPOSITORY/releases")
@@ -63,9 +61,9 @@ class UpdaterApi {
                 .takeIf { it.any() } ?: throw ParsingException("No .apk files in assets")
 
         val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
-        val release = Release(json.find("tag_name"), url)
+        val release = Release(json.find("tag_name"))
 
-        return ReleaseToken(release, json.find("prerelease"), json.find("body"))
+        return ReleaseToken(release, json.find("prerelease"), url, json.find("body"))
     }
 
 }

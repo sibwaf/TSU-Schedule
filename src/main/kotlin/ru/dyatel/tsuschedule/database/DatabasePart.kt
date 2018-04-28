@@ -5,6 +5,11 @@ import org.jetbrains.anko.db.transaction
 
 abstract class DatabasePart(protected val databaseManager: DatabaseManager) {
 
+    protected companion object {
+        fun Boolean.toInt() = if (this) 1 else 0
+        fun Long.asFlag() = this != 0L
+    }
+
     protected fun <T> execute(block: SQLiteDatabase.() -> T): T = databaseManager.use(block)
 
     protected fun <T> executeTransaction(block: SQLiteDatabase.() -> T): T {
