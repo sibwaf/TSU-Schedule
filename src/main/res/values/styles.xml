@@ -14,8 +14,6 @@
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:background">@color/primary_color</item>
-
         <item name="android:textColorPrimary">@color/text_title_color</item>
         <item name="android:textColorHint">@color/text_title_hint_color</item>
 
