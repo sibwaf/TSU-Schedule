@@ -27,6 +27,8 @@ import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class SettingsFragment : PreferenceFragmentCompat(), EventListener {
 
+    private val updater by lazy { Updater(activity!!) }
+
     private lateinit var updateButton: Preference
     private var updateAvailable = false
 
@@ -46,22 +48,25 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
         updateButton = preferenceManager.findPreference(getString(R.string.preference_update)).apply {
             setOnPreferenceClickListener {
                 val activity = activity!!
-
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
-                val updater = Updater(activity)
 
                 val view = view!!
-                if (updateAvailable)
+                if (updateAvailable) {
                     updater.installDialog { longSnackbar(view, it) }
-                else
+                } else {
                     updater.checkDialog { longSnackbar(view, it) }
+                }
 
                 true
             }
         }
         syncUpdateButton(ctx!!.schedulePreferences.lastRelease)
 
-        preferenceManager.findPreference(getString(R.string.preference_version)).summary = BuildConfig.VERSION_NAME
+        preferenceManager.findPreference(getString(R.string.preference_changelog))
+                .setOnPreferenceClickListener { updater.showChangelog(); true }
+
+        preferenceManager.findPreference(getString(R.string.preference_version))
+                .summary = BuildConfig.VERSION_NAME
 
         EventBus.subscribe(this, Event.PREFERENCES_LATEST_VERSION_CHANGED)
     }
@@ -77,10 +82,11 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
 
     private fun syncUpdateButton(lastRelease: String?) {
         updateAvailable = lastRelease != null
-        if (updateAvailable)
+        if (updateAvailable) {
             updateButton.setTitle(R.string.preference_update_install_title)
-        else
+        } else {
             updateButton.setTitle(R.string.preference_update_check_title)
+        }
     }
 
 }

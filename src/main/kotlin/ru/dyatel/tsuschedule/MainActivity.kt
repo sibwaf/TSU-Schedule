@@ -128,7 +128,7 @@ class MainActivity : SingleActivity(), EventListener {
                     NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW))
         }
 
-        val updater = Updater(ctx)
+        val updater = Updater(this)
         updater.handleMigration()
 
         toolbar = find(R.id.toolbar)
@@ -271,7 +271,7 @@ class MainActivity : SingleActivity(), EventListener {
         try {
             val lastKnown = preferences.lastRelease
 
-            updater.fetchUpdateLink()?.takeIf { it.url != lastKnown }?.run {
+            updater.fetchUpdate()?.takeIf { it.url != lastKnown }?.run {
                 val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
                 val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
