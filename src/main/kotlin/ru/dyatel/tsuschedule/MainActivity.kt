@@ -165,8 +165,8 @@ class MainActivity : SingleActivity(), EventListener {
                 Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
-        if (!handleUpdateNotification(intent)) {
-            launch { checkUpdates(updater) }
+        if (!handleUpdateNotification(intent) && preferences.autoupdate) {
+            launch { updater.checkUpdatesInBackground() }
         }
     }
 
@@ -257,40 +257,6 @@ class MainActivity : SingleActivity(), EventListener {
             getNavigator().goTo(PreferenceScreen())
         }
         return result
-    }
-
-    private fun checkUpdates(updater: Updater) {
-        if (!preferences.autoupdate)
-            return
-
-        val now = DateTime.now(TimeZone.getDefault())
-        val shouldCheck = preferences.lastAutoupdate?.plusDays(3)?.lt(now) ?: true
-        if (!shouldCheck)
-            return
-
-        try {
-            val lastKnown = preferences.lastRelease
-
-            updater.fetchUpdate()?.takeIf { it.url != lastKnown }?.run {
-                val intent = intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
-                val pending = PendingIntent.getActivity(ctx, 0, intent, PendingIntent.FLAG_ONE_SHOT)
-
-                val title = getString(R.string.notification_update_found_title, version)
-
-                val notification = NotificationCompat.Builder(ctx, NOTIFICATION_CHANNEL_UPDATES)
-                        .setSmallIcon(R.drawable.notification)
-                        .setContentTitle(title)
-                        .setContentText(getString(R.string.notification_update_found_description))
-                        .setContentIntent(pending)
-                        .build()
-
-                notificationManager.notify(NOTIFICATION_UPDATE, notification)
-            }
-
-            preferences.lastAutoupdate = now
-        } catch (e: Exception) {
-            e.handle()
-        }
     }
 
     private fun showAddGroupDialog() {

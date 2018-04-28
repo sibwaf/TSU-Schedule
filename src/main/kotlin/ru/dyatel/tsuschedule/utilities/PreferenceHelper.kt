@@ -42,14 +42,14 @@ class SchedulePreferences(private val context: Context) {
     val autoupdate: Boolean
         get() {
             val preference = context.getString(R.string.preference_update_auto)
-            val fallback = context.getString(R.string.preference_update_auto_default).toBoolean()
+            val fallback = context.getString(R.string.preference_update_auto_default)!!.toBoolean()
             return preferences.getBoolean(preference, fallback)
         }
 
     val allowPrerelease: Boolean
         get() {
             val preference = context.getString(R.string.preference_update_allow_prerelease)
-            val fallback = context.getString(R.string.preference_update_allow_prerelease_default).toBoolean()
+            val fallback = context.getString(R.string.preference_update_allow_prerelease_default)!!.toBoolean()
             return preferences.getBoolean(preference, fallback)
         }
 
@@ -92,9 +92,9 @@ class SchedulePreferences(private val context: Context) {
             EventBus.broadcast(Event.PREFERENCES_LATEST_VERSION_CHANGED, value)
         }
 
-    var lastUsedVersion: Int
-        get() = dataPreferences.getInt(DATA_LAST_USED_VERSION, -1)
-        set(value) = dataPreferences.editAndApply { putInt(DATA_LAST_USED_VERSION, value) }
+    var lastUsedVersion: Int?
+        get() = dataPreferences.getInt(DATA_LAST_USED_VERSION, -1).takeIf { it > 0 }
+        set(value) = dataPreferences.editAndApply { putInt(DATA_LAST_USED_VERSION, value ?: -1) }
 
 }
 

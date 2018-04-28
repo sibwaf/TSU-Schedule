@@ -2,26 +2,36 @@ package ru.dyatel.tsuschedule.updater
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
+import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.indeterminateProgressDialog
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
+import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.progressDialog
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.BadGroupException
 import ru.dyatel.tsuschedule.BuildConfig
+import ru.dyatel.tsuschedule.INTENT_TYPE
+import ru.dyatel.tsuschedule.INTENT_TYPE_UPDATE
+import ru.dyatel.tsuschedule.MainActivity
+import ru.dyatel.tsuschedule.NOTIFICATION_CHANNEL_UPDATES
+import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.handle
@@ -32,6 +42,7 @@ import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.File
 import java.net.URL
+import java.util.TimeZone
 
 class Updater(activity: Activity) {
 
@@ -68,8 +79,10 @@ class Updater(activity: Activity) {
     }
 
     fun handleMigration() {
-        val lastUsedVersion = preferences.lastUsedVersion
-                .takeUnless { it == BuildConfig.VERSION_CODE } ?: return
+        val lastUsedVersion = preferences.lastUsedVersion ?: -1
+        if (lastUsedVersion == BuildConfig.VERSION_CODE) {
+            return
+        }
 
         if (lastUsedVersion <= 11) {
             try {
@@ -81,7 +94,40 @@ class Updater(activity: Activity) {
         }
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
 
-        showChangelog()
+        if (lastUsedVersion != -1) {
+            showChangelog()
+        }
+    }
+
+    fun checkUpdatesInBackground() {
+        val now = DateTime.now(TimeZone.getDefault())
+
+        val scheduled = preferences.lastAutoupdate?.plusDays(3)
+        if (scheduled?.gt(now) == true) {
+            return
+        }
+
+        val lastKnown = preferences.lastRelease
+        val update = try {
+            val update = fetchUpdate()
+            preferences.lastAutoupdate = now
+            update?.takeIf { it.url != lastKnown }
+        } catch (e: Exception) {
+            e.handle()
+            null
+        } ?: return
+
+        val intent = context.intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
+        val pending = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+
+        val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_UPDATES)
+                .setSmallIcon(R.drawable.notification)
+                .setContentTitle(context.getString(R.string.notification_update_found_title, update.version))
+                .setContentText(context.getString(R.string.notification_update_found_description))
+                .setContentIntent(pending)
+                .build()
+
+        context.notificationManager.notify(NOTIFICATION_UPDATE, notification)
     }
 
     fun showChangelog() {
