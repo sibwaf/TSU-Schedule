@@ -131,33 +131,41 @@ class Updater(activity: Activity) {
     }
 
     fun showChangelog() {
-        val itemAdapter = ItemAdapter<ChangelogItem>()
-        val fastAdapter: FastAdapter<ChangelogItem> = FastAdapter.with(itemAdapter)
+        val builder = AlertDialog.Builder(context)
+                .setTitle(R.string.dialog_changelog_title)
+                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
 
-        itemAdapter.set(changelogDao.request().map { ChangelogItem(it) })
+        val changelog = changelogDao.request()
 
-        val view = context.frameLayout {
-            lparams(width = matchParent) {
-                topPadding = DIM_DIALOG_SIDE_PADDING
-                leftPadding = DIM_DIALOG_SIDE_PADDING
-                rightPadding = DIM_DIALOG_SIDE_PADDING
+        if (changelog.any()) {
+            val itemAdapter = ItemAdapter<ChangelogItem>()
+            val fastAdapter: FastAdapter<ChangelogItem> = FastAdapter.with(itemAdapter)
+
+            itemAdapter.set(changelog.map { ChangelogItem(it) })
+
+            val view = context.frameLayout {
+                lparams(width = matchParent) {
+                    topPadding = DIM_DIALOG_SIDE_PADDING
+                    leftPadding = DIM_DIALOG_SIDE_PADDING
+                    rightPadding = DIM_DIALOG_SIDE_PADDING
+                }
+
+                recyclerView {
+                    lparams(width = matchParent)
+
+                    layoutManager = LinearLayoutManager(context)
+                    adapter = fastAdapter
+
+                    addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+                }
             }
 
-            recyclerView {
-                lparams(width = matchParent)
-
-                layoutManager = LinearLayoutManager(context)
-                adapter = fastAdapter
-
-                addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-            }
+            builder.setView(view)
+        } else {
+            builder.setMessage(R.string.dialog_changelog_message_empty)
         }
 
-        AlertDialog.Builder(context)
-                .setTitle(R.string.dialog_changelog_title)
-                .setView(view)
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
-                .show()
+        builder.show()
     }
 
     fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog {
