@@ -13,6 +13,8 @@ private const val DB_VERSION = 7
 
 class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
+    val changelogs = ChangelogDao(this)
+
     val snapshots = ScheduleSnapshotDao(context, this)
 
     val filters = FilterDao(context, this)
@@ -25,6 +27,7 @@ class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(co
     val exams = ExamScheduleDao(this)
 
     private val parts = setOf(
+            changelogs,
             filters,
             snapshots, rawGroupSchedule, filteredGroupSchedule,
             teachers, teacherSchedule,

@@ -14,6 +14,8 @@ import ru.dyatel.tsuschedule.utilities.iterator
 import java.io.IOException
 import java.net.HttpURLConnection
 
+class ReleaseToken(val release: Release, val prerelease: Boolean, val changes: String)
+
 class UpdaterApi {
 
     private val connection = Jsoup.connect("https://api.github.com/repos/$GITHUB_REPOSITORY/releases")
@@ -25,10 +27,10 @@ class UpdaterApi {
         connection.timeout(timeout)
     }
 
-    fun getLatestRelease(allowPrerelease: Boolean): Release? {
+    fun getReleases(): List<ReleaseToken> {
         val response = connection.execute()
         if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-            return null
+            throw IOException("GitHub API didn't find the repository")
         }
         if (response.statusCode() != HttpURLConnection.HTTP_OK) {
             throw IOException("Request failed with HTTP code ${response.statusCode()}")
@@ -40,20 +42,16 @@ class UpdaterApi {
             throw ParsingException(e)
         }
 
-        for (releaseJson in releases) {
-            val token = try {
-                parseRelease(releaseJson as JSONObject)
-            } catch (e: Exception) {
-                e.log()
-                continue
-            }
-
-            if (!token.prerelease || allowPrerelease) {
-                return token.release
-            }
-        }
-
-        return null
+        return releases.iterator().asSequence()
+                .mapNotNull {
+                    try {
+                        parseRelease(it as JSONObject)
+                    } catch (e: Exception) {
+                        e.log()
+                        null
+                    }
+                }
+                .toList()
     }
 
     private fun parseRelease(json: JSONObject): ReleaseToken {
@@ -67,9 +65,7 @@ class UpdaterApi {
         val url = links.singleOrNull() ?: throw ParsingException("Too many .apk files in assets")
         val release = Release(json.find("tag_name"), url)
 
-        return ReleaseToken(release, json.find("prerelease"))
+        return ReleaseToken(release, json.find("prerelease"), json.find("body"))
     }
 
 }
-
-private class ReleaseToken(val release: Release, val prerelease: Boolean)

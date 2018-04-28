@@ -29,9 +29,7 @@ data class Release(val version: String, val url: String) : Comparable<Release> {
             if (components[i] < other.components[i]) return -1
         }
 
-        if (components.size > other.components.size) return 1
-        if (components.size < other.components.size) return -1
-        return 0
+        return components.size - other.components.size
     }
 
 }
