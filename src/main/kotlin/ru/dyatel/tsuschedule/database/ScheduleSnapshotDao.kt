@@ -25,8 +25,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
 
     object Columns {
         const val ID = "id"
-        const val GROUP = "`group`"
-        val GROUP_UNESCAPED = GROUP.removeSurrounding("`")
+        const val GROUP = "group_index"
         const val TIMESTAMP = "timestamp"
         const val HASH = "hash"
         const val PINNED = "pinned"
@@ -40,7 +39,7 @@ class ScheduleSnapshotDao(context: Context, databaseManager: DatabaseManager) : 
             override fun parseRow(columns: Map<String, Any?>): ScheduleSnapshot {
                 return ScheduleSnapshot(
                         columns[Columns.ID] as Long,
-                        columns[Columns.GROUP_UNESCAPED] as String,
+                        columns[Columns.GROUP] as String,
                         columns[Columns.TIMESTAMP] as Long,
                         (columns[Columns.PINNED] as Long).asFlag(),
                         (columns[Columns.SELECTED] as Long).asFlag())
