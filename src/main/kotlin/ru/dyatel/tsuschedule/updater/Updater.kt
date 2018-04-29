@@ -93,7 +93,7 @@ class Updater(activity: Activity) {
         }
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
 
-        if (lastUsedVersion != -1) {
+        if (lastUsedVersion >= 15) {
             showChangelog()
         }
     }
