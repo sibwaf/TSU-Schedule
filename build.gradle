@@ -34,8 +34,8 @@ android {
         applicationId "ru.dyatel.tsuschedule"
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 15
-        versionName "1.2.0"
+        versionCode 16
+        versionName "1.2.1"
 
         manifestPlaceholders = ["fabricKey": enableCrashlytics ? properties.getProperty("fabric.key") : ""]
     }
