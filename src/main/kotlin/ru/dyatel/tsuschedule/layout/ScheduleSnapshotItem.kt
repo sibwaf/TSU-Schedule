@@ -71,7 +71,7 @@ class ScheduleSnapshotItem(
         private val pinView = view.find<Button>(pinViewId)
 
         private val swipedContainer = view.find<ViewGroup>(swipedContainerId)
-        private val cancelView = view.find<View>(cancelViewId)
+        private val cancelView = view.find<Button>(cancelViewId)
 
         override fun bindView(item: ScheduleSnapshotItem, payloads: List<Any>) {
             contentContainer.hideIf { !item.swipeable }
@@ -163,11 +163,11 @@ class ScheduleSnapshotItem(
                     centerVertically()
                 }
 
-                textView {
+                tintedButton {
                     id = cancelViewId
                     textResource = R.string.dialog_cancel
-                    textSize = SP_TEXT_MEDIUM
-                    textColorResource = R.color.snapshot_remove_text_color
+                    setBackgroundTintResource(R.color.snapshot_remove_text_color)
+                    textColorResource = R.color.snapshot_remove_background_color
                 }.lparams {
                     alignParentRight()
                     centerVertically()
