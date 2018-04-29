@@ -13,6 +13,11 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
     private companion object {
         val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
         val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
+
+        val SURPLUS_SPACING_PATTERN = Regex("\\s{2,}")
+        val SPACES_BEFORE_COMMA_PATTERN = Regex("\\s+,")
+        val LEFT_PARENTHESIS_SPACING_PATTERN = Regex("\\(\\s+")
+        val RIGHT_PARENTHESIS_SPACING_PATTERN = Regex("\\s+\\)")
         val BLANK_PARENTHESES_PATTERN = Regex("\\(\\s*\\)")
 
         val TYPE_MAPPING = mapOf(
@@ -70,16 +75,14 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
     }
 
     private fun parseDiscipline(e: Element): Pair<LessonType, String> {
-        var text = e.getElementsByClass("disc").requireSingle().text().trim()
-                .removeSuffix(",")
-                .replace(BLANK_PARENTHESES_PATTERN, "")
+        var text = e.getElementsByClass("disc").requireSingle().text().clean()
 
         val typeMatch = TYPE_PATTERN.find(text)
         val type: LessonType?
 
         if (typeMatch != null) {
             type = TYPE_MAPPING[typeMatch.groupValues[1]]!!
-            text = text.removeRange(typeMatch.range)
+            text = text.removeRange(typeMatch.range).clean()
         } else {
             type = LessonType.UNKNOWN
         }
@@ -88,5 +91,16 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
     }
 
     protected abstract fun parseSingle(e: Element, base: Lesson): T
+
+    protected fun String.clean(): String {
+        return replace(BLANK_PARENTHESES_PATTERN, "")
+                .replace(SURPLUS_SPACING_PATTERN, " ")
+                .replace(SPACES_BEFORE_COMMA_PATTERN, ",")
+                .replace(LEFT_PARENTHESIS_SPACING_PATTERN, "(")
+                .replace(RIGHT_PARENTHESIS_SPACING_PATTERN, ")")
+                .trimEnd()
+                .removeSuffix(",")
+                .trim()
+    }
 
 }
