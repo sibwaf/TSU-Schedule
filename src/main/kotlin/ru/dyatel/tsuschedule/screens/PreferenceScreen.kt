@@ -110,7 +110,7 @@ class PreferenceView(context: Context) : BaseScreenView<PreferenceScreen>(contex
     }
 
     fun detachFragment(fragmentManager: FragmentManager) {
-        if (!fragmentManager.isDestroyed) {
+        if (!fragmentManager.isStateSaved) {
             fragmentManager.beginTransaction()
                     .detach(fragment)
                     .commitNow()
