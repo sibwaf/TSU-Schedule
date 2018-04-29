@@ -26,6 +26,7 @@
 
     <string name="dialog_changelog_title">Список изменений</string>
     <string name="dialog_changelog_message_empty">Список изменений пуст, выполните проверку обновлений</string>
+    <string name="dialog_changelog_prerelease_tag">тестовая</string>
 
     <string name="dialog_add_group_title">Добавление группы</string>
     <string name="dialog_add_group_message">Введите индекс группы:</string>

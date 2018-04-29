@@ -14,6 +14,7 @@ import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.ADAPTER_CHANGELOG_ITEM_ID
+import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.VersionChangelog
 
 class ChangelogItem(val changelog: VersionChangelog) : AbstractItem<ChangelogItem, ChangelogItem.ViewHolder>() {
@@ -28,7 +29,13 @@ class ChangelogItem(val changelog: VersionChangelog) : AbstractItem<ChangelogIte
         private val changelogView = view.find<TextView>(changelogViewId)
 
         override fun bindView(item: ChangelogItem, payloads: List<Any>) {
-            versionView.text = item.changelog.version
+            var versionText = item.changelog.version
+            if (item.changelog.prerelease) {
+                val context = itemView.context
+                versionText += " (${context.getString(R.string.dialog_changelog_prerelease_tag)})"
+            }
+
+            versionView.text = versionText
             changelogView.text = item.changelog.changelog
         }
 
