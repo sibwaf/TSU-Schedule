@@ -44,7 +44,7 @@ class TeacherScheduleDao(
 
     override fun upgradeTables(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 7) {
-            db.dropTable(table)
+            db.dropTable(table, true)
             createTables(db)
             return
         }
