@@ -225,6 +225,7 @@ class MainActivity : SingleActivity(), EventListener {
                     .withIdentifier((id + SCHEDULE_SCREEN_ID_START).toLong())
                     .withIcon(CommunityMaterial.Icon.cmd_account_multiple)
                     .withName(group)
+                    .withSetSelected(preferences.group == group)
                     .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(ScheduleScreen(group)); false })
         }
 
