@@ -3,12 +3,10 @@ package ru.dyatel.tsuschedule
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.NotificationChannel
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
@@ -32,7 +30,6 @@ import com.mikepenz.materialize.util.UIUtils
 import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
-import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.defaultSharedPreferences
@@ -40,7 +37,6 @@ import org.jetbrains.anko.dip
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
-import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
@@ -62,11 +58,9 @@ import ru.dyatel.tsuschedule.screens.HistoryScreen
 import ru.dyatel.tsuschedule.screens.HomeScreen
 import ru.dyatel.tsuschedule.screens.PreferenceScreen
 import ru.dyatel.tsuschedule.screens.ScheduleScreen
-import ru.dyatel.tsuschedule.screens.TeacherSearchScreen
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
-import java.util.TimeZone
 
 private const val SCHEDULE_SCREEN_ID_START = 1000
 
@@ -236,12 +230,12 @@ class MainActivity : SingleActivity(), EventListener {
 
         drawer.addItem(DividerDrawerItem())
 
-        drawer.addItem(PrimaryDrawerItem()
+        /*drawer.addItem(PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_account)
                 .withName(R.string.screen_teachers)
                 .withOnDrawerItemClickListener { _, _, _ -> getNavigator().replace(TeacherSearchScreen()); false })
 
-        drawer.addItem(DividerDrawerItem())
+        drawer.addItem(DividerDrawerItem())*/
 
         drawer.addItem(PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_settings)
