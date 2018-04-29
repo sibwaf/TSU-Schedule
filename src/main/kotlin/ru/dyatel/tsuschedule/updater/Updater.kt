@@ -49,7 +49,7 @@ class Updater(activity: Activity) {
     private val context: Context = activity
     private val preferences = context.schedulePreferences
 
-    private val changelogDao = activity.database.changelogs
+    private val database = activity.database
 
     private val api = UpdaterApi()
 
@@ -59,7 +59,7 @@ class Updater(activity: Activity) {
         api.setTimeout(preferences.connectionTimeout)
 
         val releases = api.getReleases()
-        changelogDao.save(releases)
+        database.changelogs.save(releases)
 
         val update = releases
                 .sortedByDescending { it.release }
@@ -83,7 +83,7 @@ class Updater(activity: Activity) {
             return
         }
 
-        if (lastUsedVersion <= 11) {
+        if (lastUsedVersion < 12) {
             try {
                 preferences.group
                         ?.let { Validator.validateGroup(it) }
@@ -91,11 +91,25 @@ class Updater(activity: Activity) {
             } catch (e: BadGroupException) {
             }
         }
-        preferences.lastUsedVersion = BuildConfig.VERSION_CODE
+
+        if (lastUsedVersion < 15) {
+            @Suppress("deprecation")
+            val oldSchedule = database.oldSchedule
+
+            preferences.groups.forEach {
+                val lessons = oldSchedule.request(it)
+                if (lessons.isNotEmpty()) {
+                    oldSchedule.remove(it)
+                    database.snapshots.save(it, lessons)
+                }
+            }
+        }
 
         if (lastUsedVersion >= 15) {
             showChangelog()
         }
+
+        preferences.lastUsedVersion = BuildConfig.VERSION_CODE
     }
 
     fun checkUpdatesInBackground() {
@@ -134,7 +148,7 @@ class Updater(activity: Activity) {
                 .setTitle(R.string.dialog_changelog_title)
                 .setPositiveButton(R.string.dialog_ok, { _, _ -> })
 
-        val changelog = changelogDao.request()
+        val changelog = database.changelogs.request()
 
         if (changelog.any()) {
             val itemAdapter = ItemAdapter<ChangelogItem>()
