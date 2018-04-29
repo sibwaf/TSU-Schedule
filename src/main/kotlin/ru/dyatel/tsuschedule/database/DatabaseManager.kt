@@ -4,16 +4,18 @@ import android.app.Activity
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
-import org.jetbrains.anko.db.dropTable
 import ru.dyatel.tsuschedule.ScheduleApplication
-import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 private const val DB_FILE = "data.db"
 private const val DB_VERSION = 7
 
-class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
+class DatabaseManager(context: Context) : ManagedSQLiteOpenHelper(context, DB_FILE, version = DB_VERSION) {
 
     val changelogs = ChangelogDao(this)
+
+    @Deprecated("Use snapshots")
+    @Suppress("deprecation")
+    val oldSchedule = UnfilteredGroupScheduleDao(context, this)
 
     val snapshots = ScheduleSnapshotDao(context, this)
 
@@ -26,8 +28,10 @@ class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(co
 
     val exams = ExamScheduleDao(this)
 
+    @Suppress("deprecation")
     private val parts = setOf(
             changelogs,
+            oldSchedule,
             filters,
             snapshots, rawGroupSchedule, filteredGroupSchedule,
             teachers, teacherSchedule,
@@ -43,21 +47,6 @@ class DatabaseManager(private val context: Context) : ManagedSQLiteOpenHelper(co
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         parts.forEach { it.upgradeTables(db, oldVersion, newVersion) }
-
-        if (oldVersion < 7) {
-            val oldSchedule = UnfilteredGroupScheduleDao(context, this)
-            oldSchedule.upgradeTables(db, oldVersion, newVersion)
-
-            val preferences = context.schedulePreferences
-            preferences.groups.forEach {
-                val lessons = oldSchedule.request(it)
-                if (lessons.isNotEmpty()) {
-                    snapshots.save(it, lessons)
-                }
-            }
-
-            db.dropTable(oldSchedule.table)
-        }
     }
 
 }
