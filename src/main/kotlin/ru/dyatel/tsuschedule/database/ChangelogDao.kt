@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule.database
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import org.jetbrains.anko.db.INTEGER
 import org.jetbrains.anko.db.MapRowParser
 import org.jetbrains.anko.db.TEXT
 import org.jetbrains.anko.db.createTable
@@ -36,6 +37,7 @@ class ChangelogDao(databaseManager: DatabaseManager) : DatabasePart(databaseMana
     override fun createTables(db: SQLiteDatabase) {
         db.createTable(TABLE, true,
                 ChangelogColumns.VERSION to TEXT,
+                ChangelogColumns.PRERELEASE to INTEGER,
                 ChangelogColumns.CHANGES to TEXT)
     }
 
