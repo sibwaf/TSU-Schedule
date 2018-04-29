@@ -1,5 +1,10 @@
 package ru.dyatel.tsuschedule.utilities
 
+import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
+import ru.dyatel.tsuschedule.BuildConfig
 import java.io.File
 import java.net.URL
 
@@ -29,4 +34,12 @@ fun URL.download(destination: File, timeout: Int, onProgressUpdate: (Int) -> Uni
             } while (true)
         }
     }
+}
+
+fun File.getContentUri(context: Context): Uri {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+        return Uri.fromFile(this)
+    }
+
+    return FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, this)
 }

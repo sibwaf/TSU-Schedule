@@ -29,6 +29,7 @@ import ru.dyatel.tsuschedule.BadGroupException
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.INTENT_TYPE
 import ru.dyatel.tsuschedule.INTENT_TYPE_UPDATE
+import ru.dyatel.tsuschedule.MIME_APK
 import ru.dyatel.tsuschedule.MainActivity
 import ru.dyatel.tsuschedule.NOTIFICATION_CHANNEL_UPDATES
 import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
@@ -39,12 +40,17 @@ import ru.dyatel.tsuschedule.layout.ChangelogItem
 import ru.dyatel.tsuschedule.layout.DIM_DIALOG_SIDE_PADDING
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.download
+import ru.dyatel.tsuschedule.utilities.getContentUri
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
 import java.io.File
 import java.net.URL
 import java.util.TimeZone
 
-class Updater(activity: Activity) {
+class Updater(private val activity: Activity) {
+
+    companion object {
+        fun getUpdateFile(context: Context) = context.cacheDir.resolve("update.apk")
+    }
 
     private val context: Context = activity
     private val preferences = context.schedulePreferences
@@ -71,10 +77,13 @@ class Updater(activity: Activity) {
     }
 
     fun installUpdate(file: File) {
-        val uri = UpdateFileProvider.getUriForFile(context, file)
-        val intent = Intent(Intent.ACTION_INSTALL_PACKAGE, uri)
+        val intent = Intent(Intent.ACTION_INSTALL_PACKAGE)
+                .setDataAndType(file.getContentUri(context), MIME_APK)
                 .putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
-        context.startActivity(intent)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        activity.startActivityForResult(intent, 0)
     }
 
     fun handleMigration() {
@@ -211,7 +220,7 @@ class Updater(activity: Activity) {
                 setProgressNumberFormat(null)
                 max = 100
 
-                val file = UpdateFileProvider.getUpdateDirectory(context).resolve("update.apk")
+                val file = getUpdateFile(context)
                 val task = launch(UI) {
                     try {
                         async {
