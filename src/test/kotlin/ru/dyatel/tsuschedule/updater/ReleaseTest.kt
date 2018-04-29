@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class ReleaseTest {
 
-    private fun release(version: String) = Release(version, "")
+    private fun release(version: String) = Release(version)
 
     @Test fun testBuildVersionName() {
         Release.CURRENT
