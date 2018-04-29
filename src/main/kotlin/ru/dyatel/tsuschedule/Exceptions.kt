@@ -65,7 +65,7 @@ fun Exception.handle(showMessage: (Int) -> Unit = {}) {
         is SocketTimeoutException -> R.string.failure_connection_timeout
         is IOException -> R.string.failure_unsuccessful_request
         is CancellationException -> return
-        else -> throw this
+        else -> throw exception
     }
     showMessage(message)
 }
