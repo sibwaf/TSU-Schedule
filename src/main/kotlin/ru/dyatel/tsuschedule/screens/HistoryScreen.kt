@@ -14,10 +14,6 @@ import com.mikepenz.fastadapter_extensions.swipe.SimpleSwipeCallback
 import com.mikepenz.iconics.IconicsDrawable
 import com.wealthfront.magellan.BaseScreenView
 import com.wealthfront.magellan.Screen
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import ru.dyatel.tsuschedule.R
@@ -63,7 +59,6 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
     private val adapter = ItemAdapter<ScheduleSnapshotItem>()
     private val fastAdapter: FastAdapter<ScheduleSnapshotItem> = FastAdapter.with(adapter)
 
-    private val runningTasks: Queue<Job> = LinkedList()
     private val pendingRemoves: Queue<Long> = LinkedList()
 
     private var keepScreenAlive = false
@@ -111,7 +106,6 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
         if (!keepScreenAlive) {
             val database = activity.database
 
-            runningTasks.toList().forEach { it.cancel() }
             while (pendingRemoves.isNotEmpty()) {
                 database.snapshots.remove(pendingRemoves.poll())
             }
@@ -130,25 +124,14 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
         val item = adapter.getAdapterItem(position)
         pendingRemoves += item.id
 
-        launch(UI) {
-            delay(3000)
+        item.withIsSwipeable(false).cancelClickListener = {
+            pendingRemoves -= it.id
 
-            val newPosition = adapter.getAdapterPosition(item)
-            adapter.remove(newPosition)
-        }.apply {
-            runningTasks += this
-            invokeOnCompletion(onCancelling = true) { runningTasks -= this }
+            it.withIsSwipeable(true).cancelClickListener = null
 
-            item.withIsSwipeable(false).cancelClickListener = {
-                pendingRemoves -= it.id
-
-                cancel()
-                it.withIsSwipeable(true).cancelClickListener = null
-
-                // TODO: fix stuck item when task is cancelled too fast
-                val newPosition = adapter.getAdapterPosition(it)
-                fastAdapter.notifyAdapterItemChanged(newPosition)
-            }
+            // TODO: fix stuck item when task is cancelled too fast
+            val newPosition = adapter.getAdapterPosition(it)
+            fastAdapter.notifyAdapterItemChanged(newPosition)
         }
 
         fastAdapter.notifyAdapterItemChanged(position)
