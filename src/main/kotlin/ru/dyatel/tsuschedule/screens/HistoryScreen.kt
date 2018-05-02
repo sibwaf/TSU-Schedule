@@ -1,6 +1,7 @@
 package ru.dyatel.tsuschedule.screens
 
 import android.content.Context
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -65,11 +66,18 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
     private val runningTasks: Queue<Job> = LinkedList()
     private val pendingRemoves: Queue<Long> = LinkedList()
 
+    private var keepScreenAlive = false
+
     override fun createView(context: Context) = HistoryView(context).apply { attachAdapter(fastAdapter) }
 
     override fun onShow(context: Context) {
         super.onShow(context)
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, false)
+
+        if (keepScreenAlive) {
+            keepScreenAlive = false
+            return
+        }
 
         val snapshots = activity.database.snapshots.request(group)
         adapter.set(snapshots.map {
@@ -92,22 +100,29 @@ class HistoryScreen(private val group: String) : Screen<HistoryView>() {
                 }
             }
         })
+    }
 
+    override fun onSave(outState: Bundle?) {
+        super.onSave(outState)
+        keepScreenAlive = true
     }
 
     override fun onHide(context: Context) {
-        val database = activity.database
+        if (!keepScreenAlive) {
+            val database = activity.database
 
-        runningTasks.toList().forEach { it.cancel() }
-        while (pendingRemoves.isNotEmpty()) {
-            database.snapshots.remove(pendingRemoves.poll())
+            runningTasks.toList().forEach { it.cancel() }
+            while (pendingRemoves.isNotEmpty()) {
+                database.snapshots.remove(pendingRemoves.poll())
+            }
+
+            adapter.adapterItems.forEach {
+                database.snapshots.update(it.id, it.pinned, it.isSelected)
+            }
+
+            EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
         }
 
-        adapter.adapterItems.forEach {
-            database.snapshots.update(it.id, it.pinned, it.isSelected)
-        }
-
-        EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)
         super.onHide(context)
     }
 
