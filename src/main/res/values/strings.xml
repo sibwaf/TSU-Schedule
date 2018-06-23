@@ -24,10 +24,6 @@
 
     <string name="result_removed">Удалено</string>
 
-    <string name="dialog_changelog_title">Список изменений</string>
-    <string name="dialog_changelog_message_empty">Список изменений пуст, выполните проверку обновлений</string>
-    <string name="dialog_changelog_prerelease_tag">тестовая</string>
-
     <string name="dialog_add_group_title">Добавление группы</string>
     <string name="dialog_add_group_message">Введите индекс группы:</string>
     <string name="dialog_add_group_message_blank">Индекс группы не может быть пустым, попробуйте ещё раз:</string>
@@ -46,11 +42,17 @@
     <string name="button_unpin_snapshot">Открепить</string>
 
     <string name="screen_home">Начальный экран</string>
+    <string name="screen_changelog">Список изменений</string>
     <string name="screen_filters">Фильтры (%s)</string>
     <string name="screen_exams">Экзамены (%s)</string>
     <string name="screen_history">История (%s)</string>
     <string name="screen_teachers">Преподаватели</string>
     <string name="screen_settings">Настройки</string>
+
+    <string name="changelog_prerelease_tag">тестовая</string>
+    <string name="changelog_installed_tag">установленная</string>
+    <string name="changelog_error_empty">Список изменений пуст</string>
+    <string name="changelog_error_outdated">Список изменений устарел</string>
 
     <string name="filter_common_practice">Объединять подгруппы на практических занятиях</string>
     <string name="filter_subgroup">Фильтровать по подгруппе</string>

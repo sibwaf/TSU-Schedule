@@ -1,30 +1,20 @@
 package ru.dyatel.tsuschedule.updater
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.wealthfront.magellan.support.SingleActivity
 import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.leftPadding
-import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
 import org.jetbrains.anko.progressDialog
-import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.rightPadding
-import org.jetbrains.anko.topPadding
 import ru.dyatel.tsuschedule.BadGroupException
 import ru.dyatel.tsuschedule.BuildConfig
 import ru.dyatel.tsuschedule.INTENT_TYPE
@@ -36,8 +26,7 @@ import ru.dyatel.tsuschedule.NOTIFICATION_UPDATE
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.handle
-import ru.dyatel.tsuschedule.layout.ChangelogItem
-import ru.dyatel.tsuschedule.layout.DIM_DIALOG_SIDE_PADDING
+import ru.dyatel.tsuschedule.screens.ChangelogScreen
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.download
 import ru.dyatel.tsuschedule.utilities.getContentUri
@@ -59,7 +48,7 @@ class Updater(private val activity: Activity) {
 
     private val api = UpdaterApi()
 
-    fun fetchUpdate(): ReleaseToken? {
+    fun fetchUpdate(notify: Boolean): ReleaseToken? {
         val allowPrerelease = preferences.allowPrerelease
 
         api.setTimeout(preferences.connectionTimeout)
@@ -72,7 +61,13 @@ class Updater(private val activity: Activity) {
                 .firstOrNull { !it.prerelease || allowPrerelease }
                 ?.takeIf { Release.CURRENT < it.release }
 
-        preferences.lastRelease = update?.url
+        if (notify && update != null && preferences.lastReleaseUrl != update.url) {
+            showNotification(update.release)
+        }
+
+        preferences.lastUpdateCheck = DateTime.now(TimeZone.getDefault())
+        preferences.lastReleaseUrl = update?.url
+
         return update
     }
 
@@ -121,30 +116,13 @@ class Updater(private val activity: Activity) {
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE
     }
 
-    fun checkUpdatesInBackground() {
-        val now = DateTime.now(TimeZone.getDefault())
-
-        val scheduled = preferences.lastAutoupdate?.plusDays(3)
-        if (scheduled?.gt(now) == true) {
-            return
-        }
-
-        val lastKnown = preferences.lastRelease
-        val update = try {
-            val update = fetchUpdate()
-            preferences.lastAutoupdate = now
-            update?.takeIf { it.url != lastKnown }
-        } catch (e: Exception) {
-            e.handle()
-            null
-        } ?: return
-
+    fun showNotification(release: Release) {
         val intent = context.intentFor<MainActivity>(INTENT_TYPE to INTENT_TYPE_UPDATE)
         val pending = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
         val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_UPDATES)
                 .setSmallIcon(R.drawable.notification)
-                .setContentTitle(context.getString(R.string.notification_update_found_title, update.release.version))
+                .setContentTitle(context.getString(R.string.notification_update_found_title, release.version))
                 .setContentText(context.getString(R.string.notification_update_found_description))
                 .setContentIntent(pending)
                 .build()
@@ -153,48 +131,14 @@ class Updater(private val activity: Activity) {
     }
 
     fun showChangelog() {
-        val builder = AlertDialog.Builder(context)
-                .setTitle(R.string.dialog_changelog_title)
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
-
-        val changelog = database.changelogs.request()
-
-        if (changelog.any()) {
-            val itemAdapter = ItemAdapter<ChangelogItem>()
-            val fastAdapter: FastAdapter<ChangelogItem> = FastAdapter.with(itemAdapter)
-
-            itemAdapter.set(changelog.map { ChangelogItem(it) })
-
-            val view = context.frameLayout {
-                lparams(width = matchParent) {
-                    topPadding = DIM_DIALOG_SIDE_PADDING
-                    leftPadding = DIM_DIALOG_SIDE_PADDING
-                    rightPadding = DIM_DIALOG_SIDE_PADDING
-                }
-
-                recyclerView {
-                    lparams(width = matchParent)
-
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = fastAdapter
-
-                    addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-                }
-            }
-
-            builder.setView(view)
-        } else {
-            builder.setMessage(R.string.dialog_changelog_message_empty)
-        }
-
-        builder.show()
+        SingleActivity.getNavigator().goTo(ChangelogScreen())
     }
 
     fun checkDialog(showMessage: (Int) -> Unit = {}): ProgressDialog {
         return context.indeterminateProgressDialog(R.string.update_finding_latest) {
             val task = launch(UI) {
                 try {
-                    val release = async { fetchUpdate() }.await()
+                    val release = async { fetchUpdate(false) }.await()
 
                     val message = if (release == null) R.string.update_not_found else R.string.update_found
                     showMessage(message)
@@ -211,7 +155,7 @@ class Updater(private val activity: Activity) {
 
     fun installDialog(showMessage: (Int) -> Unit = {}) {
         checkDialog().setOnDismissListener {
-            val link = preferences.lastRelease ?: run {
+            val link = preferences.lastReleaseUrl ?: run {
                 showMessage(R.string.update_not_found)
                 return@setOnDismissListener
             }
@@ -230,7 +174,7 @@ class Updater(private val activity: Activity) {
                         }.await()
 
                         installUpdate(file)
-                        preferences.lastRelease = null
+                        preferences.lastReleaseUrl = null
                     } catch (e: Exception) {
                         e.handle(showMessage)
                     } finally {

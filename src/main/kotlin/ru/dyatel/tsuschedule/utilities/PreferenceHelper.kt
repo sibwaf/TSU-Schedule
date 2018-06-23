@@ -14,8 +14,8 @@ private const val DATA_PREFERENCES = "data_preferences"
 private const val DATA_GROUP = "group"
 private const val DATA_GROUPS = "groups"
 
-private const val DATA_LAST_AUTO_UPDATE = "last_auto_update"
-private const val DATA_LAST_RELEASE = "last_release"
+private const val DATA_LAST_UPDATE_CHECK = "last_auto_update"
+private const val DATA_LAST_RELEASE_URL = "last_release"
 private const val DATA_LAST_USED_VERSION = "last_used_version"
 
 class SchedulePreferences(private val context: Context) {
@@ -72,23 +72,21 @@ class SchedulePreferences(private val context: Context) {
         }
     }
 
-    var lastAutoupdate: DateTime?
+    var lastUpdateCheck: DateTime?
         get() {
-            val timestamp = dataPreferences.getLong(DATA_LAST_AUTO_UPDATE, -1)
-            if (timestamp == -1L)
-                return null
-
-            return DateTime.forInstant(timestamp, TimeZone.getDefault())
+            return dataPreferences.getLong(DATA_LAST_UPDATE_CHECK, -1)
+                    .takeUnless { it == -1L }
+                    ?.let { DateTime.forInstant(it, TimeZone.getDefault()) }
         }
         set(value) {
             val timestamp = value?.getMilliseconds(TimeZone.getDefault()) ?: -1
-            dataPreferences.editAndApply { putLong(DATA_LAST_AUTO_UPDATE, timestamp) }
+            dataPreferences.editAndApply { putLong(DATA_LAST_UPDATE_CHECK, timestamp) }
         }
 
-    var lastRelease: String?
-        get() = dataPreferences.getString(DATA_LAST_RELEASE, null)
+    var lastReleaseUrl: String?
+        get() = dataPreferences.getString(DATA_LAST_RELEASE_URL, null)
         set(value) {
-            dataPreferences.editAndApply { putString(DATA_LAST_RELEASE, value) }
+            dataPreferences.editAndApply { putString(DATA_LAST_RELEASE_URL, value) }
             EventBus.broadcast(Event.PREFERENCES_LATEST_VERSION_CHANGED, value)
         }
 

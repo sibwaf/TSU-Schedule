@@ -30,6 +30,7 @@ import com.mikepenz.materialize.util.UIUtils
 import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
+import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.defaultSharedPreferences
@@ -61,6 +62,7 @@ import ru.dyatel.tsuschedule.screens.ScheduleScreen
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.Validator
 import ru.dyatel.tsuschedule.utilities.schedulePreferences
+import java.util.TimeZone
 
 private const val SCHEDULE_SCREEN_ID_START = 1000
 
@@ -160,7 +162,12 @@ class MainActivity : SingleActivity(), EventListener {
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         if (!handleUpdateNotification(intent) && preferences.autoupdate) {
-            launch { updater.checkUpdatesInBackground() }
+            val now = DateTime.now(TimeZone.getDefault())
+
+            val scheduled = preferences.lastUpdateCheck?.plusDays(3)
+            if (scheduled == null || scheduled.lteq(now)) {
+                launch { updater.fetchUpdate(true) }
+            }
         }
     }
 
@@ -249,7 +256,17 @@ class MainActivity : SingleActivity(), EventListener {
         val result = intent.getStringExtra(INTENT_TYPE) == INTENT_TYPE_UPDATE
         if (result) {
             notificationManager.cancel(NOTIFICATION_UPDATE)
-            getNavigator().goTo(PreferenceScreen())
+
+            var preferenceScreen: PreferenceScreen? = null
+            getNavigator().navigate {
+                preferenceScreen = it.mapNotNull { it as? PreferenceScreen }.singleOrNull()
+            }
+
+            if (preferenceScreen == null) {
+                getNavigator().goTo(PreferenceScreen())
+            } else {
+                getNavigator().goBackTo(preferenceScreen)
+            }
         }
         return result
     }
@@ -270,8 +287,8 @@ class MainActivity : SingleActivity(), EventListener {
                 .setTitle(R.string.dialog_add_group_title)
                 .setMessage(R.string.dialog_add_group_message)
                 .setView(view)
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> })
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> }
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                 .show()
                 .apply {
                     getButton(Dialog.BUTTON_POSITIVE).setOnClickListener { _ ->
@@ -301,7 +318,7 @@ class MainActivity : SingleActivity(), EventListener {
         AlertDialog.Builder(ctx)
                 .setTitle(R.string.dialog_remove_group_title)
                 .setMessage(getString(R.string.dialog_remove_group_message, group))
-                .setPositiveButton(R.string.dialog_ok, { _, _ ->
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
                     val navigator = getNavigator()
 
                     val groups = preferences.groups
@@ -325,8 +342,8 @@ class MainActivity : SingleActivity(), EventListener {
 
                     generateDrawerButtons()
                     newGroup?.let { selectedGroup = it }
-                })
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> })
+                }
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> }
                 .show()
     }
 
