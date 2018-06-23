@@ -16,6 +16,7 @@ import org.jetbrains.anko.verticalLayout
 import ru.dyatel.tsuschedule.ADAPTER_CHANGELOG_ITEM_ID
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.VersionChangelog
+import ru.dyatel.tsuschedule.updater.Release
 
 class ChangelogItem(val changelog: VersionChangelog) : AbstractItem<ChangelogItem, ChangelogItem.ViewHolder>() {
 
@@ -29,10 +30,20 @@ class ChangelogItem(val changelog: VersionChangelog) : AbstractItem<ChangelogIte
         private val changelogView = view.find<TextView>(changelogViewId)
 
         override fun bindView(item: ChangelogItem, payloads: List<Any>) {
+            val context = itemView.context
+
             var versionText = item.changelog.version
+
+            val tags = mutableListOf<String>()
+            if (Release(item.changelog.version) == Release.CURRENT) {
+                tags += context.getString(R.string.changelog_installed_tag)
+            }
             if (item.changelog.prerelease) {
-                val context = itemView.context
-                versionText += " (${context.getString(R.string.dialog_changelog_prerelease_tag)})"
+                tags += context.getString(R.string.changelog_prerelease_tag)
+            }
+
+            if (tags.any()) {
+                versionText += tags.joinToString(", ", " (", ")")
             }
 
             versionView.text = versionText
@@ -59,6 +70,8 @@ class ChangelogItem(val changelog: VersionChangelog) : AbstractItem<ChangelogIte
 
             textView {
                 id = changelogViewId
+            }.lparams {
+                margin = DIM_LARGE
             }
         }
     }

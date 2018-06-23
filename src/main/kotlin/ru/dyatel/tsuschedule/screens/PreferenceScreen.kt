@@ -27,6 +27,13 @@ import ru.dyatel.tsuschedule.utilities.schedulePreferences
 
 class SettingsFragment : PreferenceFragmentCompat(), EventListener {
 
+    private fun Preference.setClickListener(listener: () -> Unit) {
+        setOnPreferenceClickListener {
+            listener()
+            true
+        }
+    }
+
     private val updater by lazy { Updater(activity!!) }
 
     private lateinit var updateButton: Preference
@@ -46,7 +53,7 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
                 .onPreferenceChangeListener = NumberPreferenceValidator(constraint = 1..Int.MAX_VALUE)
 
         updateButton = preferenceManager.findPreference(getString(R.string.preference_update)).apply {
-            setOnPreferenceClickListener {
+            setClickListener {
                 val activity = activity!!
                 activity.notificationManager.cancel(NOTIFICATION_UPDATE)
 
@@ -56,14 +63,12 @@ class SettingsFragment : PreferenceFragmentCompat(), EventListener {
                 } else {
                     updater.checkDialog { longSnackbar(view, it) }
                 }
-
-                true
             }
         }
-        syncUpdateButton(ctx!!.schedulePreferences.lastRelease)
+        syncUpdateButton(ctx!!.schedulePreferences.lastReleaseUrl)
 
         preferenceManager.findPreference(getString(R.string.preference_changelog))
-                .setOnPreferenceClickListener { updater.showChangelog(); true }
+                .setClickListener { updater.showChangelog() }
 
         preferenceManager.findPreference(getString(R.string.preference_version))
                 .summary = BuildConfig.VERSION_NAME

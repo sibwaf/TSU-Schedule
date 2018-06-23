@@ -32,6 +32,16 @@ data class Release(val version: String) : Comparable<Release> {
         return components.size - other.components.size
     }
 
+    override fun hashCode(): Int {
+        return components.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is Release) {
+            return false
+        }
+        return compareTo(other) == 0
+    }
 }
 
 class ReleaseToken(val release: Release, val prerelease: Boolean, val url: String, val changes: String)
