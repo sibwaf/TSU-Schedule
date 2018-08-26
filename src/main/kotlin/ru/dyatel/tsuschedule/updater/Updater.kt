@@ -110,7 +110,7 @@ class Updater(private val activity: Activity) {
         }
 
         if (lastUsedVersion >= 15) {
-            showChangelog()
+            preferences.pendingChangelogDisplay = true
         }
 
         preferences.lastUsedVersion = BuildConfig.VERSION_CODE

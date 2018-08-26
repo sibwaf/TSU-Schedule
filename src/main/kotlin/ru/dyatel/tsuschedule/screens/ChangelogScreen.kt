@@ -38,6 +38,7 @@ import ru.dyatel.tsuschedule.layout.DIM_LARGE
 import ru.dyatel.tsuschedule.updater.Release
 import ru.dyatel.tsuschedule.updater.Updater
 import ru.dyatel.tsuschedule.utilities.ReplacingJobLauncher
+import ru.dyatel.tsuschedule.utilities.SchedulePreferences
 import ru.dyatel.tsuschedule.utilities.ctx
 import ru.dyatel.tsuschedule.utilities.hideIf
 
@@ -123,9 +124,11 @@ class ChangelogScreen : Screen<ChangelogView>() {
 
     override fun createView(context: Context) = ChangelogView(context).apply { setAdapter(fastAdapter) }
 
-    override fun onShow(context: Context?) {
+    override fun onShow(context: Context) {
         super.onShow(context)
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, false)
+
+        SchedulePreferences(context).pendingChangelogDisplay = false
 
         bindChangelog()
         if (view.error != null) {
@@ -133,7 +136,7 @@ class ChangelogScreen : Screen<ChangelogView>() {
         }
     }
 
-    override fun onHide(context: Context?) {
+    override fun onHide(context: Context) {
         task.cancel()
 
         EventBus.broadcast(Event.SET_DRAWER_ENABLED, true)

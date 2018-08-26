@@ -17,6 +17,7 @@ private const val DATA_GROUPS = "groups"
 private const val DATA_LAST_UPDATE_CHECK = "last_auto_update"
 private const val DATA_LAST_RELEASE_URL = "last_release"
 private const val DATA_LAST_USED_VERSION = "last_used_version"
+private const val DATA_PENDING_CHANGELOG_DISPLAY = "pending_changelog_display"
 
 class SchedulePreferences(private val context: Context) {
 
@@ -71,6 +72,10 @@ class SchedulePreferences(private val context: Context) {
             putStringSet(DATA_GROUPS, HashSet(groups).apply { remove(group) })
         }
     }
+
+    var pendingChangelogDisplay: Boolean
+        get() = dataPreferences.getBoolean(DATA_PENDING_CHANGELOG_DISPLAY, false)
+        set(value) = dataPreferences.editAndApply { putBoolean(DATA_PENDING_CHANGELOG_DISPLAY, value) }
 
     var lastUpdateCheck: DateTime?
         get() {
