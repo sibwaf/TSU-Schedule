@@ -54,6 +54,11 @@
     <string name="changelog_error_empty">Список изменений пуст</string>
     <string name="changelog_error_outdated">Список изменений устарел</string>
 
+    <string name="label_consultation">Консультация</string>
+    <string name="label_exam">Экзамен</string>
+    <string name="label_exam_datetime">Дата: %s</string>
+    <string name="label_exam_auditory">Аудитория: %s</string>
+
     <string name="filter_common_practice">Объединять подгруппы на практических занятиях</string>
     <string name="filter_subgroup">Фильтровать по подгруппе</string>
 
