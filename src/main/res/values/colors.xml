@@ -13,7 +13,7 @@
 
     <color name="home_background_color">@color/primary_color</color>
     <color name="home_text_color">@color/text_title_color</color>
-    <color name="home_error_color">#FF3900</color>
+    <color name="home_error_color">@color/text_title_color</color>
 
     <color name="changelog_error_background_color">@color/md_red_700</color>
     <color name="changelog_error_text_color">@color/md_white_1000</color>
