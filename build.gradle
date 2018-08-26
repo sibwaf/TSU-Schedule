@@ -55,6 +55,8 @@ android {
 
     buildTypes {
         debug {
+            applicationIdSuffix ".debug"
+
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "false"
         }
         release {
