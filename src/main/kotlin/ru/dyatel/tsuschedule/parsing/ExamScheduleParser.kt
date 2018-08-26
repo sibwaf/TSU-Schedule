@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule.parsing
 
 import hirondelle.date4j.DateTime
 import org.jsoup.nodes.Element
+import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.model.Exam
 
@@ -28,6 +29,10 @@ object ExamScheduleParser : ParserBase() {
     private val TYPE_MARKER_PATTERN = Regex("\\(\\s*([А-Яа-я]+)\\.?\\s*\\)")
 
     fun parse(element: Element): Set<Exam> {
+        if (element.childNodeSize() < 1) {
+            throw EmptyResultException()
+        }
+
         return element.children()
                 .filter { it.tagName() == "div" }
                 .map { parseSingle(it) }

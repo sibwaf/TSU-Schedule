@@ -6,7 +6,6 @@ import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.model.Lesson
 import ru.dyatel.tsuschedule.model.LessonType
 import ru.dyatel.tsuschedule.model.Parity
-import java.util.HashSet
 
 abstract class ScheduleParser<out T : Lesson> : ParserBase() {
 
@@ -34,13 +33,12 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
             throw EmptyResultException()
         }
 
-        val lessons = HashSet<T>()
         var currentWeekday: String? = null
 
-        element.children()
+        return element.children()
                 .filter { !it.hasClass("screenonly") }
                 .map { it.child(0).child(0).children().last() } // Ignore the padding row
-                .forEach {
+                .map {
                     val timeText = it.getElementsByClass("time").requireSingle().text().trim()
                     val weekday = WEEKDAY_PATTERN.find(timeText)?.value ?: currentWeekday
                     currentWeekday = weekday ?: throw ParsingException("Can't find weekday of the lesson")
@@ -50,10 +48,9 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
                     val auditory = parseAuditory(it)
                     val (type, discipline) = parseDiscipline(it)
 
-                    lessons += parseSingle(it, Lesson(parity, weekday, time, discipline, auditory, type))
+                    parseSingle(it, Lesson(parity, weekday, time, discipline, auditory, type))
                 }
-
-        return lessons
+                .toSet()
     }
 
     private fun parseParity(e: Element): Parity {
