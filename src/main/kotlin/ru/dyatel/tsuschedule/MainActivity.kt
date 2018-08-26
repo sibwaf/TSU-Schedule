@@ -73,6 +73,7 @@ class MainActivity : SingleActivity(), EventListener {
     private lateinit var parityIndicator: TextView
 
     private val preferences = schedulePreferences
+    private val updater by lazy { Updater(this) }
 
     private var selectedGroup: String?
         get() {
@@ -124,7 +125,6 @@ class MainActivity : SingleActivity(), EventListener {
                     NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW))
         }
 
-        val updater = Updater(this)
         updater.handleMigration()
 
         toolbar = find(R.id.toolbar)
@@ -175,6 +175,10 @@ class MainActivity : SingleActivity(), EventListener {
         super.onPostCreate(savedInstanceState)
         if (savedInstanceState == null) {
             preferences.group?.let { selectedGroup = it }
+
+            if (preferences.pendingChangelogDisplay) {
+                updater.showChangelog()
+            }
         }
     }
 
