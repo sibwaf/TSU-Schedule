@@ -7,25 +7,68 @@ import ru.dyatel.tsuschedule.model.Lesson
 import ru.dyatel.tsuschedule.model.LessonType
 import ru.dyatel.tsuschedule.model.Parity
 
+private class WeekdayToken(weekdayRow: Element) {
+
+    private companion object {
+        val PARITY_MAPPING = mapOf(
+                "н/н" to Parity.ODD,
+                "нечётная неделя" to Parity.ODD,
+                "ч/н" to Parity.EVEN,
+                "чётная неделя" to Parity.EVEN
+        )
+        val WEEKDAY_PATTERN = PARITY_MAPPING.keys
+                .joinToString("|", "\\b([А-Яа-я]+)\\b\\s*+\\((", ")\\)")
+                .toRegex(RegexOption.IGNORE_CASE)
+    }
+
+    private val lessons = mutableListOf<Element>()
+
+    val weekday: String
+    val parity: Parity
+
+    init {
+        val weekdayText = weekdayRow.select(".time").text().trim()
+        val match = WEEKDAY_PATTERN.find(weekdayText)
+                ?: throw ParsingException("Failed to parse weekday from <$weekdayText>")
+
+        weekday = match.groupValues[1]
+        parity = match.groupValues[2].toLowerCase()
+                .let { parity ->
+                    PARITY_MAPPING[parity] ?: throw ParsingException("Failed to parse parity from <$parity>")
+                }
+    }
+
+    fun list(): List<Element> = lessons
+
+    fun add(element: Element) {
+        lessons += element
+    }
+
+}
+
 abstract class ScheduleParser<out T : Lesson> : ParserBase() {
 
     private companion object {
-        val WEEKDAY_PATTERN = Regex("\\b[А-Яа-я]+\\b")
-        val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
-
         val SURPLUS_SPACING_PATTERN = Regex("\\s{2,}")
         val SPACES_BEFORE_COMMA_PATTERN = Regex("\\s+,")
         val LEFT_PARENTHESIS_SPACING_PATTERN = Regex("\\(\\s+")
         val RIGHT_PARENTHESIS_SPACING_PATTERN = Regex("\\s+\\)")
         val BLANK_PARENTHESES_PATTERN = Regex("\\(\\s*\\)")
 
+        val TIME_PATTERN = Regex("\\d{2}:\\d{2}-\\d{2}:\\d{2}")
+
         val TYPE_MAPPING = mapOf(
-                "Пр" to LessonType.PRACTICE,
-                "Практ" to LessonType.PRACTICE,
-                "Л" to LessonType.LECTURE,
-                "Лаб" to LessonType.LABORATORY
+                "пр" to LessonType.PRACTICE,
+                "практ" to LessonType.PRACTICE,
+                "практические занятия" to LessonType.PRACTICE,
+                "л" to LessonType.LECTURE,
+                "лекционные занятия" to LessonType.LECTURE,
+                "лаб" to LessonType.LABORATORY,
+                "лабораторные работы" to LessonType.LABORATORY
         )
-        val TYPE_PATTERN = TYPE_MAPPING.keys.joinToString("|", "\\((", ")\\.?\\)").toRegex()
+        val TYPE_PATTERN = TYPE_MAPPING.keys
+                .joinToString("|", "\\((", ")\\.?\\)")
+                .toRegex(RegexOption.IGNORE_CASE)
     }
 
     fun parse(element: Element): Set<T> {
@@ -33,36 +76,47 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
             throw EmptyResultException()
         }
 
-        var currentWeekday: String? = null
+        val lessons = element.children()
 
-        return element.children()
-                .filter { !it.hasClass("screenonly") }
-                .map { it.child(0).child(0).children().last() } // Ignore the padding row
-                .map {
-                    val timeText = it.getElementsByClass("time").requireSingle().text().trim()
-                    val weekday = WEEKDAY_PATTERN.find(timeText)?.value ?: currentWeekday
-                    currentWeekday = weekday ?: throw ParsingException("Can't find weekday of the lesson")
+        val weekdays = mutableListOf<WeekdayToken>()
+        var currentWeekday: WeekdayToken? = null
 
-                    val parity = parseParity(it)
-                    val time = parseTime(timeText)
-                    val auditory = parseAuditory(it)
-                    val (type, discipline) = parseDiscipline(it)
+        for (i in 0 until lessons.size) {
+            val rows = lessons[i].select("tr")
+                    .filter { it.text().isNotBlank() }
 
-                    parseSingle(it, Lesson(parity, weekday, time, discipline, auditory, type))
+            if (rows.isEmpty()) {
+                continue
+            }
+
+            if (rows.size > 2) {
+                throw ParsingException("Too many rows for a lesson")
+            }
+
+            if (rows.size == 2) {
+                currentWeekday = WeekdayToken(rows.first())
+                weekdays += currentWeekday
+            }
+
+            currentWeekday ?: throw ParsingException("Weekday row was not found")
+            currentWeekday.add(rows.last())
+        }
+
+        return weekdays
+                .flatMap { token ->
+                    token.list().map {
+                        val time = parseTime(it)
+                        val auditory = parseAuditory(it)
+                        val (type, discipline) = parseDiscipline(it)
+
+                        parseSingle(it, Lesson(token.parity, token.weekday, time, discipline, auditory, type))
+                    }
                 }
                 .toSet()
     }
 
-    private fun parseParity(e: Element): Parity {
-        val text = e.getElementsByClass("parity").requireSingle().text().trim()
-        return when (text) {
-            "н/н" -> Parity.ODD
-            "ч/н" -> Parity.EVEN
-            else -> throw ParsingException("Can't determine parity from <$text>")
-        }
-    }
-
-    private fun parseTime(text: String): String {
+    private fun parseTime(e: Element): String {
+        val text = e.getElementsByClass("time").requireSingle().text().trim()
         return TIME_PATTERN.find(text)?.value ?: throw ParsingException("Can't parse time from <$text>")
     }
 
@@ -78,7 +132,7 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
         val type: LessonType?
 
         if (typeMatch != null) {
-            type = TYPE_MAPPING[typeMatch.groupValues[1]]!!
+            type = TYPE_MAPPING[typeMatch.groupValues[1].toLowerCase()]!!
             text = text.removeRange(typeMatch.range).clean()
         } else {
             type = LessonType.UNKNOWN
@@ -95,9 +149,8 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
                 .replace(SPACES_BEFORE_COMMA_PATTERN, ",")
                 .replace(LEFT_PARENTHESIS_SPACING_PATTERN, "(")
                 .replace(RIGHT_PARENTHESIS_SPACING_PATTERN, ")")
-                .trimEnd()
-                .removeSuffix(",")
                 .trim()
+                .removeSuffix(",")
     }
 
 }

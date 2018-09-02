@@ -2,6 +2,7 @@ package ru.dyatel.tsuschedule.parsing
 
 import org.junit.Test
 import ru.dyatel.tsuschedule.EmptyResultException
+import ru.dyatel.tsuschedule.model.LessonType
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -19,6 +20,8 @@ class GroupScheduleParserTest {
                 .distinct()
                 .count()
 
+        assertFalse(lessons.all { it.type == LessonType.UNKNOWN }, "Failed to recognize all lesson types")
+
         assertTrue(weekdayCount > 1, "Got too few weekdays")
     }
 
@@ -34,7 +37,7 @@ class GroupScheduleParserTest {
 
     @Test fun test230751() = check("230751")
 
-    @Test fun test720541() = check("720541-ПБ")
+    @Test fun test720551() = check("720551-ПБ")
 
     @Test fun test132361() = check("132361")
 
@@ -42,7 +45,7 @@ class GroupScheduleParserTest {
 
     @Test fun test520761() = check("520761")
 
-    @Test fun test622641() = check("622641")
+    @Test fun test622651() = check("622651")
 
     @Test fun test930169() = check("930169")
 
