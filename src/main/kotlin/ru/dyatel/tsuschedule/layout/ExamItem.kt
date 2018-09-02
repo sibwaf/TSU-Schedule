@@ -13,6 +13,7 @@ import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
+import org.jetbrains.anko.horizontalMargin
 import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.padding
@@ -20,6 +21,7 @@ import org.jetbrains.anko.textColorResource
 import org.jetbrains.anko.textResource
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.verticalMargin
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.ADAPTER_EXAM_ITEM_ID
 import ru.dyatel.tsuschedule.NORMAL_WEEKDAY_ORDER
@@ -150,7 +152,8 @@ class ExamItem(val exam: Exam) : AbstractItem<ExamItem, ExamItem.ViewHolder>() {
 
                     linearLayout {
                         lparams(width = matchParent) {
-                            bottomMargin = DIM_LARGE
+                            horizontalMargin = DIM_SMALL
+                            verticalMargin = DIM_MEDIUM
                         }
 
                         id = consultationContainerId
@@ -171,7 +174,10 @@ class ExamItem(val exam: Exam) : AbstractItem<ExamItem, ExamItem.ViewHolder>() {
                     }
 
                     linearLayout {
-                        lparams(width = matchParent)
+                        lparams(width = matchParent) {
+                            horizontalMargin = DIM_SMALL
+                            verticalMargin = DIM_MEDIUM
+                        }
 
                         view {
                             backgroundResource = R.color.exam_color

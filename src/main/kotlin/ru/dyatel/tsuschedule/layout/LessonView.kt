@@ -8,11 +8,13 @@ import org.jetbrains.anko.alignParentLeft
 import org.jetbrains.anko.alignParentRight
 import org.jetbrains.anko.backgroundResource
 import org.jetbrains.anko.find
+import org.jetbrains.anko.horizontalMargin
 import org.jetbrains.anko.leftOf
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.verticalMargin
 import org.jetbrains.anko.view
 import ru.dyatel.tsuschedule.R
 import ru.dyatel.tsuschedule.model.GroupLesson
@@ -36,10 +38,8 @@ abstract class LessonView<in T : Lesson>(context: Context) : _LinearLayout(conte
 
     init {
         lparams(width = matchParent) {
-            leftMargin = DIM_SMALL
-            rightMargin = DIM_SMALL
-            topMargin = DIM_MEDIUM
-            bottomMargin = DIM_MEDIUM
+            horizontalMargin = DIM_SMALL
+            verticalMargin = DIM_MEDIUM
         }
 
         typeMarkerView = view().lparams(width = DIM_MEDIUM, height = matchParent) {
