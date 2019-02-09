@@ -1,7 +1,6 @@
 package ru.dyatel.tsuschedule.parsing
 
 import org.jsoup.nodes.Element
-import ru.dyatel.tsuschedule.EmptyResultException
 import ru.dyatel.tsuschedule.ParsingException
 import ru.dyatel.tsuschedule.model.Lesson
 import ru.dyatel.tsuschedule.model.LessonType
@@ -17,7 +16,7 @@ private class WeekdayToken(weekdayRow: Element) {
                 "чётная неделя" to Parity.EVEN
         )
         val WEEKDAY_PATTERN = PARITY_MAPPING.keys
-                .joinToString("|", "\\b([А-Яа-я]+)\\b\\s*+\\((", ")\\)")
+                .joinToString("|", "\\b([А-Яа-я]+)\\b\\s*\\((", ")\\)")
                 .toRegex(RegexOption.IGNORE_CASE)
     }
 
@@ -72,34 +71,20 @@ abstract class ScheduleParser<out T : Lesson> : ParserBase() {
     }
 
     fun parse(element: Element): Set<T> {
-        if (element.childNodeSize() <= 1) {
-            throw EmptyResultException()
-        }
-
-        val lessons = element.children()
+        val rows = element.select("tr")
 
         val weekdays = mutableListOf<WeekdayToken>()
         var currentWeekday: WeekdayToken? = null
 
-        for (i in 0 until lessons.size) {
-            val rows = lessons[i].select("tr")
-                    .filter { it.text().isNotBlank() }
-
-            if (rows.isEmpty()) {
+        for (row in rows) {
+            if (row.children().size == 1) {
+                currentWeekday = WeekdayToken(row)
+                weekdays += currentWeekday
                 continue
             }
 
-            if (rows.size > 2) {
-                throw ParsingException("Too many rows for a lesson")
-            }
-
-            if (rows.size == 2) {
-                currentWeekday = WeekdayToken(rows.first())
-                weekdays += currentWeekday
-            }
-
             currentWeekday ?: throw ParsingException("Weekday row was not found")
-            currentWeekday.add(rows.last())
+            currentWeekday.add(row)
         }
 
         return weekdays

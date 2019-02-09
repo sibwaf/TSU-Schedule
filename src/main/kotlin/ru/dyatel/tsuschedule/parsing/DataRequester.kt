@@ -3,6 +3,7 @@ package ru.dyatel.tsuschedule.parsing
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
+import ru.dyatel.tsuschedule.EmptyResultException
 
 class DataRequester {
 
@@ -14,6 +15,9 @@ class DataRequester {
                 .data("group", group)
                 .get()
                 .getElementById("results")
+                .children()
+                .lastOrNull { it.tagName() == "table" }
+                ?: throw EmptyResultException()
     }
 
     fun teacherSchedule(teacher: String): Element {
