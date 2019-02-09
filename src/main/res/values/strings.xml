@@ -2,6 +2,7 @@
 
     <string name="app_name">TSU Schedule</string>
 
+    <string name="label_week">%s неделя</string>
     <string name="odd_week">нечётная</string>
     <string name="even_week">чётная</string>
 

@@ -12,13 +12,11 @@ import android.support.v4.view.ViewCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.TextView
 import com.mikepenz.community_material_typeface_library.CommunityMaterial
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.typeface.IIcon
@@ -26,7 +24,6 @@ import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.DividerDrawerItem
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem
-import com.mikepenz.materialize.util.UIUtils
 import com.wealthfront.magellan.Navigator
 import com.wealthfront.magellan.support.SingleActivity
 import com.wealthfront.magellan.transitions.NoAnimationTransition
@@ -34,18 +31,14 @@ import hirondelle.date4j.DateTime
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.defaultSharedPreferences
-import org.jetbrains.anko.dip
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.find
 import org.jetbrains.anko.frameLayout
 import org.jetbrains.anko.leftPadding
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.notificationManager
-import org.jetbrains.anko.padding
 import org.jetbrains.anko.rightPadding
 import org.jetbrains.anko.singleLine
-import org.jetbrains.anko.textView
-import org.jetbrains.anko.wrapContent
 import ru.dyatel.tsuschedule.database.database
 import ru.dyatel.tsuschedule.events.Event
 import ru.dyatel.tsuschedule.events.EventBus
@@ -70,7 +63,8 @@ class MainActivity : SingleActivity(), EventListener {
 
     private lateinit var toolbar: Toolbar
     private lateinit var drawer: Drawer
-    private lateinit var parityIndicator: TextView
+
+    private lateinit var parityItem: PrimaryDrawerItem
 
     private val preferences = schedulePreferences
     private val updater by lazy { Updater(this) }
@@ -87,12 +81,8 @@ class MainActivity : SingleActivity(), EventListener {
 
     private val drawerListener = object : Drawer.OnDrawerListener {
         override fun onDrawerSlide(drawerView: View, slideOffset: Float) = Unit
-
         override fun onDrawerClosed(drawerView: View) = Unit
-
-        override fun onDrawerOpened(drawerView: View) {
-            parityIndicator.text = currentWeekParity.toText(ctx)
-        }
+        override fun onDrawerOpened(drawerView: View) = updateParityItemText()
     }
 
     private val historySizeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -122,7 +112,8 @@ class MainActivity : SingleActivity(), EventListener {
 
             val name = getString(R.string.notification_channel_updates_name)
             notificationManager.createNotificationChannel(
-                    NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW))
+                    NotificationChannel(NOTIFICATION_CHANNEL_UPDATES, name, NotificationManagerCompat.IMPORTANCE_LOW)
+            )
         }
 
         updater.handleMigration()
@@ -130,24 +121,9 @@ class MainActivity : SingleActivity(), EventListener {
         toolbar = find(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val header = ctx.frameLayout {
-            parityIndicator = textView {
-                gravity = Gravity.CENTER
-                textSize = 18f
-                text = currentWeekParity.toText(ctx)
-            }.lparams {
-                width = matchParent
-                height = wrapContent
-                padding = dip(4)
-                topMargin = UIUtils.getStatusBarHeight(ctx)
-            }
-        }
-
         drawer = DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withStickyHeader(header)
-                .withTranslucentStatusBar(false)
                 .withOnDrawerListener(drawerListener)
                 .withOnDrawerNavigationListener { onBackPressed(); true }
                 .withSavedInstance(savedInstanceState)
@@ -157,8 +133,10 @@ class MainActivity : SingleActivity(), EventListener {
 
         defaultSharedPreferences.registerOnSharedPreferenceChangeListener(historySizeListener)
 
-        EventBus.subscribe(this,
-                Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP)
+        EventBus.subscribe(
+                this,
+                Event.SET_TOOLBAR_SHADOW_ENABLED, Event.SET_DRAWER_ENABLED, Event.ADD_GROUP
+        )
         EventBus.broadcast(Event.SET_TOOLBAR_SHADOW_ENABLED, true)
 
         if (!handleUpdateNotification(intent) && preferences.autoupdate) {
@@ -225,6 +203,14 @@ class MainActivity : SingleActivity(), EventListener {
     private fun generateDrawerButtons() {
         drawer.removeAllItems()
 
+        parityItem = PrimaryDrawerItem()
+                .withIcon(CommunityMaterial.Icon.cmd_calendar)
+                .withSelectable(false)
+        drawer.addItem(parityItem)
+        updateParityItemText()
+
+        drawer.addItem(DividerDrawerItem())
+
         drawer.addItem(PrimaryDrawerItem()
                 .withIcon(CommunityMaterial.Icon.cmd_plus)
                 .withName(R.string.button_add_group)
@@ -254,6 +240,12 @@ class MainActivity : SingleActivity(), EventListener {
                 .withName(R.string.screen_settings)
                 .withOnDrawerItemClickListener { _, _, _ -> getNavigator().goTo(PreferenceScreen()); false }
                 .withSelectable(false))
+    }
+
+    private fun updateParityItemText() {
+        val parityText = currentWeekParity.toText(ctx).capitalize()
+        parityItem.withName(ctx.getString(R.string.label_week, parityText))
+        drawer.updateItem(parityItem)
     }
 
     private fun handleUpdateNotification(intent: Intent): Boolean {
