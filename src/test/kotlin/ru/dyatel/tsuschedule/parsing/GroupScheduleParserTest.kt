@@ -39,6 +39,8 @@ class GroupScheduleParserTest {
 
     @Test fun test720551() = check("720551-ПБ")
 
+    @Test fun test721075() = check("721075")
+
     @Test fun test132361() = check("132361")
 
     @Test fun test420851() = check("420851")
